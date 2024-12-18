@@ -31,6 +31,7 @@ import PageNotFound from "../Errors/PageNotFound";
 import DynamicHomePage from "../dashboard/dynamicDashBoard";
 import Files from "../Files/index";
 import { DashboardIndex } from "../dashboard/Dashboards";
+import Leads from "../leads";
 
 function LoginLayoutIndex(props) {
   return (
