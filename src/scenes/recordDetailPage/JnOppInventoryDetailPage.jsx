@@ -7,10 +7,11 @@ import { useParams, useNavigate } from "react-router-dom"
 import axios from 'axios'
 import "../formik/FormStyles.css"
 import ToastNotification from '../toast/ToastNotification';
+import { appConfig } from '../config';
 
-const url = `${process.env.REACT_APP_SERVER_URL}/UpsertJnOppInventory`;
-const fetchInventoriesbyName = `${process.env.REACT_APP_SERVER_URL}/InventoryName`;
-const fetchOpportunitybyName = `${process.env.REACT_APP_SERVER_URL}/opportunitiesbyName`;
+const url = `${appConfig.server}/UpsertJnOppInventory`;
+const fetchInventoriesbyName = `${appConfig.server}/InventoryName`;
+const fetchOpportunitybyName = `${appConfig.server}/opportunitiesbyName`;
 
 
 const JnOppInventoryDetailPage = ({ item }) => {
@@ -24,13 +25,13 @@ const JnOppInventoryDetailPage = ({ item }) => {
     const [alertSeverity, setAlertSeverity] = useState();
     const [opportunityRecords, setOpportunityRecords] = useState([]);
     const [inventoriesRecord, setInventoriesRecord] = useState([]);
-     // notification
-     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
+    // notification
+    const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
 
     useEffect(() => {
-         console.log('passed record', location.state.record.item);
-     
-         setOppInventory(location.state.record.item);
+        console.log('passed record', location.state.record.item);
+
+        setOppInventory(location.state.record.item);
         setshowNew(!location.state.record.item)
         console.log('inside use effect');
         FetchInventoriesbyName('');
@@ -156,7 +157,7 @@ const JnOppInventoryDetailPage = ({ item }) => {
 
                         return (
                             <>
-                                   <ToastNotification notify={notify} setNotify={setNotify} />
+                                <ToastNotification notify={notify} setNotify={setNotify} />
 
                                 <Form>
                                     <Grid container spacing={2}>
@@ -182,7 +183,7 @@ const JnOppInventoryDetailPage = ({ item }) => {
                                                     if (newInputValue.length >= 3) {
                                                         FetchInventoriesbyName(newInputValue);
                                                     }
-                                                    else  if (newInputValue.length == 0) {
+                                                    else if (newInputValue.length == 0) {
                                                         FetchInventoriesbyName(newInputValue);
                                                     }
                                                 }}
@@ -214,7 +215,7 @@ const JnOppInventoryDetailPage = ({ item }) => {
                                                     if (newInputValue.length >= 3) {
                                                         FetchOpportunitybyName(newInputValue);
                                                     }
-                                                    else  if (newInputValue.length == 0) {
+                                                    else if (newInputValue.length == 0) {
                                                         FetchOpportunitybyName(newInputValue);
                                                     }
                                                 }}

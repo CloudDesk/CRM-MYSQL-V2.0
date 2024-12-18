@@ -42,18 +42,19 @@ import CustomizedSelectForFormik from "../formik/CustomizedSelectForFormik";
 import queryString from "query-string";
 import ToastNotification from "../toast/ToastNotification";
 import { Delete, ExpandMore } from "@mui/icons-material";
+import { appConfig } from "../../config";
 
 function DashboardHarish() {
-    const urlOpportunity = `${process.env.REACT_APP_SERVER_URL}/opportunities`;
-    const urlLead = `${process.env.REACT_APP_SERVER_URL}/leads`;
-    const urlAccount = `${process.env.REACT_APP_SERVER_URL}/accounts`;
-    const urlInventory = `${process.env.REACT_APP_SERVER_URL}/inventories`;
-    const urlTabs = `${process.env.REACT_APP_SERVER_URL}/tabs`;
-    const urlFields = `${process.env.REACT_APP_SERVER_URL}/fields`;
-    const urlDashboard = `${process.env.REACT_APP_SERVER_URL}/dashboardGroup`;
-    const urlPostDashboard = `${process.env.REACT_APP_SERVER_URL}/Dashboard`;
-    const urlGetDashboards = `${process.env.REACT_APP_SERVER_URL}/dashboards`
-    const urlDeleteDashboards = `${process.env.REACT_APP_SERVER_URL}/dashboard/`
+    const urlOpportunity = `${appConfig.server}/opportunities`;
+    const urlLead = `${appConfig.server}/leads`;
+    const urlAccount = `${appConfig.server}/accounts`;
+    const urlInventory = `${appConfig.server}/inventories`;
+    const urlTabs = `${appConfig.server}/tabs`;
+    const urlFields = `${appConfig.server}/fields`;
+    const urlDashboard = `${appConfig.server}/dashboardGroup`;
+    const urlPostDashboard = `${appConfig.server}/Dashboard`;
+    const urlGetDashboards = `${appConfig.server}/dashboards`
+    const urlDeleteDashboards = `${appConfig.server}/dashboard/`
 
     const user = JSON.parse(sessionStorage.getItem('loggedInUser'))
     console.log(user, "user");

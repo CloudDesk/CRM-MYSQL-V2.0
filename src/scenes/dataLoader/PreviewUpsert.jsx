@@ -5,9 +5,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 import ToastNotification from '../toast/ToastNotification';
+import { appConfig } from '../config';
 
 
-const upsertUrl = `${process.env.REACT_APP_SERVER_URL}/dataloader`;
+const upsertUrl = `${appConfig.server}/dataloader`;
 
 function PreviewUpsert({ object, data, file, ModalClose }) {
 

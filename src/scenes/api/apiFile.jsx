@@ -1,7 +1,8 @@
 import axios, { isCancel, AxiosError } from 'axios';
+import { appConfig } from '../config';
 
 const apiFile = axios.create({
-  baseURL: `${process.env.REACT_APP_SERVER_URL}`,
+  baseURL: appConfig.server,
   headers: {
     'Content-Type': 'multipart/form-data',
   },

@@ -196,7 +196,7 @@ export default EmailModalPage
 // import { convert } from "html-to-text";
 
 
-// const urlSendEmailbulk = `${process.env.REACT_APP_SERVER_URL}/bulkemail`
+// const urlSendEmailbulk = `${appConfig.server}/bulkemail`
 
 // const EmailModalPage = ({ data, handleModal, bulkMail }) => {
 

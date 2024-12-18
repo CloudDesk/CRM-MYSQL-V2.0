@@ -32,6 +32,7 @@ import cdlogo from "../assets/cdlogo.jpg";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import HandshakeIcon from '@mui/icons-material/Handshake';
+import { appConfig } from '../config';
 
 const titleStyles = {
   display: 'flex',
@@ -107,7 +108,7 @@ const Sidebar = ({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        width: isExpanded ? 300 : 73,
+        width: isMobile ? 300 : (isExpanded ? 300 : 73),
         transition: 'width 0.2s ease-in-out',
       }}
     >
@@ -126,7 +127,7 @@ const Sidebar = ({
         }}>
           {isExpanded && (
             <Box sx={titleStyles}>
-              <img src={cdlogo} alt="CloudDesk" />
+              <img src={cdlogo} alt={appConfig.name} />
               <Box className="title-container">
                 <Typography
                   variant="h6"
@@ -143,7 +144,7 @@ const Sidebar = ({
                     WebkitTextFillColor: 'transparent'
                   }}
                 >
-                  CloudDesk
+                  {appConfig.name}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -196,7 +197,7 @@ const Sidebar = ({
         <List>
           {tableNamearr.map((page) => (
             <Tooltip
-              title={!isExpanded ? page.title : ""}
+              title={!isExpanded && !isMobile ? page.title : ""}
               placement="right"
               key={page.title}
             >
@@ -208,7 +209,7 @@ const Sidebar = ({
                   mb: 1,
                   mx: 1,
                   borderRadius: 1,
-                  justifyContent: isExpanded ? 'flex-start' : 'start',
+                  justifyContent: (isExpanded || isMobile) ? 'flex-start' : 'start',
                   '&.Mui-selected': {
                     backgroundColor: 'primary.main',
                     color: 'white',
@@ -218,13 +219,22 @@ const Sidebar = ({
                     '& .MuiListItemIcon-root': {
                       color: 'white',
                     },
+                    '& .MuiListItemText-root': {
+                      color: 'white',
+                    },
+                  },
+                  '& .MuiListItemText-root': {
+                    color: 'text.primary',
+                  },
+                  '& .MuiListItemIcon-root': {
+                    color: 'text.secondary',
                   },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: isExpanded ? 40 : 'auto' }}>
+                <ListItemIcon sx={{ minWidth: (isExpanded || isMobile) ? 40 : 'auto' }}>
                   {getIcon(page.title)}
                 </ListItemIcon>
-                {isExpanded && <ListItemText primary={page.title} />}
+                {(isExpanded || isMobile) && <ListItemText primary={page.title} />}
               </ListItem>
             </Tooltip>
           ))}

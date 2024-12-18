@@ -19,6 +19,7 @@ import { UserInitialValues, UserSavedValues } from '../formik/InitialValues/form
 import { RequestServer } from '../api/HttpReq';
 import { apiCheckPermission } from '../Auth/apiCheckPermission'
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';
+import { appConfig } from '../config';
 
 
 const UserDetailPage = ({ item }) => {
@@ -105,26 +106,21 @@ const UserDetailPage = ({ item }) => {
 
     const sendInviteEmail = (values) => {
 
-        const obj = {
+        const greetingEmail = {
             emailId: `${values.email}`,
-            subject: 'Welcome to CloudDesk CRM',
-            htmlbody: ` Dear ${values.fullName || values.fullname}, ` + '\n' + '\n' +
-                `Welcome to Clouddesk CRM you can access.` + '\n' + '\n' +
+            subject: `Welcome to ${appConfig.name} ${appConfig.subTitle}`,
+            htmlbody: `Dear ${values.fullName || values.fullname},\n\n` +
+                `Welcome to ${appConfig.name} ${appConfig.subTitle}. You can access your account using the following credentials:\n\n` +
+                `Username: ${values.userName || values.username}\n\n` +
+                `To generate your ${appConfig.subTitle} password, click here: ${appConfig.resetLink}\n\n` +
+                `Note: This link will expire in 4 days.\n\n` +
+                `If you have any trouble logging in, please contact us at ${appConfig.adminEmail}.\n\n` +
+                `Thanks and Regards,\n` +
+                `${appConfig.name}`
+        };
+        console.log(greetingEmail, "sendInviteEmail")
 
-                `Your UserName is ${values.userName || values.username}` + '\n' + '\n' +
-
-                `To generate your ClouDesk-CRM password, click here ${process.env.REACT_APP_FORGOT_EMAIL_LINK} ` + '\n' + '\n' +
-
-                `Note this Link will expire in 4 days.` + '\n' + '\n' +
-
-                `if you have any trouble logging in, write to us at ${process.env.REACT_APP_ADMIN_EMAIL_ID}` + '\n' + '\n' +
-
-                `Thanks and Regards, ` + '\n' +
-                `Clouddesk.`
-        }
-        console.log(obj, "sendInviteEmail")
-
-        RequestServer("post", urlSendEmail, obj)
+        RequestServer("post", urlSendEmail, greetingEmail)
             .then((res) => {
                 console.log("eamil res", res.data)
                 if (res.success) {

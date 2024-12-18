@@ -22,10 +22,11 @@ import ArticleIcon from "@mui/icons-material/Article";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ToastNotification from "../toast/ToastNotification";
+import { appConfig } from "../config";
 
-const UpsertUrl = `${process.env.REACT_APP_SERVER_URL}/uploadfile`;
-const urlFiles = `${process.env.REACT_APP_SERVER_URL}/files`;
-const deleteUrl = `${process.env.REACT_APP_SERVER_URL}/deletefile?code=`;
+const UpsertUrl = `${appConfig.server}/uploadfile`;
+const urlFiles = `${appConfig.server}/files`;
+const deleteUrl = `${appConfig.server}/deletefile?code=`;
 
 const FileUploadUpdated = () => {
   const [filesList, setFileList] = useState([]);
