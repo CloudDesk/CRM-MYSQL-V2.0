@@ -8,8 +8,9 @@ import {
 import axios from 'axios'
 import "../formik/FormStyles.css"
 import PreviewUpsert from "./PreviewUpsert";
+import { appConfig } from "../config";
 
-const generatePreview = `${process.env.REACT_APP_SERVER_URL}/generatePreview`;
+const generatePreview = `${appConfig.server}/generatePreview`;
 
 const ModalFileUpload = ({ object, handleModal }) => {
 

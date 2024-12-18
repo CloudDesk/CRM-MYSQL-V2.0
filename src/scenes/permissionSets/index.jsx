@@ -9,6 +9,7 @@ import {
   Typography,
   Grid,
   Modal,
+  useMediaQuery,
 } from "@mui/material";
 import {
   DataGrid,
@@ -34,6 +35,7 @@ import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import NoAccess from "../NoAccess/NoAccess";
 import SharedDataGrid from "../../components/SharedDataGrid";
 import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
+import MobileListView from '../../components/common/MobileListView';
 
 const PermissionSets = () => {
   const OBJECT_API = "Permissions";
@@ -64,6 +66,8 @@ const PermissionSets = () => {
   const [permissionValues, setPermissionValues] = useState({});
 
   const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchRecords();
@@ -109,7 +113,7 @@ const PermissionSets = () => {
 
   const handleOnCellClick = (e) => {
     console.log("selected record", e);
-    const item = e.row;
+    const item = e.row ? e.row : e;
     navigate(`/permissionDetailPage/${item._id}`, {
       state: { record: { item } },
     });
@@ -174,6 +178,34 @@ const PermissionSets = () => {
         });
       });
   };
+
+  const handleDeleteMobile = async (id) => {
+    console.log("deleteRecord id", id);
+    try {
+      let res = await RequestServer("delete", `${urlDelete}${id}`, {})
+      if (res.success) {
+        console.log("api delete response", res);
+
+        fetchRecords()
+        return {
+          success: true,
+          message: "Record deleted successfully"
+        };
+      } else {
+        console.log("api delete error", res);
+        return {
+          success: false,
+          message: res.error?.message || "Failed to delete record"
+        };
+      }
+    } catch (error) {
+      console.log("api delete error", error);
+      return {
+        success: false,
+        message: error.message || "Error deleting record"
+      };
+    }
+  }
 
   function CustomPagination() {
     const apiRef = useGridApiContext();
@@ -258,6 +290,23 @@ const PermissionSets = () => {
     });
   }
 
+  const mobileFields = [
+    { label: "Permission Name", key: "permissionname" },
+    { label: "Department Name", key: "department" },
+    {
+      label: "Role",
+      key: "roledetails",
+      render: (value) => {
+        try {
+          return value || "---";
+        } catch (error) {
+          console.error("Value format error:", error);
+          return "Invalid Format";
+        }
+      }
+    }
+  ];
+
   return (
     <>
       <ToastNotification notify={notify} setNotify={setNotify} />
@@ -270,25 +319,37 @@ const PermissionSets = () => {
       ) : (
         <Box>
           {permissionValues.read ? (
-            <SharedDataGrid
-              title="Permission Sets"
-              subtitle="List Of Permission Sets"
-              records={records}
-              columns={columns}
-              loading={fetchLoading}
-              showDelete={showDelete}
-              permissionValues={permissionValues}
-              selectedRecordIds={selectedRecordIds}
-              handleImportModalOpen={null}
-              handleAddRecord={handleAddRecord}
-              handleDelete={onHandleDelete}
-              setShowDelete={setShowDelete}
-              setSelectedRecordIds={setSelectedRecordIds}
-              setSelectedRecordDatas={setSelectedRecordDatas}
-              handleOnCellClick={handleOnCellClick}
-              CustomPagination={CustomPagination}
-              ExcelDownload={ExcelDownload}
-            />
+            isMobile ? (
+              <MobileListView
+                title="Permission Sets"
+                subtitle="List of Permission Sets"
+                records={records}
+                fields={mobileFields}
+                onAdd={handleAddRecord}
+                onEdit={handleOnCellClick}
+                onDelete={permissionValues.delete ? handleDeleteMobile : null}
+              />
+            ) : (
+              <SharedDataGrid
+                title="Permission Sets"
+                subtitle="List Of Permission Sets"
+                records={records}
+                columns={columns}
+                loading={fetchLoading}
+                showDelete={showDelete}
+                permissionValues={permissionValues}
+                selectedRecordIds={selectedRecordIds}
+                handleImportModalOpen={null}
+                handleAddRecord={handleAddRecord}
+                handleDelete={onHandleDelete}
+                setShowDelete={setShowDelete}
+                setSelectedRecordIds={setSelectedRecordIds}
+                setSelectedRecordDatas={setSelectedRecordDatas}
+                handleOnCellClick={handleOnCellClick}
+                CustomPagination={CustomPagination}
+                ExcelDownload={ExcelDownload}
+              />
+            )
           ) : null}
         </Box>
       )}

@@ -7,12 +7,13 @@ import {
 } from "@mui/material";
 import axios from 'axios'
 import "../formik/FormStyles.css"
+import { appConfig } from "../config";
 
 
-const UpsertLeadUrl = `${process.env.REACT_APP_SERVER_URL}/dataloaderlead`;
-const UpsertAccountUrl=`${process.env.REACT_APP_SERVER_URL}dataloaderAccount`;
-const UpsertOppUrl=`${process.env.REACT_APP_SERVER_URL}/dataloaderOpportunity`;
-const generatePreview =`${process.env.REACT_APP_SERVER_URL}/generatePreview`;
+const UpsertLeadUrl = `${appConfig.server}/dataloaderlead`;
+const UpsertAccountUrl=`${appConfig.server}dataloaderAccount`;
+const UpsertOppUrl=`${appConfig.server}/dataloaderOpportunity`;
+const generatePreview =`${appConfig.server}/generatePreview`;
 
 const DataLoadPage = () => {
     useEffect(() => {
@@ -189,7 +190,7 @@ export default DataLoadPage
 
 
 
-// const UpsertUrl = "`${process.env.REACT_APP_SERVER_URL}/dataloaderlead`;
+// const UpsertUrl = "`${appConfig.server}/dataloaderlead`;
 
 // const allowedExtensions =['csv'];
 

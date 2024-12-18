@@ -41,7 +41,7 @@ function LoginLayoutIndex(props) {
         <Route path="/list/account" element={<ResponsiveAccounts />} />
         <Route path="/list/contact" element={<ResponsiveContacts />} />
         <Route path="/list/deals" element={<ResponsiveOpportunities />} />
-        <Route path="/list/enquiry" element={<ResponsiveLeads />} />
+        <Route path="/list/enquiry" element={<Leads />} />
         <Route path="/list/inventory" element={<ResponsiveInventories />} />
         <Route path="/list/event" element={<ResponsiveTasks />} />
         <Route path="/list/user" element={<ResponsiveUsers />} />

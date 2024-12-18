@@ -604,8 +604,8 @@ export default LeadDetailPage;
 // import CustomizedSelectForFormik from '../formik/CustomizedSelectForFormik';
 // import './Form.css'
 
-// const url = `${process.env.REACT_APP_SERVER_URL}/UpsertLead`;
-// const fetchUsersbyName = `${process.env.REACT_APP_SERVER_URL}/usersbyName`;
+// const url = `${appConfig.server}/UpsertLead`;
+// const fetchUsersbyName = `${appConfig.server}/usersbyName`;
 
 // const LeadDetailPage = ({ item }) => {
 

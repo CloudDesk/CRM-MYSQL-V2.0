@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
     Box,
     Button,
@@ -10,11 +10,11 @@ import {
     MenuItem,
     Menu,
     Typography,
-} from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Header from "../Header";
-import ToastNotification from "../../scenes/toast/ToastNotification";
-import DeleteConfirmDialog from "../../scenes/toast/DeleteConfirmDialog";
+} from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Header from '../Header';
+import ToastNotification from '../../scenes/toast/ToastNotification';
+import DeleteConfirmDialog from '../../scenes/toast/DeleteConfirmDialog';
 
 const MobileListView = ({
     title,
@@ -24,7 +24,7 @@ const MobileListView = ({
     onAdd,
     onEdit,
     onDelete,
-    itemsPerPage = 3,
+    itemsPerPage = 5,
 }) => {
     const [page, setPage] = useState(1);
     const [notify, setNotify] = useState({
@@ -54,19 +54,21 @@ const MobileListView = ({
     };
 
     // Delete handlers
-    const handleDeleteClick = (e, record) => {
+    const handleDeleteClick = (e) => {
         e.stopPropagation();
         setConfirmDialog({
             isOpen: true,
             title: "Are you sure to delete this Record?",
             subTitle: "You can't undo this Operation",
-            onConfirm: () => handleDeleteConfirm(record),
+            onConfirm: () => handleDeleteConfirm(e, selectedRecord),
         });
     };
 
-    const handleDeleteConfirm = async (record) => {
+    const handleDeleteConfirm = async (e, record) => {
+        console.log(record, "record handleDeleteConfirm")
         try {
-            const result = await onDelete(record._id);
+            const result = await onDelete(e, record._id);
+            console.log(result, "result handleDeleteConfirm")
             setNotify({
                 isOpen: true,
                 message: result.message,
@@ -84,10 +86,17 @@ const MobileListView = ({
         }
     };
 
+    const handleEditClick = () => {
+        onEdit(selectedRecord);
+        handleMenuClose();
+    };
 
     return (
         <>
-            <ToastNotification notify={notify} setNotify={setNotify} />
+            <ToastNotification
+                notify={notify}
+                setNotify={setNotify}
+            />
             <DeleteConfirmDialog
                 confirmDialog={confirmDialog}
                 setConfirmDialog={setConfirmDialog}
@@ -106,7 +115,7 @@ const MobileListView = ({
                     <Header title={title} subtitle={subtitle} />
                     <Button
                         variant="contained"
-                        color="info"
+                        color="primary"
                         onClick={onAdd}
                         sx={{ height: 'fit-content' }}
                     >
@@ -125,17 +134,14 @@ const MobileListView = ({
                                         bgcolor: "aliceblue",
                                         m: 2,
                                         borderRadius: 1,
+                                        position: 'relative',
                                         "&:hover": {
                                             bgcolor: "action.hover",
                                             transition: "background-color 0.3s",
                                         },
                                     }}
                                 >
-                                    <Grid
-                                        container
-                                        spacing={2}
-                                        alignItems="center"
-                                    >
+                                    <Grid container spacing={2} alignItems="center">
                                         <Grid item xs={10}>
                                             {fields.map((field) => (
                                                 <Box
@@ -189,7 +195,7 @@ const MobileListView = ({
                                 </CardContent>
                             ))
                     ) : (
-                        <CardContent sx={{ bgcolor: "aliceblue", m: 2 }}>
+                        <CardContent sx={{ bgcolor: "aliceblue", m: 2, textAlign: 'center' }}>
                             <Typography>No Records Found</Typography>
                         </CardContent>
                     )}
@@ -214,23 +220,18 @@ const MobileListView = ({
                     open={Boolean(menuAnchorEl)}
                     onClose={handleMenuClose}
                     anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "left",
+                        vertical: "bottom",
+                        horizontal: "right",
                     }}
                     transformOrigin={{
                         vertical: "top",
-                        horizontal: "left",
+                        horizontal: "right",
                     }}
                 >
-                    <MenuItem
-                        onClick={() => {
-                            onEdit(selectedRecord);
-                            handleMenuClose();
-                        }}
-                    >
+                    <MenuItem onClick={handleEditClick}>
                         Edit
                     </MenuItem>
-                    <MenuItem onClick={(e) => handleDeleteClick(e, selectedRecord)}>
+                    <MenuItem onClick={(e) => handleDeleteClick(e)}>
                         Delete
                     </MenuItem>
                 </Menu>
