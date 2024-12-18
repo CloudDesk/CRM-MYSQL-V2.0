@@ -1,9 +1,10 @@
-import { Box, Typography, Button, IconButton, Tooltip } from '@mui/material';
+import { Box, Typography, Button, IconButton, Tooltip, Modal } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomPagination from './CustomPagination';
 import ToastNotification from '../../scenes/toast/ToastNotification';
 import DeleteConfirmDialog from '../../scenes/toast/DeleteConfirmDialog';
+import ModalFileUpload from '../../scenes/dataLoader/ModalFileUpload';
 import { useState } from 'react';
 
 const WebListView = ({
@@ -15,15 +16,14 @@ const WebListView = ({
     showDelete,
     permissionValues,
     selectedRecordIds,
-    handleImportModalOpen,
     handleAddRecord,
     handleDelete,
     setShowDelete,
     setSelectedRecordIds,
-    setSelectedRecordDatas,
     handleOnCellClick,
     ExcelDownload,
     additionalToolbarActions,
+    importConfig
 }) => {
     // Add state for toast and confirm dialog
     const [notify, setNotify] = useState({
@@ -38,40 +38,59 @@ const WebListView = ({
         subTitle: '',
     });
 
-    // Handle delete with confirmation
-    const onHandleDelete = (e, row) => {
+    // Add import modal state
+    const [importModalOpen, setImportModalOpen] = useState(false);
+
+    // Handle import modal
+    const handleImportModalOpen = () => {
+        setImportModalOpen(true);
+    };
+
+    const handleImportModalClose = () => {
+        setImportModalOpen(false);
+    };
+
+    // Handle multiple delete with confirmation
+    const onHandleDelete = (e, selectedIds) => {
         e.stopPropagation();
         setConfirmDialog({
             isOpen: true,
-            title: 'Are you sure to delete this Record ?',
+            title: Array.isArray(selectedIds)
+                ? `Are you sure to delete ${selectedIds.length} records?`
+                : 'Are you sure to delete this record?',
             subTitle: "You can't undo this Operation",
-            onConfirm: () => confirmDeleteRecord(e, row),
+            onConfirm: () => confirmDeleteRecord(e, selectedIds),
         });
     };
 
-    // Handle delete confirmation
-    const confirmDeleteRecord = async (e, row) => {
-        console.log(row, "row confirmDeleteRecord")
+    // Modified delete confirmation to handle both single and multiple deletes
+    const confirmDeleteRecord = async (e, ids) => {
         try {
-            const result = await handleDelete(e, row._id);
+            // Handle both single record and multiple records
+            const result = Array.isArray(ids)
+                ? await handleDelete(e, ids)
+                : await handleDelete(e, ids._id);
             console.log(result, "result confirmDeleteRecord")
             if (result && result.success) {
                 setNotify({
                     isOpen: true,
-                    message: result.message || 'Record deleted successfully',
+                    message: result.message || 'Record(s) deleted successfully',
                     type: 'success',
                 });
+                // Reset selection after successful delete
+                setShowDelete(false);
+                setSelectedRecordIds([]);
             } else {
                 setNotify({
                     isOpen: true,
-                    message: result?.message || 'Error deleting record',
+                    message: result?.message || 'Error deleting record(s)',
                     type: 'error',
                 });
             }
         } catch (error) {
             setNotify({
                 isOpen: true,
-                message: error.message || 'Error deleting record',
+                message: error.message || 'Error deleting record(s)',
                 type: 'error',
             });
         } finally {
@@ -169,7 +188,8 @@ const WebListView = ({
                         ) : (
                             permissionValues.create && (
                                 <>
-                                    {handleImportModalOpen !== null &&
+                                    {
+                                        importConfig.isImport &&
                                         <Button
                                             variant="contained"
                                             onClick={handleImportModalOpen}
@@ -286,17 +306,40 @@ const WebListView = ({
                         onSelectionModelChange={(ids) => {
                             setShowDelete(Object.keys(ids).length > 0);
                             setSelectedRecordIds(ids);
-                            const selectedIDs = new Set(ids);
-                            const selectedRowRecords = records.filter((row) =>
-                                selectedIDs.has(row._id.toString())
-                            );
-                            setSelectedRecordDatas(selectedRowRecords);
+
                         }}
                         onRowClick={handleOnCellClick}
                         sx={{ height: '100%' }}
                     />
                 </Box>
             </Box>
+
+            {/* Import Modal */}
+            <Modal
+                open={importModalOpen}
+                onClose={handleImportModalClose}
+                sx={{
+                    backdropFilter: "blur(1px)",
+                    "& .modal": {
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        boxShadow: 24,
+                        p: 4,
+                    },
+                }}
+            >
+                <div className="modal">
+                    <ModalFileUpload
+                        object={importConfig.objectName}
+                        handleModal={handleImportModalClose}
+                        callBack={importConfig.callBack}
+                    />
+                </div>
+            </Modal>
         </>
     );
 };

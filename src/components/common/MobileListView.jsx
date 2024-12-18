@@ -24,8 +24,10 @@ const MobileListView = ({
     onAdd,
     onEdit,
     onDelete,
+    permissionValues,
     itemsPerPage = 5,
 }) => {
+    console.log(permissionValues, "permissionValues mobile")
     const [page, setPage] = useState(1);
     const [notify, setNotify] = useState({
         isOpen: false,
@@ -229,11 +231,13 @@ const MobileListView = ({
                     }}
                 >
                     <MenuItem onClick={handleEditClick}>
-                        Edit
+                        {permissionValues.edit ? "Edit" : "View"}
                     </MenuItem>
-                    <MenuItem onClick={(e) => handleDeleteClick(e)}>
-                        Delete
-                    </MenuItem>
+                    {permissionValues.delete && (
+                        <MenuItem onClick={(e) => handleDeleteClick(e)}>
+                            Delete
+                        </MenuItem>
+                    )}
                 </Menu>
             </Box>
         </>

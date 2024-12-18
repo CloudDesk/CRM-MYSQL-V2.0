@@ -12,7 +12,7 @@ import { appConfig } from "../config";
 
 const generatePreview = `${appConfig.server}/generatePreview`;
 
-const ModalFileUpload = ({ object, handleModal }) => {
+const ModalFileUpload = ({ object, handleModal, callBack }) => {
 
     const [uplodedData, setUplodedData] = useState([])
     const [uplodedFile, setUploadedFile] = useState()
@@ -71,7 +71,7 @@ const ModalFileUpload = ({ object, handleModal }) => {
             {uplodedData.length > 0 ?
 
                 <>
-                    <PreviewUpsert object={object} data={uplodedData} file={uplodedFile} ModalClose={handleModal} />
+                    <PreviewUpsert callBack={callBack} object={object} data={uplodedData} file={uplodedFile} ModalClose={handleModal} />
                 </> :
 
 

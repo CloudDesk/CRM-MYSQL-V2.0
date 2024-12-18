@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useTheme, Box, IconButton, Modal, useMediaQuery } from "@mui/material";
+import { useTheme, Box, IconButton, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ModalFileUpload from "../dataLoader/ModalFileUpload";
 import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import "../recordDetailPage/Form.css";
@@ -10,7 +9,6 @@ import "../indexCSS/muiBoxStyles.css";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
-import SharedDataGrid from "../../components/SharedDataGrid";
 import MobileListView from "../../components/common/MobileListView";
 import WebListView from "../../components/common/WebListView";
 import NoAccessPage from "../../components/NoAccessPage";
@@ -29,8 +27,6 @@ const Leads = () => {
   const [fetchLoading, setFetchLoading] = useState(true);
   const [showDelete, setShowDelete] = useState(false);
   const [selectedRecordIds, setSelectedRecordIds] = useState([]);
-  const [selectedRecordDatas, setSelectedRecordDatas] = useState([]);
-  const [importModalOpen, setImportModalOpen] = useState(false);
   const [permissionValues, setPermissionValues] = useState({});
 
   const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
@@ -128,7 +124,27 @@ const Leads = () => {
 
   const onHandleDelete = async (e, rowId) => {
     e.stopPropagation();
-    console.log("row onHandleDelete", rowId);
+    if (Array.isArray(rowId)) {
+      const results = await Promise.all(rowId.map((id) => deleteRecord(e, id)));
+      // If any deletion failed, return error
+      const hasError = results.some((result) => !result.success);
+      if (hasError) {
+        return {
+          success: false,
+          message: "Some records failed to delete",
+        };
+      }
+      return {
+        success: true,
+        message: "All records deleted successfully",
+      };
+    } else {
+      return await deleteRecord(e, rowId);
+    }
+  };
+
+  const deleteRecord = async (e, rowId) => {
+    e.stopPropagation();
     try {
       const res = await RequestServer("delete", `${urlDelete}/${rowId}`, {});
       console.log(res.data, "res onHandleDelete");
@@ -150,15 +166,6 @@ const Leads = () => {
         message: error.message || "Error deleting record",
       };
     }
-  };
-
-  const handleImportModalOpen = () => {
-    setImportModalOpen(true);
-  };
-
-  const handleImportModalClose = () => {
-    setImportModalOpen(false);
-    fetchRecords();
   };
 
   if (permissionValues.delete) {
@@ -199,6 +206,7 @@ const Leads = () => {
                 fields={mobileFields}
                 onAdd={handleAddRecord}
                 onEdit={handleOnCellClick}
+                permissionValues={permissionValues}
                 onDelete={permissionValues.delete ? onHandleDelete : null}
               />
             ) : (
@@ -211,14 +219,17 @@ const Leads = () => {
                 showDelete={showDelete}
                 permissionValues={permissionValues}
                 selectedRecordIds={selectedRecordIds}
-                handleImportModalOpen={handleImportModalOpen}
                 handleAddRecord={handleAddRecord}
                 handleDelete={onHandleDelete}
                 setShowDelete={setShowDelete}
                 setSelectedRecordIds={setSelectedRecordIds}
-                setSelectedRecordDatas={setSelectedRecordDatas}
                 handleOnCellClick={handleOnCellClick}
                 ExcelDownload={ExcelDownload}
+                importConfig={{
+                  objectName: "Enquiry",
+                  isImport: true,
+                  callBack: fetchRecords,
+                }}
               />
             )
           ) : (
@@ -226,31 +237,6 @@ const Leads = () => {
           )}
         </Box>
       )}
-
-      <Modal
-        open={importModalOpen}
-        onClose={handleImportModalClose}
-        sx={{
-          backdropFilter: "blur(1px)",
-          "& .modal": {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            boxShadow: 24,
-            p: 4,
-          },
-        }}
-      >
-        <div className="modal">
-          <ModalFileUpload
-            object="Enquiry"
-            handleModal={handleImportModalClose}
-          />
-        </div>
-      </Modal>
     </>
   );
 };

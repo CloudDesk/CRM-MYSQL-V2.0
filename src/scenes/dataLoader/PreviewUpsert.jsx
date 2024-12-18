@@ -10,7 +10,7 @@ import { appConfig } from '../config';
 
 const upsertUrl = `${appConfig.server}/dataloader`;
 
-function PreviewUpsert({ object, data, file, ModalClose }) {
+function PreviewUpsert({ object, data, file, ModalClose, callBack }) {
 
   const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
   const [isLoading, setIsLoading] = useState(false)
@@ -36,7 +36,7 @@ function PreviewUpsert({ object, data, file, ModalClose }) {
           message: typeof (res.data) === 'string' ? res.data : 'Records Inserted Successfully',
           type: 'success'
         })
-
+        callBack();
       })
       .catch((error) => {
         console.log('data import error', error);
