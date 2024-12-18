@@ -75,6 +75,37 @@ const elegantTheme = createTheme({
               borderColor: "#3A5A8C",
               borderWidth: 2,
             },
+            "& .MuiInputBase-input": {
+              fontWeight: 700, // Makes the input text bolder
+              color: "#2C3E50", // Ensures the text color aligns with your theme
+            },
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        root: {
+          "& .MuiSelect-select": {
+            fontWeight: 700, // Bold text for selected value
+            color: "#2C3E50", // Ensure text color matches theme
+          },
+        },
+      },
+    },
+    MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          "& .MuiInputBase-root": {
+            fontWeight: 700, // Bold text for input and selected values
+            color: "#2C3E50", // Align text color with theme
+          },
+          "& .MuiAutocomplete-option": {
+            fontWeight: 500, // Slightly bold text for dropdown options
+            color: "#2C3E50", // Option text color
+          },
+          "& .Mui-focused": {
+            fontWeight: 700, // Bold text when focused
           },
         },
       },
@@ -123,7 +154,12 @@ const generateValidationSchema = (fields) => {
 };
 
 // Dynamic Form Field Renderer
-const DynamicFormField = ({ field, formik, customComponents = {} }) => {
+const DynamicFormField = ({
+  field,
+  formik,
+  customComponents = {},
+  permissionValues,
+}) => {
   const { values, errors, touched, handleChange, setFieldValue } = formik;
 
   // Custom component renderer
@@ -150,6 +186,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
           onChange={handleChange}
           error={touched[field.name] && Boolean(errors[field.name])}
           helperText={touched[field.name] && errors[field.name]}
+          disabled={!permissionValues.edit}
           {...field.props}
         />
       );
@@ -159,9 +196,11 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
         <FormControl
           fullWidth
           error={touched[field.name] && Boolean(errors[field.name])}
+          disabled={!permissionValues.edit}
         >
           <InputLabel>{field.label}</InputLabel>
           <Select
+            disabled={!permissionValues.edit}
             name={field.name}
             label={field.label}
             value={values[field.name] || ""}
@@ -185,6 +224,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
         <FormControl
           component="fieldset"
           error={touched[field.name] && Boolean(errors[field.name])}
+          disabled={!permissionValues.edit}
         >
           <RadioGroup
             name={field.name}
@@ -194,6 +234,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
           >
             {field.options.map((option) => (
               <FormControlLabel
+                disabled={!permissionValues.edit}
                 key={option.value}
                 value={option.value}
                 control={<Radio />}
@@ -212,6 +253,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
         <FormControlLabel
           control={
             <Checkbox
+              disabled={!permissionValues.edit}
               checked={!!values[field.name]}
               onChange={(e) => setFieldValue(field.name, e.target.checked)}
               {...field.props}
@@ -226,6 +268,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
         <FormControlLabel
           control={
             <Switch
+              disabled={!permissionValues.edit}
               checked={!!values[field.name]}
               onChange={(e) => setFieldValue(field.name, e.target.checked)}
               {...field.props}
@@ -238,6 +281,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
     case "autocomplete":
       return (
         <Autocomplete
+          disabled={!permissionValues.edit}
           options={field.options}
           getOptionLabel={(option) =>
             typeof option === "string" ? option : option.label || option.value
@@ -248,6 +292,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
           }}
           renderInput={(params) => (
             <TextField
+              disabled={!permissionValues.edit}
               {...params}
               name={field.name}
               label={field.label}
@@ -272,6 +317,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
           onChange={handleChange}
           error={touched[field.name] && Boolean(errors[field.name])}
           helperText={touched[field.name] && errors[field.name]}
+          disabled={!permissionValues.edit}
           {...field.props}
         />
       );
@@ -279,6 +325,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
     case "multiselect":
       return (
         <Autocomplete
+          disabled={!permissionValues.edit}
           multiple
           options={field.options}
           getOptionLabel={(option) =>
@@ -291,6 +338,7 @@ const DynamicFormField = ({ field, formik, customComponents = {} }) => {
           renderInput={(params) => (
             <TextField
               {...params}
+              disabled={!permissionValues.edit}
               name={field.name}
               label={field.label}
               error={touched[field.name] && Boolean(errors[field.name])}
@@ -318,7 +366,9 @@ export const DynamicForm = ({
   formTitle,
   formProps = {},
   gridProps = { spacing: 2 },
+  permissionValues,
 }) => {
+  console.log(permissionValues, "permissionValues in DynamicForm");
   // Generate validation schema if not provided
   const schema = useMemo(() => {
     return validationSchema || generateValidationSchema(fields);
@@ -365,6 +415,7 @@ export const DynamicForm = ({
                       field={field}
                       formik={formik}
                       customComponents={customComponents}
+                      permissionValues={permissionValues}
                     />
                   </Grid>
                 ))}
@@ -378,7 +429,12 @@ export const DynamicForm = ({
                     mt: 2,
                   }}
                 >
-                  <Button type="submit" variant="contained" color="primary">
+                  <Button
+                    disabled={!permissionValues.edit}
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                  >
                     {submitButtonText}
                   </Button>
                   <Button

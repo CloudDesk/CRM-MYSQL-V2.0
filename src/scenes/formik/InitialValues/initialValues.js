@@ -1,10 +1,12 @@
 import * as Yup from 'yup';
 import { format } from 'date-fns';
-import { IndustryPickList, LeadMonthPicklist, LeadsDemoPicklist, LeadSourcePickList, LeadStatusPicklist } from '../../../data/pickLists';
+import { IndustryPickList, LeadMonthPicklist, LeadsDemoPicklist, LeadSourcePickList, LeadStatusPicklist, OppStagePicklist, OppTypePicklist } from '../../../data/pickLists';
 import { Grid, Typography } from '@mui/material';
 
 const phoneRegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
+
+// Lead Initial Values
 export const leadFormFields = [
   // Personal Information
   {
@@ -261,7 +263,7 @@ export const generateLeadInitialValues = (existingLead = {}) => {
     if (Object.keys(existingLead).length > 0) {
 
       // Timestamps
-      defaultValues.appointmentdate = format(existingLead.appointmentdate,'yyyy-MM-dd') ?? Date.now();
+      defaultValues.appointmentdate = (existingLead?.appointmentdate !== null && format(existingLead?.appointmentdate,'yyyy-MM-dd')) ?? Date.now();
       defaultValues.createddate = format(existingLead.createddate,'MM/dd/yyyy') ?? Date.now();
       defaultValues.modifieddate = format(existingLead.modifieddate,'MM/dd/yyyy') ?? Date.now();
   
@@ -288,6 +290,196 @@ export const generateLeadInitialValues = (existingLead = {}) => {
         //     userFullName: existingLead.modifiedby.userFullName || '',
         //     userDepartment: existingLead.modifiedby.userDepartment || ''
         //   }
+        : null;
+    }
+  
+    return defaultValues;
+  };
+
+
+  // Opportunity Initial Values
+
+  export const opportunityFormFields = [
+    // Identification
+    {
+      name: 'leadid',
+      label: 'Lead ID',
+      type: 'text',
+      xs: 12,
+      md: 6,
+      props: {
+        placeholder: 'Enter Lead ID'
+      }
+    },
+    {
+      name: 'inventoryid',
+      label: 'Inventory ID',
+      type: 'text',
+      xs: 12,
+      md: 6,
+      props: {
+        placeholder: 'Enter Inventory ID'
+      }
+    },
+    {
+      name: 'opportunityname',
+      label: 'Opportunity Name',
+      type: 'text',
+      required: true,
+      xs: 12,
+      md: 6,
+      validator: Yup.string()
+        .min(2, 'Opportunity name must be at least 2 characters')
+        .max(100, 'Opportunity name must be less than 100 characters')
+        .required('Opportunity Name is required'),
+      props: {
+        placeholder: 'Enter Opportunity Name'
+      }
+    },
+    
+    // Opportunity Details
+    {
+      name: 'type',
+      label: 'Opportunity Type',
+      type: 'select',
+      xs: 12,
+      md: 6,
+      options: OppTypePicklist,
+      validator: Yup.string().required('Opportunity Type is required'),
+      props: {
+        displayEmpty: true
+      }
+    },
+    {
+      name: 'leadsource',
+      label: 'Lead Source',
+      type: 'select',
+      xs: 12,
+      md: 6,
+      options: [], // You would import or define LeadSourcePickList similar to previous example
+      props: {
+        displayEmpty: true
+      }
+    },
+    {
+      name: 'amount',
+      label: 'Opportunity Amount',
+      type: 'number',
+      xs: 12,
+      md: 6,
+      validator: Yup.number()
+        .positive('Amount must be a positive number')
+        .required('Opportunity Amount is required'),
+      props: {
+        placeholder: 'Enter Opportunity Amount',
+        type: 'number'
+      }
+    },
+    {
+      name: 'closedate',
+      label: 'Close Date',
+      type: 'date',
+      xs: 12,
+      md: 6,
+      validator: Yup.date().nullable(),
+      props: {
+        InputLabelProps: { shrink: true },
+        placeholder: 'Select Close Date'
+      }
+    },
+    {
+      name: 'stage',
+      label: 'Opportunity Stage',
+      type: 'select',
+      xs: 12,
+      md: 6,
+      required: true,
+      options: OppStagePicklist,
+      validator: Yup.string().required('Opportunity Stage is required'),
+      props: {
+        displayEmpty: true
+      }
+    },
+    {
+      name: 'description',
+      label: 'Description',
+      type: 'text',
+      multiline: true,
+      xs: 12,
+      props: {
+        multiline: true,
+        rows: 4,
+        placeholder: 'Additional details about the opportunity'
+      }
+    },
+    
+    // Metadata
+    {
+      name: 'createddate',
+      label: 'Created Date',
+      type: 'text',
+      xs: 12,
+      md: 6,
+      props: {
+        disabled: true
+      },
+      defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+    },
+    {
+      name: 'modifieddate',
+      label: 'Modified Date',
+      type: 'text',
+      xs: 12,
+      md: 6,
+      props: {
+        disabled: true
+      },
+      defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+    },
+    {
+      name: 'createdby',
+      label: 'Created By',
+      type: 'text',
+      xs: 12,
+      md: 6,
+      props: {
+        disabled: true
+      }
+    },
+    {
+      name: 'modifiedby',
+      label: 'Modified By',
+      type: 'text',
+      xs: 12,
+      md: 6,
+      props: {
+        disabled: true
+      }
+    }
+  ];
+  
+  export const generateOpportunityInitialValues = (existingOpportunity = {}) => {
+    const defaultValues = opportunityFormFields.reduce((acc, field) => {
+      // Check if value exists in existing opportunity, otherwise use empty string or default
+      acc[field.name] = existingOpportunity[field.name] ?? '';
+      return acc;
+    }, {});
+  
+    // Add metadata values only if editing an existing opportunity
+    if (Object.keys(existingOpportunity).length > 0) {
+      // Timestamps
+      defaultValues.closedate = (existingOpportunity?.closedate !== null && format(existingOpportunity?.closedate, 'yyyy-MM-dd')) ?? null;
+      defaultValues.createddate = format(existingOpportunity.createddate, 'MM/dd/yyyy') ?? Date.now();
+      defaultValues.modifieddate = format(existingOpportunity.modifieddate, 'MM/dd/yyyy') ?? Date.now();
+  
+      // Created By
+      defaultValues.createdby = existingOpportunity.createdby
+        ? existingOpportunity.createdby.userFullName + " " + format(existingOpportunity.createddate, "MM/dd/yyyy")
+        : null;
+  
+      // Modified By
+      defaultValues.modifiedby = existingOpportunity.modifiedby
+        ? existingOpportunity.modifiedby.userFullName + " " + format(existingOpportunity.modifieddate, "MM/dd/yyyy")
         : null;
     }
   

@@ -1,6 +1,5 @@
 import React from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import AppNavbar from "../global/AppNavbar";
+import { Routes, Route } from "react-router-dom";
 import ResponsiveAccounts from "../accounts/ResponsiveScreen";
 import ResponsiveContacts from "../contacts/ResponsiveScreen";
 import ResponsiveInventories from "../inventories/ResponsiveScreen";
@@ -10,7 +9,7 @@ import ResponsiveTasks from "../tasks/ResponsiveScreen";
 import ResponsiveUsers from "../users/ResponsiveScreen";
 import ContactDetailPage from "../recordDetailPage/ContactDetailPage";
 import AccountDetailPage from "../recordDetailPage/AccountDetailPage";
-// import LeadDetailPage from "../recordDetailPage/LeadDetailPage";
+// import LeadDetailPage from '../recordDetailPage/LeadDetailPage';
 import LeadDetailPage from "../leads/Forms/LeadDetailPage";
 import OpportunityDetailPage from "../recordDetailPage/OpportunityDetailPage";
 import InventoryDetailPage from "../recordDetailPage/InventoryDetailPage";
@@ -26,11 +25,10 @@ import RoleDetailPage from "../recordDetailPage/RoleDetailPage";
 import RoleIndex from "../Roles";
 import PermissionDetailPage from "../recordDetailPage/PermissionDetailPage";
 import PermissionSets from "../permissionSets";
-import StaticDashboardIndex from "../home";
 import PageNotFound from "../Errors/PageNotFound";
-import DynamicHomePage from "../dashboard/dynamicDashBoard";
 import Files from "../Files/index";
 import { DashboardIndex } from "../dashboard/Dashboards";
+import Leads from "../leads";
 
 function LoginLayoutIndex(props) {
   return (

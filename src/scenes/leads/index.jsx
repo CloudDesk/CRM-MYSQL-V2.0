@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  useTheme,
-  Box,
-  IconButton,
-  Modal,
-  useMediaQuery,
-} from "@mui/material";
+import { useTheme, Box, IconButton, Modal, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModalFileUpload from "../dataLoader/ModalFileUpload";
@@ -17,8 +11,9 @@ import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
 import SharedDataGrid from "../../components/SharedDataGrid";
-import MobileListView from '../../components/common/MobileListView';
+import MobileListView from "../../components/common/MobileListView";
 import WebListView from "../../components/common/WebListView";
+import NoAccessPage from "../../components/NoAccessPage";
 
 const Leads = () => {
   const OBJECT_API = "Enquiry";
@@ -27,7 +22,7 @@ const Leads = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [records, setRecords] = useState([]);
   const [fetchError, setFetchError] = useState();
@@ -136,23 +131,23 @@ const Leads = () => {
     console.log("row onHandleDelete", rowId);
     try {
       const res = await RequestServer("delete", `${urlDelete}/${rowId}`, {});
-      console.log(res.data, "res onHandleDelete")
+      console.log(res.data, "res onHandleDelete");
       if (res.data) {
         fetchRecords();
         return {
           success: true,
-          message: "Record deleted successfully"
+          message: "Record deleted successfully",
         };
       } else {
         return {
           success: false,
-          message: res.error?.message || "Failed to delete record"
+          message: res.error?.message || "Failed to delete record",
         };
       }
     } catch (error) {
       return {
         success: false,
-        message: error.message || "Error deleting record"
+        message: error.message || "Error deleting record",
       };
     }
   };
@@ -195,7 +190,7 @@ const Leads = () => {
         <SharedDataGridSkeleton />
       ) : (
         <Box>
-          {permissionValues.read && (
+          {permissionValues.read ? (
             isMobile ? (
               <MobileListView
                 title="Enquiries"
@@ -226,6 +221,8 @@ const Leads = () => {
                 ExcelDownload={ExcelDownload}
               />
             )
+          ) : (
+            <NoAccessPage />
           )}
         </Box>
       )}

@@ -156,6 +156,7 @@ const LeadDetailPage = ({ props }) => {
         onSubmit={handleSubmit}
         formTitle={existingLead ? "Edit Lead" : "New Lead"}
         submitButtonText={existingLead ? "Update Lead" : "Create Lead"}
+        permissionValues={permissionValues}
       />
     </div>
   );
