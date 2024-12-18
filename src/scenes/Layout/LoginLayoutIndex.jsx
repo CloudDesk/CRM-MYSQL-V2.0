@@ -1,6 +1,5 @@
 import React from 'react'
-import { Routes, Route, useNavigate } from "react-router-dom";
-import AppNavbar from '../global/AppNavbar';
+import { Routes, Route } from "react-router-dom";
 import ResponsiveAccounts from '../accounts/ResponsiveScreen';
 import ResponsiveContacts from '../contacts/ResponsiveScreen';
 import ResponsiveInventories from '../inventories/ResponsiveScreen';
@@ -25,11 +24,10 @@ import RoleDetailPage from '../recordDetailPage/RoleDetailPage';
 import RoleIndex from '../Roles';
 import PermissionDetailPage from '../recordDetailPage/PermissionDetailPage';
 import PermissionSets from '../permissionSets';
-import StaticDashboardIndex from '../home';
 import PageNotFound from '../Errors/PageNotFound';
-import DynamicHomePage from '../dashboard/dynamicDashBoard'
 import Files from '../Files/index'
 import { DashboardIndex } from '../dashboard/Dashboards';
+import Leads from '../leads';
 
 
 function LoginLayoutIndex(props) {
@@ -43,7 +41,7 @@ function LoginLayoutIndex(props) {
         <Route path="/list/account" element={<ResponsiveAccounts />} />
         <Route path="/list/contact" element={<ResponsiveContacts />} />
         <Route path="/list/deals" element={<ResponsiveOpportunities />} />
-        <Route path="/list/enquiry" element={<ResponsiveLeads />} />
+        <Route path="/list/enquiry" element={<Leads />} />
         <Route path="/list/inventory" element={<ResponsiveInventories />} />
         <Route path="/list/event" element={<ResponsiveTasks />} />
         <Route path="/list/user" element={<ResponsiveUsers />} />
