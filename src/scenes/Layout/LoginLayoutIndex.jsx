@@ -33,7 +33,6 @@ function LoginLayoutIndex(props) {
   return (
     <>
       <Routes>
-        {/* <Route path="/" exact element={<StaticDashboardIndex />} /> */}
         <Route path="/" exact element={<DashboardIndex />} />
         <Route path="/list/account" element={<Accounts />} />
         <Route path="/list/contact" element={<Contacts />} />

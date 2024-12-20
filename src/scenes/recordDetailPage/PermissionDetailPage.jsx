@@ -160,7 +160,7 @@ const PermissiionSetForm = ({ item }) => {
     // console.log(values.roleDetails, "values.roleDetails");
     let dateSeconds = new Date().getTime();
     // let createDateSec = new Date(values.createdDate).getTime();
-    let createDateSec = location.state.record.item.createddate;
+
 
     // values.roleDetails = values.roleDetails;
     // values.permissionSets = JSON.stringify(values.permissionSets);
@@ -173,7 +173,7 @@ const PermissiionSetForm = ({ item }) => {
       delete values.userDetails;
     } else if (!showNew) {
       values.modifiedDate = dateSeconds;
-      values.createdDate = createDateSec;
+      values.createdDate = location.state.record.item.createddate;
       values.createdBy = singlePermission.createdBy;
       values.modifiedBy = sessionStorage.getItem("loggedInUser");
       delete values.userDetails;
