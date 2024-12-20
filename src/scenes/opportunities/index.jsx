@@ -134,7 +134,7 @@ const Opportunities = () => {
   // Effects
   useEffect(() => {
     initializeComponent();
-  }, [isMobile]);
+  }, []);
 
   // Initialization
   const initializeComponent = async () => {

@@ -1,209 +1,59 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  useTheme,
-  IconButton,
-  Pagination,
-  Tooltip,
-  Grid,
-  Modal,
-  Typography,
-} from "@mui/material";
-import {
-  DataGrid,
-  GridToolbar,
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
-} from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useTheme, Box, useMediaQuery, IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import ToastNotification from "../toast/ToastNotification";
-import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
-import ModalFileUpload from "../dataLoader/ModalFileUpload";
 import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
-import { getPermissions } from "../Auth/getPermission";
-import NoAccess from "../NoAccess/NoAccess";
-import "../indexCSS/muiBoxStyles.css";
-import AppNavbar from "../global/AppNavbar";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import SharedDataGrid from "../../components/SharedDataGrid";
-import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
+import ListViewContainer from "../../components/common/ListViewContainer";
 
-const Accounts = ({ props }) => {
-  const OBJECT_API = "Account";
-  const urlDelete = `/deleteAccount`;
-  const urlAccount = `/accounts`;
+// Constants
+const CONSTANTS = {
+  OBJECT_NAME: 'Account',
+  ROUTES: {
+    ACCOUNTS: '/accounts',
+    DELETE_ACCOUNT: '/deleteAccount',
+    NEW_ACCOUNT: '/new-accounts',
+    ACCOUNT_DETAIL: '/accountDetailPage',
+  },
+  TITLES: {
+    MAIN: 'Accounts',
+    WEB_SUBTITLE: 'List Of Accounts',
+    MOBILE_SUBTITLE: 'List of Accounts',
+  },
+  ERROR_MESSAGES: {
+    DELETE_MULTIPLE: 'Some accounts failed to delete',
+    DELETE_SINGLE: 'Failed to delete account',
+    DEFAULT: 'An error occurred',
+  },
+  SUCCESS_MESSAGES: {
+    DELETE_MULTIPLE: 'All accounts deleted successfully',
+    DELETE_SINGLE: 'Account deleted successfully',
+  },
+};
 
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const navigate = useNavigate();
-  const [records, setRecords] = useState([]);
-  const [fetchError, setFetchError] = useState();
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [confirmDialog, setConfirmDialog] = useState({
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
-  const [showDelete, setShowDelete] = useState(false);
-  const [selectedRecordIds, setSelectedRecordIds] = useState();
-  const [selectedRecordDatas, setSelectedRecordDatas] = useState();
-  const [importModalOpen, setImportModalOpen] = useState(false);
-  const [permissionValues, setPermissionValues] = useState({});
-
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
-
-  useEffect(() => {
-    fetchRecords();
-    fetchPermissions();
-  }, []);
-
-  const fetchRecords = () => {
-    RequestServer("get", urlAccount, {})
-      .then((res) => {
-        console.log(res, "index page res");
-        if (res.success) {
-          setRecords(res.data);
-          setFetchLoading(false);
-          setFetchError(null);
-        } else {
-          setRecords([]);
-          setFetchError(res.error.message);
-          setFetchLoading(false);
-        }
-      })
-      .catch((err) => {
-        setFetchError(err.message);
-        setFetchLoading(false);
-      });
-  };
-
-  const fetchPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, "res apiCheckPermission");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "res apiCheckPermission");
-          setPermissionValues({});
-        });
+// Table configuration
+const TABLE_CONFIG = {
+  mobileFields: [
+    {
+      key: "accountname",
+      label: "Name"
+    },
+    {
+      key: "phone",
+      label: "Phone"
+    },
+    {
+      key: "billingcity",
+      label: "City"
+    },
+    {
+      key: "industry",
+      label: "Industry"
     }
-  };
-
-  const handleAddRecord = () => {
-    navigate("/new-accounts", { state: { record: {} } });
-  };
-
-  const handleOnCellClick = (e) => {
-    console.log("selected record", e);
-    const item = e.row;
-    navigate(`/accountDetailPage/${item._id}`, { state: { record: { item } } });
-
-    // navigate(`/accountDetailPage/${row._id}`, { state: { record: { item } } })
-  };
-
-  const onHandleDelete = (e, row) => {
-    e.stopPropagation();
-    console.log("req delete rec", row);
-
-    setConfirmDialog({
-      isOpen: true,
-      title: `Are you sure to delete this Record ?`,
-      subTitle: "You can't undo this Operation",
-      onConfirm: () => {
-        onConfirmDeleteRecord(row);
-      },
-    });
-  };
-  const onConfirmDeleteRecord = (row) => {
-    if (row.length) {
-      console.log("if row", row);
-      row.forEach((element) => {
-        onebyoneDelete(element);
-      });
-    } else {
-      console.log("else", row._id);
-      onebyoneDelete(row._id);
-    }
-  };
-  const onebyoneDelete = async (row) => {
-    console.log("onebyoneDelete rec id", row);
-    try {
-      let res = await RequestServer("delete", `${urlDelete}/${row}`, {});
-      if (res.success) {
-        console.log("api delete response", res);
-        setNotify({
-          isOpen: true,
-          message: res.data,
-          type: "success",
-        });
-        fetchRecords();
-      } else {
-        console.log("api delete error", res);
-        setNotify({
-          isOpen: true,
-          message: res.error.message,
-          type: "error",
-        });
-      }
-    } catch (error) {
-      console.log("api delete error", error);
-      setNotify({
-        isOpen: true,
-        message: error.message,
-        type: "error",
-      });
-    } finally {
-      setConfirmDialog({
-        ...confirmDialog,
-        isOpen: false,
-      });
-    }
-  };
-
-  const handleImportModalOpen = () => {
-    setImportModalOpen(true);
-  };
-  const handleImportModalClose = () => {
-    setImportModalOpen(false);
-    fetchRecords();
-  };
-
-  const handleExportAll = () => {
-    console.log("handleExportAll");
-  };
-
-  function CustomPagination() {
-    const apiRef = useGridApiContext();
-    const page = useGridSelector(apiRef, gridPageSelector);
-    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-    return (
-      <Pagination
-        color="primary"
-        count={pageCount}
-        page={page + 1}
-        onChange={(event, value) => apiRef.current.setPage(value - 1)}
-      />
-    );
-  }
-
-  const columns = [
+  ],
+  columns: [
     {
       field: "accountname",
       headerName: "Name",
@@ -236,13 +86,7 @@ const Accounts = ({ props }) => {
           style: "currency",
           currency: "USD",
         });
-        return (
-          <>
-            {params.row.annualrevenue
-              ? formatCurrency.format(params.row.annualrevenue)
-              : null}
-          </>
-        );
+        return params.row.annualrevenue ? formatCurrency.format(params.row.annualrevenue) : null;
       },
     },
     {
@@ -252,99 +96,187 @@ const Accounts = ({ props }) => {
       align: "center",
       flex: 1,
     },
-  ];
-  if (permissionValues.delete) {
-    columns.push({
-      field: "actions",
-      headerName: "Actions",
-      headerAlign: "center",
-      align: "center",
-      width: 400,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <>
-            {!showDelete ? (
-              <>
-                {/* <IconButton onClick={(e) => handleOnCellClick(e, params.row)} style={{ padding: '20px', color: '#0080FF' }}>
-                    <EditIcon  />
-                  </IconButton> */}
-                <IconButton
-                  onClick={(e) => onHandleDelete(e, params.row)}
-                  style={{ padding: "20px", color: "#FF3333" }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </>
-            ) : (
-              ""
-            )}
-          </>
-        );
-      },
+  ],
+};
+
+/**
+ * Accounts Component
+ * Manages the display and interactions for accounts in both mobile and desktop views
+ */
+const Accounts = () => {
+  // Hooks
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+
+  // State management
+  const [accountRecords, setAccountRecords] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [permissions, setPermissions] = useState({});
+
+  // Effects
+  useEffect(() => {
+    initializeComponent();
+  }, []);
+
+  // Initialization
+  const initializeComponent = async () => {
+    await Promise.all([
+      fetchAccountRecords(),
+      fetchPermissions(),
+    ]);
+  };
+
+  // Fetches the list of accounts
+  const fetchAccountRecords = async () => {
+    try {
+      const response = await RequestServer("get", CONSTANTS.ROUTES.ACCOUNTS, {});
+      if (response.success) {
+        setAccountRecords(response.data);
+        setFetchError(null);
+      } else {
+        setAccountRecords([]);
+        setFetchError(response.error.message);
+      }
+    } catch (error) {
+      setFetchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPermissions = async () => {
+    if (!userRoleDept) return;
+    try {
+      const permissions = await apiCheckPermission(userRoleDept);
+      setPermissions(permissions);
+    } catch (error) {
+      console.error('Error fetching permissions:', error);
+      setPermissions({});
+    }
+  };
+
+  // Navigation handlers
+  const handleCreateAccount = () => {
+    navigate(CONSTANTS.ROUTES.NEW_ACCOUNT, { state: { record: {} } });
+  };
+
+  const handleAccountDetail = (event) => {
+    const account = event.row || event;
+    navigate(`${CONSTANTS.ROUTES.ACCOUNT_DETAIL}/${account._id}`, {
+      state: { record: { item: account } }
     });
-  }
+  };
+
+  // Delete operations
+  const handleDelete = async (event, recordId) => {
+    event.stopPropagation();
+
+    if (Array.isArray(recordId)) {
+      return await handleBulkDelete(event, recordId);
+    }
+    return await handleSingleDelete(event, recordId);
+  };
+
+  const handleSingleDelete = async (event, recordId) => {
+    try {
+      const response = await RequestServer(
+        "delete",
+        `${CONSTANTS.ROUTES.DELETE_ACCOUNT}/${recordId}`,
+        {}
+      );
+
+      if (response.data) {
+        await fetchAccountRecords();
+        return {
+          success: true,
+          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+        };
+      }
+
+      return {
+        success: false,
+        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+      };
+    }
+  };
+
+  const handleBulkDelete = async (event, recordIds) => {
+    const deleteResults = await Promise.all(
+      recordIds.map(id => handleSingleDelete(event, id))
+    );
+
+    const hasFailures = deleteResults.some(result => !result.success);
+
+    return {
+      success: !hasFailures,
+      message: hasFailures
+        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+    };
+  };
+
+  // Column configuration with conditional delete action
+  const getTableColumns = () => {
+    if (!permissions.delete) return TABLE_CONFIG.columns;
+
+    return [
+      ...TABLE_CONFIG.columns,
+      {
+        field: "actions",
+        headerName: "Actions",
+        headerAlign: "center",
+        align: "center",
+        width: 400,
+        flex: 1,
+        renderCell: (params) => (
+          !isDeleteMode && (
+            <IconButton
+              onClick={(e) => handleDelete(e, params.row._id)}
+              style={{ padding: "20px", color: "#FF3333" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )
+        ),
+      },
+    ];
+  };
 
   return (
-    <>
-      <ToastNotification notify={notify} setNotify={setNotify} />
-      <DeleteConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-      />
-      {fetchLoading ? (
-        <SharedDataGridSkeleton />
-      ) : (
-        <Box>
-          {permissionValues.read ? (
-            <SharedDataGrid
-              title="Accounts"
-              subtitle="List Of Accounts"
-              records={records}
-              columns={columns}
-              loading={fetchLoading}
-              showDelete={showDelete}
-              permissionValues={permissionValues}
-              selectedRecordIds={selectedRecordIds}
-              handleImportModalOpen={handleImportModalOpen}
-              handleAddRecord={handleAddRecord}
-              handleDelete={onHandleDelete}
-              setShowDelete={setShowDelete}
-              setSelectedRecordIds={setSelectedRecordIds}
-              setSelectedRecordDatas={setSelectedRecordDatas}
-              handleOnCellClick={handleOnCellClick}
-              CustomPagination={CustomPagination}
-              ExcelDownload={ExcelDownload}
-            />
-          ) : null}
-        </Box>
-      )}
-
-      <Modal
-        open={importModalOpen}
-        onClose={handleImportModalClose}
-        sx={{
-          backdropFilter: "blur(1px)",
-          "& .modal": {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            boxShadow: 24,
-            p: 4,
-          },
+    <Box>
+      <ListViewContainer
+        isMobile={isMobile}
+        title={CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        records={accountRecords}
+        onCreateRecord={handleCreateAccount}
+        onEditRecord={handleAccountDetail}
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        permissions={permissions}
+        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        isLoading={isLoading}
+        isDeleteMode={isDeleteMode}
+        selectedRecordIds={selectedIds}
+        onToggleDeleteMode={setIsDeleteMode}
+        onSelectRecords={setSelectedIds}
+        ExcelDownload={ExcelDownload}
+        importConfig={{
+          objectName: CONSTANTS.OBJECT_NAME,
+          isImport: true,
+          callBack: fetchAccountRecords,
         }}
-      >
-        <div className="modal">
-          <ModalFileUpload
-            object="Account"
-            handleModal={handleImportModalClose}
-          />
-        </div>
-      </Modal>
-    </>
+      />
+    </Box>
   );
 };
 

@@ -180,7 +180,7 @@ const WebListView = ({
     additionalToolbarActions,
     importConfig
 }) => {
-    console.log(records, "records **")
+    console.log(columnConfig, "columnConfig w")
     // state Mnagement
     const [notificationState, setNotificationState] = useState({
         isOpen: false,

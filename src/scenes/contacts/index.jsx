@@ -1,182 +1,64 @@
 import React, { useState, useEffect } from "react";
-import { Box, Modal, IconButton, Tooltip } from "@mui/material";
+import { useTheme, Box, useMediaQuery, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ToastNotification from "../toast/ToastNotification";
-import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
-import EmailModalPage from "../recordDetailPage/EmailModalPage";
-import WhatAppModalPage from "../recordDetailPage/WhatsAppModalPage";
+import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import SharedDataGrid from "../../components/SharedDataGrid";
-import {
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
-} from "@mui/x-data-grid";
-import { Pagination } from "@mui/material";
-import ExcelDownload from "../Excel";
-import EmailIcon from "@mui/icons-material/Email";
-import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
+import ListViewContainer from "../../components/common/ListViewContainer";
 
-function CustomPagination() {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+// Constants
+const CONSTANTS = {
+  OBJECT_NAME: 'Contact',
+  ROUTES: {
+    CONTACTS: '/contacts',
+    DELETE_CONTACT: '/deleteContact',
+    NEW_CONTACT: '/new-contacts',
+    CONTACT_DETAIL: '/contactDetailPage',
+  },
+  TITLES: {
+    MAIN: 'Contacts',
+    WEB_SUBTITLE: 'List Of Contacts',
+    MOBILE_SUBTITLE: 'List of Contacts',
+  },
+  ERROR_MESSAGES: {
+    DELETE_MULTIPLE: 'Some contacts failed to delete',
+    DELETE_SINGLE: 'Failed to delete contact',
+    DEFAULT: 'An error occurred',
+  },
+  SUCCESS_MESSAGES: {
+    DELETE_MULTIPLE: 'All contacts deleted successfully',
+    DELETE_SINGLE: 'Contact deleted successfully',
+  },
+  IMPORT_CONFIG: {
+    objectName: 'Contact',
+    isImport: false,
+    callBack: null,
+  },
+};
 
-  return (
-    <Pagination
-      color="primary"
-      count={pageCount}
-      page={page + 1}
-      onChange={(event, value) => apiRef.current.setPage(value - 1)}
-    />
-  );
-}
-
-const Contacts = () => {
-  const OBJECT_API = "Contact";
-  const urlContact = `/contacts`;
-  const urlDelete = `/deleteContact`;
-
-  const navigate = useNavigate();
-  const [records, setRecords] = useState([]);
-  const [fetchError, setFetchError] = useState();
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [confirmDialog, setConfirmDialog] = useState({
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
-  const [showEmail, setShowEmail] = useState(false);
-  const [selectedRecordIds, setSelectedRecordIds] = useState();
-  const [selectedRecordDatas, setSelectedRecordDatas] = useState();
-  const [emailModalOpen, setEmailModalOpen] = useState(false);
-  const [whatsAppModalOpen, setWhatsAppModalOpen] = useState(false);
-  const [permissionValues, setPermissionValues] = useState({});
-
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
-
-  useEffect(() => {
-    fetchRecords();
-    fetchPermission();
-  }, []);
-
-  const fetchRecords = () => {
-    RequestServer("get", urlContact, {})
-      .then((res) => {
-        if (res.success) {
-          setRecords(res.data);
-          setFetchError(null);
-          setFetchLoading(false);
-        } else {
-          setRecords([]);
-          setFetchError(res.error.message);
-          setFetchLoading(false);
-        }
-      })
-      .catch((err) => {
-        setFetchError(err.message);
-        setFetchLoading(false);
-      });
-  };
-
-  const fetchPermission = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          setPermissionValues({});
-        });
+// Table configuration
+const TABLE_CONFIG = {
+  mobileFields: [
+    {
+      key: "lastname",
+      label: "Last Name"
+    },
+    {
+      key: "accountname",
+      label: "Account Name"
+    },
+    {
+      key: "phone",
+      label: "Phone"
+    },
+    {
+      key: "email",
+      label: "Email"
     }
-  };
-
-  const handleAddRecord = () => {
-    navigate("/new-contacts", { state: { record: {} } });
-  };
-
-  const handleOnCellClick = (e) => {
-    const item = e.row;
-    navigate(`/contactDetailPage/${item._id}`, { state: { record: { item } } });
-  };
-
-  const onHandleDelete = (e, row) => {
-    e.stopPropagation();
-    setConfirmDialog({
-      isOpen: true,
-      title: `Are you sure to delete this Record ?`,
-      subTitle: "You can't undo this Operation",
-      onConfirm: () => {
-        onConfirmDeleteRecord(row);
-      },
-    });
-  };
-
-  const onConfirmDeleteRecord = (row) => {
-    if (row.length) {
-      row.forEach((element) => {
-        onebyoneDelete(element);
-      });
-    } else {
-      onebyoneDelete(row._id);
-    }
-  };
-
-  const onebyoneDelete = async (row) => {
-    try {
-      let res = await RequestServer("delete", `${urlDelete}/${row}`, {});
-      if (res.success) {
-        setNotify({
-          isOpen: true,
-          message: res.data,
-          type: "success",
-        });
-        fetchRecords();
-      } else {
-        setNotify({
-          isOpen: true,
-          message: res.error.message,
-          type: "error",
-        });
-      }
-    } catch (error) {
-      setNotify({
-        isOpen: true,
-        message: error.message,
-        type: "error",
-      });
-    } finally {
-      setConfirmDialog({
-        ...confirmDialog,
-        isOpen: false,
-      });
-    }
-  };
-
-  const handleEmailAction = () => {
-    setEmailModalOpen(true);
-  };
-
-  const toolbarActions = showEmail ? (
-    <>
-      <Tooltip title="Email">
-        <IconButton onClick={handleEmailAction}>
-          <EmailIcon sx={{ color: "#DB4437" }} />
-        </IconButton>
-      </Tooltip>
-    </>
-  ) : null;
-
-  const columns = [
+  ],
+  columns: [
     {
       field: "lastname",
       headerName: "Last Name",
@@ -218,117 +100,183 @@ const Contacts = () => {
       align: "center",
       flex: 1,
     },
-  ];
+  ],
+};
 
-  if (permissionValues.delete) {
-    columns.push({
-      field: "actions",
-      headerName: "Actions",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      width: 400,
-      renderCell: (params) => {
-        return !showEmail ? (
-          <IconButton
-            onClick={(e) => onHandleDelete(e, params.row)}
-            style={{ padding: "20px", color: "#FF3333" }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ) : null;
-      },
+/**
+ * Contacts Component
+ * Manages the display and interactions for contacts in both mobile and desktop views
+ */
+const Contacts = () => {
+  // Hooks
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+
+  // State management
+  const [contactRecords, setContactRecords] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [permissions, setPermissions] = useState({});
+
+  // Effects
+  useEffect(() => {
+    initializeComponent();
+  }, []);
+
+  // Initialization
+  const initializeComponent = async () => {
+    await Promise.all([
+      fetchContactRecords(),
+      fetchPermissions(),
+    ]);
+  };
+
+  // Fetches the list of contacts
+  const fetchContactRecords = async () => {
+    try {
+      const response = await RequestServer("get", CONSTANTS.ROUTES.CONTACTS, {});
+      if (response.success) {
+        setContactRecords(response.data);
+        setFetchError(null);
+      } else {
+        setContactRecords([]);
+        setFetchError(response.error.message);
+      }
+    } catch (error) {
+      setFetchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPermissions = async () => {
+    if (!userRoleDept) return;
+    try {
+      const permissions = await apiCheckPermission(userRoleDept);
+      setPermissions(permissions);
+    } catch (error) {
+      console.error('Error fetching permissions:', error);
+      setPermissions({});
+    }
+  };
+
+  // Navigation handlers
+  const handleCreateContact = () => {
+    navigate(CONSTANTS.ROUTES.NEW_CONTACT, { state: { record: {} } });
+  };
+
+  const handleContactDetail = (event) => {
+    const contact = event.row || event;
+    navigate(`${CONSTANTS.ROUTES.CONTACT_DETAIL}/${contact._id}`, {
+      state: { record: { item: contact } }
     });
-  }
+  };
+
+  // Delete operations
+  const handleDelete = async (event, recordId) => {
+    event.stopPropagation();
+
+    if (Array.isArray(recordId)) {
+      return await handleBulkDelete(event, recordId);
+    }
+    return await handleSingleDelete(event, recordId);
+  };
+
+  const handleSingleDelete = async (event, recordId) => {
+    try {
+      const response = await RequestServer(
+        "delete",
+        `${CONSTANTS.ROUTES.DELETE_CONTACT}/${recordId}`,
+        {}
+      );
+
+      if (response.data) {
+        await fetchContactRecords();
+        return {
+          success: true,
+          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+        };
+      }
+
+      return {
+        success: false,
+        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+      };
+    }
+  };
+
+  const handleBulkDelete = async (event, recordIds) => {
+    const deleteResults = await Promise.all(
+      recordIds.map(id => handleSingleDelete(event, id))
+    );
+
+    const hasFailures = deleteResults.some(result => !result.success);
+
+    return {
+      success: !hasFailures,
+      message: hasFailures
+        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+    };
+  };
+
+  // Column configuration with conditional delete action
+  const getTableColumns = () => {
+    if (!permissions.delete) return TABLE_CONFIG.columns;
+
+    return [
+      ...TABLE_CONFIG.columns,
+      {
+        field: "actions",
+        headerName: "Actions",
+        headerAlign: "center",
+        align: "center",
+        width: 400,
+        flex: 1,
+        renderCell: (params) => (
+          !isDeleteMode && (
+            <IconButton
+              onClick={(e) => handleDelete(e, params.row._id)}
+              style={{ padding: "20px", color: "#FF3333" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )
+        ),
+      },
+    ];
+  };
 
   return (
-    <>
-      <ToastNotification notify={notify} setNotify={setNotify} />
-      <DeleteConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
+    <Box>
+      <ListViewContainer
+        isMobile={isMobile}
+        title={CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        records={contactRecords}
+        onCreateRecord={handleCreateContact}
+        onEditRecord={handleContactDetail}
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        permissions={permissions}
+        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        isLoading={isLoading}
+        isDeleteMode={isDeleteMode}
+        selectedRecordIds={selectedIds}
+        onToggleDeleteMode={setIsDeleteMode}
+        onSelectRecords={setSelectedIds}
+        ExcelDownload={ExcelDownload}
+        importConfig={CONSTANTS.IMPORT_CONFIG}
       />
-      {fetchLoading ? (
-        <SharedDataGridSkeleton />
-      ) : (
-        <Box>
-          {permissionValues.read ? (
-            <SharedDataGrid
-              title="Contacts"
-              subtitle="List Of Contacts"
-              records={records}
-              columns={columns}
-              loading={fetchLoading}
-              showDelete={showEmail}
-              permissionValues={permissionValues}
-              selectedRecordIds={selectedRecordIds}
-              handleImportModalOpen={null}
-              handleAddRecord={handleAddRecord}
-              handleDelete={onHandleDelete}
-              setShowDelete={setShowEmail}
-              setSelectedRecordIds={setSelectedRecordIds}
-              setSelectedRecordDatas={setSelectedRecordDatas}
-              handleOnCellClick={handleOnCellClick}
-              CustomPagination={CustomPagination}
-              ExcelDownload={ExcelDownload}
-              additionalToolbarActions={toolbarActions}
-            />
-          ) : null}
-        </Box>
-      )}
-
-      <Modal
-        open={emailModalOpen}
-        onClose={() => setEmailModalOpen(false)}
-        sx={{
-          backdropFilter: "blur(1px)",
-          "& .modal": {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            boxShadow: 24,
-            p: 4,
-          },
-        }}
-      >
-        <div className="modal">
-          <EmailModalPage
-            data={selectedRecordDatas}
-            handleModal={() => setEmailModalOpen(false)}
-            bulkMail={true}
-          />
-        </div>
-      </Modal>
-
-      <Modal
-        open={whatsAppModalOpen}
-        onClose={() => setWhatsAppModalOpen(false)}
-        sx={{
-          backdropFilter: "blur(1px)",
-          "& .modal": {
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            backgroundColor: "white",
-            borderRadius: "8px",
-            boxShadow: 24,
-            p: 4,
-          },
-        }}
-      >
-        <div className="modal">
-          <WhatAppModalPage
-            data={selectedRecordDatas}
-            handleModal={() => setWhatsAppModalOpen(false)}
-            bulkMail={true}
-          />
-        </div>
-      </Modal>
-    </>
+    </Box>
   );
 };
 

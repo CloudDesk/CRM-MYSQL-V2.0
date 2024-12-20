@@ -1,165 +1,52 @@
 import React, { useState, useEffect } from "react";
-import { Box, Modal, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ToastNotification from "../toast/ToastNotification";
-import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
+import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import SharedDataGrid from "../../components/SharedDataGrid";
-import {
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
-} from "@mui/x-data-grid";
-import { Pagination } from "@mui/material";
-import ExcelDownload from "../Excel";
-import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
+import ListViewContainer from "../../components/common/ListViewContainer";
 
-function CustomPagination() {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+// Constants
+const CONSTANTS = {
+  OBJECT_NAME: 'Inventory',
+  ROUTES: {
+    INVENTORY: '/inventories',
+    DELETE_INVENTORY: '/deleteInventory',
+    NEW_INVENTORY: '/new-inventories',
+    INVENTORY_DETAIL: '/inventoryDetailPage',
+  },
+  TITLES: {
+    MAIN: 'Inventories',
+    WEB_SUBTITLE: 'List Of Inventories',
+    MOBILE_SUBTITLE: 'List of Inventories',
+  },
+  ERROR_MESSAGES: {
+    DELETE_MULTIPLE: 'Some records failed to delete',
+    DELETE_SINGLE: 'Failed to delete record',
+    DEFAULT: 'An error occurred',
+  },
+  SUCCESS_MESSAGES: {
+    DELETE_MULTIPLE: 'All records deleted successfully',
+    DELETE_SINGLE: 'Record deleted successfully',
+  },
+  IMPORT_CONFIG: {
+    objectName: 'Inventory',
+    isImport: false,
+    callBack: null,
+  },
+};
 
-  return (
-    <Pagination
-      color="primary"
-      count={pageCount}
-      page={page + 1}
-      onChange={(event, value) => apiRef.current.setPage(value - 1)}
-    />
-  );
-}
-
-const Inventories = () => {
-  const OBJECT_API = "Inventory";
-  const urlDelete = `/deleteInventory`;
-  const urlInventory = `/inventories`;
-
-  const navigate = useNavigate();
-  const [records, setRecords] = useState([]);
-  const [fetchError, setFetchError] = useState();
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [confirmDialog, setConfirmDialog] = useState({
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
-  const [showDelete, setShowDelete] = useState(false);
-  const [selectedRecordIds, setSelectedRecordIds] = useState();
-  const [selectedRecordDatas, setSelectedRecordDatas] = useState();
-  const [permissionValues, setPermissionValues] = useState({});
-
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
-
-  useEffect(() => {
-    fetchRecords();
-    fetchPermissions();
-  }, []);
-
-  const fetchRecords = () => {
-    RequestServer("get", urlInventory, {})
-      .then((res) => {
-        if (res.success) {
-          setRecords(res.data);
-          setFetchLoading(false);
-          setFetchError(null);
-        } else {
-          setRecords([]);
-          setFetchError(res.error.message);
-          setFetchLoading(false);
-        }
-      })
-      .catch((err) => {
-        setFetchError(err.message);
-        setFetchLoading(false);
-      });
-  };
-
-  const fetchPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          setPermissionValues({});
-        });
-    }
-  };
-
-  const handleAddRecord = () => {
-    navigate("/new-inventories", { state: { record: {} } });
-  };
-
-  const handleOnCellClick = (e) => {
-    const item = e.row;
-    navigate(`/inventoryDetailPage/${item._id}`, {
-      state: { record: { item } },
-    });
-  };
-
-  const onHandleDelete = (e, row) => {
-    e.stopPropagation();
-    setConfirmDialog({
-      isOpen: true,
-      title: `Are you sure to delete this Record ?`,
-      subTitle: "You can't undo this Operation",
-      onConfirm: () => {
-        onConfirmDeleteRecord(row);
-      },
-    });
-  };
-
-  const onConfirmDeleteRecord = (row) => {
-    if (row.length) {
-      row.forEach((element) => {
-        onebyoneDelete(element);
-      });
-    } else {
-      onebyoneDelete(row._id);
-    }
-  };
-
-  const onebyoneDelete = async (row) => {
-    try {
-      let res = await RequestServer("delete", `${urlDelete}/${row}`, {});
-      if (res.success) {
-        setNotify({
-          isOpen: true,
-          message: res.data,
-          type: "success",
-        });
-        fetchRecords();
-      } else {
-        setNotify({
-          isOpen: true,
-          message: res.error.message,
-          type: "error",
-        });
-      }
-    } catch (error) {
-      setNotify({
-        isOpen: true,
-        message: error.message,
-        type: "error",
-      });
-    } finally {
-      setConfirmDialog({
-        ...confirmDialog,
-        isOpen: false,
-      });
-    }
-  };
-
-  const columns = [
+// Table configuration
+const TABLE_CONFIG = {
+  mobileFields: [
+    { label: "Project Name", key: "projectname" },
+    { label: "Property Name", key: "propertyname" },
+    { label: "Type", key: "type" },
+    { label: "Status", key: "status" },
+  ],
+  columns: [
     {
       field: "projectname",
       headerName: "Project Name",
@@ -195,77 +82,180 @@ const Inventories = () => {
       align: "center",
       flex: 1,
       cellClassName: (params) => {
-        const statusClassName =
-          params.row.status === "Available"
-            ? "inventory-status-avail-green"
-            : params.row.status === "Booked"
-            ? "inventory-status-booked-pink"
-            : params.row.status === "Sold"
-            ? "inventory-status-sold-red"
-            : params.row.status === "Processed"
-            ? "inventory-status-process-yellow"
-            : "";
-        return statusClassName;
+        const statusMap = {
+          "Available": "inventory-status-avail-green",
+          "Booked": "inventory-status-booked-pink",
+          "Sold": "inventory-status-sold-red",
+          "Processed": "inventory-status-process-yellow"
+        };
+        return statusMap[params.row.status] || "";
       },
     },
-  ];
+  ],
+};
 
-  if (permissionValues.delete) {
-    columns.push({
-      field: "actions",
-      headerName: "Actions",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      width: 400,
-      renderCell: (params) => {
-        return !showDelete ? (
-          <IconButton
-            onClick={(e) => onHandleDelete(e, params.row)}
-            style={{ padding: "20px", color: "#FF3333" }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ) : null;
-      },
+const Inventories = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+
+  const [records, setRecords] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [permissions, setPermissions] = useState({});
+
+  useEffect(() => {
+    initializeComponent();
+  }, []);
+
+  const initializeComponent = async () => {
+    await Promise.all([
+      fetchRecords(),
+      fetchPermissions(),
+    ]);
+  };
+
+  const fetchRecords = async () => {
+    try {
+      const response = await RequestServer("get", CONSTANTS.ROUTES.INVENTORY, {});
+      if (response.success) {
+        setRecords(response.data);
+        setFetchError(null);
+      } else {
+        setRecords([]);
+        setFetchError(response.error.message);
+      }
+    } catch (error) {
+      setFetchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPermissions = async () => {
+    if (!userRoleDept) return;
+    try {
+      const permissions = await apiCheckPermission(userRoleDept);
+      setPermissions(permissions);
+    } catch (error) {
+      console.error('Error fetching permissions:', error);
+      setPermissions({});
+    }
+  };
+
+  const handleCreateRecord = () => {
+    navigate(CONSTANTS.ROUTES.NEW_INVENTORY, { state: { record: {} } });
+  };
+
+  const handleEditRecord = (event) => {
+    const item = event.row || event;
+    navigate(`${CONSTANTS.ROUTES.INVENTORY_DETAIL}/${item._id}`, {
+      state: { record: { item } }
     });
-  }
+  };
+
+  const handleDelete = async (event, recordId) => {
+    event.stopPropagation();
+
+    if (Array.isArray(recordId)) {
+      return await handleBulkDelete(event, recordId);
+    }
+    return await handleSingleDelete(event, recordId);
+  };
+
+  const handleSingleDelete = async (event, recordId) => {
+    try {
+      const response = await RequestServer(
+        "delete",
+        `${CONSTANTS.ROUTES.DELETE_INVENTORY}/${recordId}`,
+        {}
+      );
+
+      if (response.data) {
+        await fetchRecords();
+        return {
+          success: true,
+          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+        };
+      }
+
+      return {
+        success: false,
+        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+      };
+    }
+  };
+
+  const handleBulkDelete = async (event, recordIds) => {
+    const deleteResults = await Promise.all(
+      recordIds.map(id => handleSingleDelete(event, id))
+    );
+
+    const hasFailures = deleteResults.some(result => !result.success);
+
+    return {
+      success: !hasFailures,
+      message: hasFailures
+        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+    };
+  };
+
+  const getTableColumns = () => {
+    if (!permissions.delete) return TABLE_CONFIG.columns;
+
+    return [
+      ...TABLE_CONFIG.columns,
+      {
+        field: "actions",
+        headerName: "Actions",
+        headerAlign: "center",
+        align: "center",
+        width: 400,
+        flex: 1,
+        renderCell: (params) => (
+          !isDeleteMode && (
+            <IconButton
+              onClick={(e) => handleDelete(e, params.row._id)}
+              style={{ padding: "20px", color: "#FF3333" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )
+        ),
+      },
+    ];
+  };
 
   return (
-    <>
-      <ToastNotification notify={notify} setNotify={setNotify} />
-      <DeleteConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
+    <Box>
+      <ListViewContainer
+        isMobile={isMobile}
+        title={CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        records={records}
+        onCreateRecord={handleCreateRecord}
+        onEditRecord={handleEditRecord}
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        permissions={permissions}
+        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        isLoading={isLoading}
+        isDeleteMode={isDeleteMode}
+        selectedRecordIds={selectedIds}
+        onToggleDeleteMode={setIsDeleteMode}
+        onSelectRecords={setSelectedIds}
+        ExcelDownload={ExcelDownload}
+        importConfig={CONSTANTS.IMPORT_CONFIG}
       />
-      {fetchLoading ? (
-        <SharedDataGridSkeleton />
-      ) : (
-        <Box>
-          {permissionValues.read ? (
-            <SharedDataGrid
-              title="Inventories"
-              subtitle="List Of Inventories"
-              records={records}
-              columns={columns}
-              loading={fetchLoading}
-              showDelete={showDelete}
-              permissionValues={permissionValues}
-              selectedRecordIds={selectedRecordIds}
-              handleImportModalOpen={null}
-              handleAddRecord={handleAddRecord}
-              handleDelete={onHandleDelete}
-              setShowDelete={setShowDelete}
-              setSelectedRecordIds={setSelectedRecordIds}
-              setSelectedRecordDatas={setSelectedRecordDatas}
-              handleOnCellClick={handleOnCellClick}
-              CustomPagination={CustomPagination}
-              ExcelDownload={ExcelDownload}
-            />
-          ) : null}
-        </Box>
-      )}
-    </>
+    </Box>
   );
 };
 
