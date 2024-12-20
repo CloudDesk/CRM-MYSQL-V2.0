@@ -2,8 +2,10 @@ import * as Yup from 'yup';
 import { format } from 'date-fns';
 import { IndustryPickList, LeadMonthPicklist, LeadsDemoPicklist, LeadSourcePickList, LeadStatusPicklist, OppStagePicklist, OppTypePicklist } from '../../../data/pickLists';
 import { Grid, Typography } from '@mui/material';
+import { FetchInventoryData } from '../../../utility/FetchData/FetchInventoryData';
 
 const phoneRegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+
 
 
 // Lead Initial Values
@@ -301,29 +303,29 @@ export const generateLeadInitialValues = (existingLead = {}) => {
 
   export const opportunityFormFields = [
     // Identification
-    {
-      name: 'leadid',
-      label: 'Lead ID',
-      type: 'text',
-      xs: 12,
-      md: 6,
-      props: {
-        placeholder: 'Enter Lead ID'
-      }
-    },
-    {
-      name: 'inventoryid',
-      label: 'Inventory ID',
-      type: 'text',
-      xs: 12,
-      md: 6,
-      props: {
-        placeholder: 'Enter Inventory ID'
-      }
-    },
+    // {
+    //   name: 'leadid',
+    //   label: 'Lead ID',
+    //   type: 'text',
+    //   xs: 12,
+    //   md: 6,
+    //   props: {
+    //     placeholder: 'Enter Lead ID'
+    //   }
+    // },
+    // {
+    //   name: 'inventoryid',
+    //   label: 'Inventory ID',
+    //   type: 'text',
+    //   xs: 12,
+    //   md: 6,
+    //   props: {
+    //     placeholder: 'Enter Inventory ID'
+    //   }
+    // },
     {
       name: 'opportunityname',
-      label: 'Opportunity Name',
+      label: 'Deal Name',
       type: 'text',
       required: true,
       xs: 12,
@@ -336,11 +338,24 @@ export const generateLeadInitialValues = (existingLead = {}) => {
         placeholder: 'Enter Opportunity Name'
       }
     },
+    {
+        name:"inventoryname",
+        label:"Inventory Name",
+        type:"autocomplete",
+        xs:12,
+        md:6,
+        fetchurl: `/InventoryName`,
+        searchfor: "propertyname",
+        options: [],
+        props:{
+            placeholder:"Enter Inventory Name"
+        }
+    },
     
     // Opportunity Details
     {
       name: 'type',
-      label: 'Opportunity Type',
+      label: 'Deal Type',
       type: 'select',
       xs: 12,
       md: 6,
@@ -351,19 +366,32 @@ export const generateLeadInitialValues = (existingLead = {}) => {
       }
     },
     {
+        name:"leadname",
+        label:"Enquiry Name",
+        type:"autocomplete",
+        fetchurl:"/LeadsbyName",
+        searchfor:"fullname",
+        xs:12,
+        md:6,
+        props:{
+            placeholder:"Enter Enquiry Name"
+        }
+        
+    },
+    {
       name: 'leadsource',
-      label: 'Lead Source',
+      label: 'Enquiry Source',
       type: 'select',
       xs: 12,
       md: 6,
-      options: [], // You would import or define LeadSourcePickList similar to previous example
+      options: LeadSourcePickList, // You would import or define LeadSourcePickList similar to previous example
       props: {
         displayEmpty: true
       }
     },
     {
       name: 'amount',
-      label: 'Opportunity Amount',
+      label: 'Deal Amount',
       type: 'number',
       xs: 12,
       md: 6,
@@ -389,7 +417,7 @@ export const generateLeadInitialValues = (existingLead = {}) => {
     },
     {
       name: 'stage',
-      label: 'Opportunity Stage',
+      label: 'Deal Stage',
       type: 'select',
       xs: 12,
       md: 6,
@@ -414,51 +442,52 @@ export const generateLeadInitialValues = (existingLead = {}) => {
     },
     
     // Metadata
-    {
-      name: 'createddate',
-      label: 'Created Date',
-      type: 'text',
-      xs: 12,
-      md: 6,
-      props: {
-        disabled: true
-      },
-      defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
-    },
-    {
-      name: 'modifieddate',
-      label: 'Modified Date',
-      type: 'text',
-      xs: 12,
-      md: 6,
-      props: {
-        disabled: true
-      },
-      defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
-    },
-    {
-      name: 'createdby',
-      label: 'Created By',
-      type: 'text',
-      xs: 12,
-      md: 6,
-      props: {
-        disabled: true
-      }
-    },
-    {
-      name: 'modifiedby',
-      label: 'Modified By',
-      type: 'text',
-      xs: 12,
-      md: 6,
-      props: {
-        disabled: true
-      }
-    }
+    // {
+    //   name: 'createddate',
+    //   label: 'Created Date',
+    //   type: 'text',
+    //   xs: 12,
+    //   md: 6,
+    //   props: {
+    //     disabled: true
+    //   },
+    //   defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+    // },
+    // {
+    //   name: 'modifieddate',
+    //   label: 'Modified Date',
+    //   type: 'text',
+    //   xs: 12,
+    //   md: 6,
+    //   props: {
+    //     disabled: true
+    //   },
+    //   defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+    // },
+    // {
+    //   name: 'createdby',
+    //   label: 'Created By',
+    //   type: 'text',
+    //   xs: 12,
+    //   md: 6,
+    //   props: {
+    //     disabled: true
+    //   }
+    // },
+    // {
+    //   name: 'modifiedby',
+    //   label: 'Modified By',
+    //   type: 'text',
+    //   xs: 12,
+    //   md: 6,
+    //   props: {
+    //     disabled: true
+    //   }
+    // }
   ];
   
   export const generateOpportunityInitialValues = (existingOpportunity = {}) => {
+    console.log(existingOpportunity,"existingOpportunity from generateOpportunityInitialValues");
     const defaultValues = opportunityFormFields.reduce((acc, field) => {
       // Check if value exists in existing opportunity, otherwise use empty string or default
       acc[field.name] = existingOpportunity[field.name] ?? '';
@@ -471,7 +500,12 @@ export const generateLeadInitialValues = (existingLead = {}) => {
       defaultValues.closedate = (existingOpportunity?.closedate !== null && format(existingOpportunity?.closedate, 'yyyy-MM-dd')) ?? null;
       defaultValues.createddate = format(existingOpportunity.createddate, 'MM/dd/yyyy') ?? Date.now();
       defaultValues.modifieddate = format(existingOpportunity.modifieddate, 'MM/dd/yyyy') ?? Date.now();
-  
+      if(existingOpportunity.inventoryname !== null){
+        defaultValues.inventoryname = JSON.parse(existingOpportunity.inventoryname).label ?? '';
+      }
+        if(existingOpportunity.leadname !== null){
+        defaultValues.leadname = JSON.parse(existingOpportunity.leadname).label ?? '';
+        }
       // Created By
       defaultValues.createdby = existingOpportunity.createdby
         ? existingOpportunity.createdby.userFullName + " " + format(existingOpportunity.createddate, "MM/dd/yyyy")

@@ -220,7 +220,13 @@ const Opportunities = () => {
       flex: 1,
       renderCell: (params) => {
         if (params.row.inventoryname) {
-          return <div className="rowitem">{params.row.inventoryname}</div>;
+          return (
+            <div className="rowitem">
+              {params.row.inventoryname.startsWith("{")
+                ? JSON.parse(params.row.inventoryname).label
+                : params.row.inventoryname || ""}
+            </div>
+          );
         } else {
           return <div className="rowitem">{null}</div>;
         }
