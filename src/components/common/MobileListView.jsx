@@ -1,317 +1,297 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  IconButton,
-  Pagination,
-  Grid,
-  MenuItem,
-  Menu,
-  Typography,
-} from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Header from '../Header';
-import ToastNotification from '../../scenes/toast/ToastNotification';
-import DeleteConfirmDialog from '../../scenes/toast/DeleteConfirmDialog';
+import React, { useState, useEffect } from "react";
+import { useTheme, Box, useMediaQuery, IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExcelDownload from "../Excel";
+import { RequestServer } from "../api/HttpReq";
+import { apiCheckPermission } from "../Auth/apiCheckPermission";
+import { getLoginUserRoleDept } from "../Auth/userRoleDept";
+import ListViewContainer from "../../components/common/ListViewContainer";
 
 // Constants
 const CONSTANTS = {
-  MESSAGES: {
-    DELETE: {
-      TITLE: "Are you sure to delete this Record?",
-      SUBTITLE: "You can't undo this Operation",
-      ERROR: "Error deleting record",
-    },
-    NO_RECORDS: "No Records Found",
+  OBJECT_NAME: 'Deals',
+  ROUTES: {
+    OPPORTUNITIES: '/opportunities',
+    DELETE_OPPORTUNITY: '/deleteOpportunity',
+    NEW_OPPORTUNITY: '/new-opportunities',
+    OPPORTUNITY_DETAIL: '/opportunityDetailPage',
   },
-  MENU_OPTIONS: {
-    EDIT: "Edit",
-    VIEW: "View",
-    DELETE: "Delete",
+  TITLES: {
+    MAIN: 'Deals',
+    WEB_SUBTITLE: 'List Of Deals 22',
+    MOBILE_SUBTITLE: 'List of Deals 22',
   },
-  BUTTON_LABELS: {
-    NEW: "New",
+  ERROR_MESSAGES: {
+    DELETE_MULTIPLE: 'Some dealRecords failed to delete',
+    DELETE_SINGLE: 'Failed to delete record',
+    DEFAULT: 'An error occurred',
   },
-  PAGINATION: {
-    DEFAULT_PAGE: 1,
-    DEFAULT_ITEMS: 5,
+  SUCCESS_MESSAGES: {
+    DELETE_MULTIPLE: 'All dealRecords deleted successfully',
+    DELETE_SINGLE: 'Record deleted successfully',
   },
 };
 
-const STYLES = {
-  mainContainer: {
-    m: "20px",
-  },
-  headerContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    mb: 3,
-  },
-  newButton: {
-    height: 'fit-content',
-  },
-  recordCard: {
-    bgcolor: "aliceblue",
-    m: 2,
-    borderRadius: 1,
-    position: 'relative',
-    "&:hover": {
-      bgcolor: "action.hover",
-      transition: "background-color 0.3s",
+// Table configuration
+const TABLE_CONFIG = {
+  mobileFields: [
+    {
+      key: "opportunityname",
+      label: "Deal Name"
     },
-  },
-  fieldContainer: {
-    mb: 1,
-    display: 'flex',
-    gap: 1,
-    alignItems: 'baseline',
-  },
-  fieldLabel: {
-    component: "span",
-    fontWeight: "bold",
-    minWidth: "120px",
-  },
-  actionContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-  },
-  actionButton: {
-    '&:hover': {
-      backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    {
+      key: "propertyname",
+      label: "Inventory Name"
     },
-  },
-  paginationContainer: {
-    mt: 2,
-    display: "flex",
-    justifyContent: "center",
-  },
-  emptyStateCard: {
-    bgcolor: "aliceblue",
-    m: 2,
-    textAlign: 'center',
-  },
+    {
+      key: "type",
+      label: "Type"
+    },
+    {
+      key: "stage",
+      label: "Stage"
+    }
+  ],
+  columns: [
+    {
+      field: "opportunityname",
+      headerName: "Deal Name",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "propertyname",
+      headerName: "Inventory Name",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.inventoryname) {
+          return (
+            <div className="rowitem">
+              {params.row.inventoryname.startsWith("{")
+                ? JSON.parse(params.row.inventoryname).label
+                : params.row.inventoryname || ""}
+            </div>
+          );
+        } else {
+          return <div className="rowitem">{null}</div>;
+        }
+      },
+    },
+    {
+      field: "type",
+      headerName: "Type",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+    {
+      field: "amount",
+      headerName: "Opportunity Amount",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+      renderCell: (params) => {
+        const formatCurrency = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "INR",
+        });
+        return formatCurrency.format(params.row.amount);
+      },
+    },
+    {
+      field: "stage",
+      headerName: "Stage",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+    },
+  ],
 };
 
 /**
- * MobileListView Component
- * A responsive list view component optimized for mobile devices
+ * Opportunities Component
+ * Manages the display and interactions for deals/opportunities in both mobile and desktop views
  */
-const MobileListView = ({
-  title,
-  subtitle,
-  records = [],
-  fields = [],
-  onAdd,
-  onEdit,
-  onDelete,
-  permissionValues,
-  itemsPerPage = CONSTANTS.PAGINATION.DEFAULT_ITEMS,
-}) => {
-  // State Management
-  const [currentPage, setCurrentPage] = useState(CONSTANTS.PAGINATION.DEFAULT_PAGE);
-  const [notification, setNotification] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [deleteConfirmation, setDeleteConfirmation] = useState({
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
-  const [menuState, setMenuState] = useState({
-    anchorEl: null,
-    selectedRecord: null,
-  });
+const Opportunities = () => {
+  // Hooks
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
 
-  // Computed Values
-  const totalPages = Math.ceil(records.length / itemsPerPage);
-  const currentPageRecords = records.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  // State management
+  const [dealRecords, setDealRecords] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [permissions, setPermissions] = useState({});
 
-  // Menu Handlers
-  const handleMenuActions = {
-    open: (event, record) => {
-      setMenuState({
-        anchorEl: event.currentTarget,
-        selectedRecord: record,
-      });
-    },
-    close: () => {
-      setMenuState({
-        anchorEl: null,
-        selectedRecord: null,
-      });
-    },
+  // Effects
+  useEffect(() => {
+    initializeComponent();
+  }, [isMobile]);
+
+  // Initialization
+  const initializeComponent = async () => {
+    await Promise.all([
+      fetchDealRecords(),
+      fetchPermissions(),
+    ]);
   };
 
-  // Delete Handlers
-  const handleDeleteActions = {
-    initiate: (e) => {
-      e.stopPropagation();
-      setDeleteConfirmation({
-        isOpen: true,
-        title: CONSTANTS.MESSAGES.DELETE.TITLE,
-        subTitle: CONSTANTS.MESSAGES.DELETE.SUBTITLE,
-        onConfirm: () => handleDeleteActions.confirm(e, menuState.selectedRecord),
-      });
-    },
-    confirm: async (e, record) => {
-      try {
-        const result = await onDelete(e, record._id);
-        showNotification(result.message, result.success ? "success" : "error");
-      } catch (error) {
-        showNotification(error.message || CONSTANTS.MESSAGES.DELETE.ERROR, "error");
-      } finally {
-        closeDeleteConfirmation();
-        handleMenuActions.close();
+  // Fetches the list of opportunities
+  const fetchDealRecords = async () => {
+    try {
+      const response = await RequestServer("get", CONSTANTS.ROUTES.OPPORTUNITIES, {});
+      if (response.success) {
+        setDealRecords(response.data);
+        setFetchError(null);
+      } else {
+        setDealRecords([]);
+        setFetchError(response.error.message);
       }
-    },
+    } catch (error) {
+      setFetchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Utility Functions
-  const showNotification = (message, type) => {
-    setNotification({
-      isOpen: true,
-      message,
-      type,
+  const fetchPermissions = async () => {
+    if (!userRoleDept) return;
+    try {
+      const permissions = await apiCheckPermission(userRoleDept);
+      setPermissions(permissions);
+    } catch (error) {
+      console.error('Error fetching permissions:', error);
+      setPermissions({});
+    }
+  };
+
+  // Navigation handlers
+  const handleCreateOpportunity = () => {
+    navigate(CONSTANTS.ROUTES.NEW_OPPORTUNITY, { state: { record: {} } });
+  };
+
+  const handleOpportunityDetail = (event) => {
+    const opportunity = event.row || event;
+    navigate(`${CONSTANTS.ROUTES.OPPORTUNITY_DETAIL}/${opportunity._id}`, {
+      state: { record: { item: opportunity } }
     });
   };
 
-  const closeDeleteConfirmation = () => {
-    setDeleteConfirmation(prev => ({
-      ...prev,
-      isOpen: false,
-    }));
+  // Delete operations
+  const handleDelete = async (event, recordId) => {
+    event.stopPropagation();
+
+    if (Array.isArray(recordId)) {
+      return await handleBulkDelete(event, recordId);
+    }
+    return await handleSingleDelete(event, recordId);
   };
 
-  const handleEdit = () => {
-    onEdit(menuState.selectedRecord);
-    handleMenuActions.close();
+  const handleSingleDelete = async (event, recordId) => {
+    try {
+      const response = await RequestServer(
+        "delete",
+        `${CONSTANTS.ROUTES.DELETE_OPPORTUNITY}/${recordId}`,
+        {}
+      );
+
+      if (response.data) {
+        await fetchDealRecords();
+        return {
+          success: true,
+          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+        };
+      }
+
+      return {
+        success: false,
+        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+      };
+    }
   };
 
-  // Render Methods
-  const renderField = (field, record) => {
-    const value = record[field.key];
-    if (field.render) return field.render(value, record);
-    if (field.format) return field.format(value);
-    return value || "---";
+  const handleBulkDelete = async (event, recordIds) => {
+    const deleteResults = await Promise.all(
+      recordIds.map(id => handleSingleDelete(event, id))
+    );
+
+    const hasFailures = deleteResults.some(result => !result.success);
+
+    return {
+      success: !hasFailures,
+      message: hasFailures
+        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+    };
   };
 
-  const renderRecord = (record) => (
-    <CardContent key={record._id} sx={STYLES.recordCard}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={10}>
-          {fields.map((field) => (
-            <Box key={field.key} sx={STYLES.fieldContainer}>
-              <Typography sx={STYLES.fieldLabel}>
-                {field.label}:
-              </Typography>
-              <Typography component="span">
-                {renderField(field, record)}
-              </Typography>
-            </Box>
-          ))}
-        </Grid>
-        <Grid item xs={2} sx={STYLES.actionContainer}>
-          <IconButton
-            onClick={(e) => handleMenuActions.open(e, record)}
-            sx={STYLES.actionButton}
-          >
-            <MoreVertIcon />
-          </IconButton>
-        </Grid>
-      </Grid>
-    </CardContent>
-  );
+  // Column configuration with conditional delete action
+  const getTableColumns = () => {
+    if (!permissions.delete) return TABLE_CONFIG.columns;
 
-  const renderRecordsList = () => (
-    <>
-      <Card>
-        {records.length > 0 ? (
-          currentPageRecords.map(renderRecord)
-        ) : (
-          <CardContent sx={STYLES.emptyStateCard}>
-            <Typography>{CONSTANTS.MESSAGES.NO_RECORDS}</Typography>
-          </CardContent>
-        )}
-      </Card>
-
-      {records.length > 0 && (
-        <Box sx={STYLES.paginationContainer}>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={(_, value) => setCurrentPage(value)}
-            color="primary"
-            size="large"
-            showFirstButton
-            showLastButton
-          />
-        </Box>
-      )}
-    </>
-  );
+    return [
+      ...TABLE_CONFIG.columns,
+      {
+        field: "actions",
+        headerName: "Actions",
+        headerAlign: "center",
+        align: "center",
+        width: 400,
+        flex: 1,
+        renderCell: (params) => (
+          !isDeleteMode && (
+            <IconButton
+              onClick={(e) => handleDelete(e, params.row._id)}
+              style={{ padding: "20px", color: "#FF3333" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )
+        ),
+      },
+    ];
+  };
 
   return (
-    <>
-      <ToastNotification
-        notify={notification}
-        setNotify={setNotification}
+    <Box>
+      <ListViewContainer
+        isMobile={isMobile}
+        title={CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        records={dealRecords}
+        onCreateRecord={handleCreateOpportunity}
+        onEditRecord={handleOpportunityDetail}
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        permissions={permissions}
+
+        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        isLoading={isLoading}
+        isDeleteMode={isDeleteMode}
+        selectedRecordIds={selectedIds}
+        onToggleDeleteMode={setIsDeleteMode}
+        onSelectRecords={setSelectedIds}
+        ExcelDownload={ExcelDownload}
+        importConfig={{
+          objectName: CONSTANTS.OBJECT_NAME,
+          isImport: true,
+          callBack: fetchDealRecords,
+        }}
       />
-      <DeleteConfirmDialog
-        confirmDialog={deleteConfirmation}
-        setConfirmDialog={setDeleteConfirmation}
-        moreModalClose={handleMenuActions.close}
-      />
-
-      <Box sx={STYLES.mainContainer}>
-        <Box sx={STYLES.headerContainer}>
-          <Header title={title} subtitle={subtitle} />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onAdd}
-            sx={STYLES.newButton}
-          >
-            {CONSTANTS.BUTTON_LABELS.NEW}
-          </Button>
-        </Box>
-
-        {renderRecordsList()}
-
-        <Menu
-          anchorEl={menuState.anchorEl}
-          open={Boolean(menuState.anchorEl)}
-          onClose={handleMenuActions.close}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-        >
-          <MenuItem onClick={handleEdit}>
-            {permissionValues.edit ? CONSTANTS.MENU_OPTIONS.EDIT : CONSTANTS.MENU_OPTIONS.VIEW}
-          </MenuItem>
-          {permissionValues.delete && (
-            <MenuItem onClick={handleDeleteActions.initiate}>
-              {CONSTANTS.MENU_OPTIONS.DELETE}
-            </MenuItem>
-          )}
-        </Menu>
-      </Box>
-    </>
+    </Box>
   );
 };
 
-export default MobileListView;
+export default Opportunities;

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import {
@@ -22,28 +22,156 @@ import {
   createTheme,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { RequestServer } from "../../scenes/api/HttpReq";
+
+// const elegantTheme = createTheme({
+//   palette: {
+//     primary: {
+//       main: "#3A5A8C", // Deep, sophisticated blue
+//       light: "#6B8EAF",
+//       dark: "#1E3A5F",
+//     },
+//     background: {
+//       default: "#F5F7FA", // Soft, light background
+//       paper: "#FFFFFF",
+//     },
+//     text: {
+//       primary: "#2C3E50", // Deep, professional text color
+//       secondary: "#5D6D7E",
+//     },
+//     error: {
+//       main: "#C0392B", // Refined error red
+//     },
+//   },
+//   typography: {
+//     // fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+//     h4: {
+//       fontWeight: 600,
+//       color: "#2C3E50",
+//       letterSpacing: "-0.5px",
+//     },
+//     body1: {
+//       lineHeight: 1.6,
+//     },
+//   },
+//   components: {
+//     MuiPaper: {
+//       styleOverrides: {
+//         root: {
+//           borderRadius: 12,
+//           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+//           padding: "32px",
+//         },
+//       },
+//     },
+//     MuiTextField: {
+//       styleOverrides: {
+//         root: {
+//           "& .MuiOutlinedInput-root": {
+//             borderRadius: 10,
+//             "&:hover .MuiOutlinedInput-notchedOutline": {
+//               borderColor: "#3A5A8C",
+//             },
+//             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+//               borderColor: "#3A5A8C",
+//               borderWidth: 2,
+//             },
+//             "& .MuiInputBase-input": {
+//               fontWeight: 700, // Makes the input text bolder
+//               color: "#2C3E50", // Ensures the text color aligns with your theme
+//             },
+//           },
+//         },
+//       },
+//     },
+//     MuiSelect: {
+//       styleOverrides: {
+//         root: {
+//           "& .MuiSelect-select": {
+//             fontWeight: 700, // Bold text for selected value
+//             color: "#2C3E50", // Ensure text color matches theme
+//           },
+//         },
+//       },
+//     },
+//     MuiAutocomplete: {
+//       styleOverrides: {
+//         root: {
+//           "& .MuiInputBase-root": {
+//             fontWeight: 700, // Bold text for input and selected values
+//             color: "#2C3E50", // Align text color with theme
+//           },
+//           "& .MuiAutocomplete-option": {
+//             fontWeight: 500, // Slightly bold text for dropdown options
+//             color: "#2C3E50", // Option text color
+//           },
+//           "& .Mui-focused": {
+//             fontWeight: 700, // Bold text when focused
+//           },
+//         },
+//       },
+//     },
+//     MuiButton: {
+//       styleOverrides: {
+//         root: {
+//           borderRadius: 10,
+//           textTransform: "none",
+//           fontWeight: 600,
+//           padding: "12px 24px",
+//           margin: "0 12px",
+//           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+//           transition: "all 0.3s ease",
+//           "&:hover": {
+//             transform: "translateY(-2px)",
+//             boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+//           },
+//         },
+//         containedPrimary: {
+//           backgroundColor: "#3A5A8C",
+//           "&:hover": {
+//             backgroundColor: "#1E3A5F",
+//           },
+//         },
+//       },
+//     },
+//   },
+// });
 
 const elegantTheme = createTheme({
   palette: {
     primary: {
-      main: "#3A5A8C", // Deep, sophisticated blue
+      main: "#3A5A8C",
       light: "#6B8EAF",
       dark: "#1E3A5F",
     },
+    secondary: {
+      main: "#8E44AD", // Complementary purple
+    },
     background: {
-      default: "#F5F7FA", // Soft, light background
+      default: "#F5F7FA",
       paper: "#FFFFFF",
     },
     text: {
-      primary: "#2C3E50", // Deep, professional text color
+      primary: "#2C3E50",
       secondary: "#5D6D7E",
     },
     error: {
-      main: "#C0392B", // Refined error red
+      main: "#C0392B",
+    },
+    success: {
+      main: "#27AE60", // Green for success messages
+    },
+    warning: {
+      main: "#F39C12", // Amber for warnings
     },
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    // fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    h1: {
+      fontWeight: 700,
+      fontSize: "2.125rem",
+      letterSpacing: "-0.8px",
+    },
     h4: {
       fontWeight: 600,
       color: "#2C3E50",
@@ -51,6 +179,11 @@ const elegantTheme = createTheme({
     },
     body1: {
       lineHeight: 1.6,
+      color: "#5D6D7E",
+    },
+    button: {
+      textTransform: "none",
+      fontWeight: 600,
     },
   },
   components: {
@@ -60,6 +193,10 @@ const elegantTheme = createTheme({
           borderRadius: 12,
           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
           padding: "32px",
+          transition: "box-shadow 0.3s ease",
+          "&:hover": {
+            boxShadow: "0 12px 32px rgba(0,0,0,0.12)",
+          },
         },
       },
     },
@@ -67,45 +204,14 @@ const elegantTheme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            borderRadius: 10,
+            // borderRadius: 10,
             "&:hover .MuiOutlinedInput-notchedOutline": {
               borderColor: "#3A5A8C",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#3A5A8C",
+              borderColor: "#1E3A5F",
               borderWidth: 2,
             },
-            "& .MuiInputBase-input": {
-              fontWeight: 700, // Makes the input text bolder
-              color: "#2C3E50", // Ensures the text color aligns with your theme
-            },
-          },
-        },
-      },
-    },
-    MuiSelect: {
-      styleOverrides: {
-        root: {
-          "& .MuiSelect-select": {
-            fontWeight: 700, // Bold text for selected value
-            color: "#2C3E50", // Ensure text color matches theme
-          },
-        },
-      },
-    },
-    MuiAutocomplete: {
-      styleOverrides: {
-        root: {
-          "& .MuiInputBase-root": {
-            fontWeight: 700, // Bold text for input and selected values
-            color: "#2C3E50", // Align text color with theme
-          },
-          "& .MuiAutocomplete-option": {
-            fontWeight: 500, // Slightly bold text for dropdown options
-            color: "#2C3E50", // Option text color
-          },
-          "& .Mui-focused": {
-            fontWeight: 700, // Bold text when focused
           },
         },
       },
@@ -113,13 +219,12 @@ const elegantTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 10,
+          borderRadius: 5,
           textTransform: "none",
           fontWeight: 600,
           padding: "12px 24px",
-          margin: "0 12px",
           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          transition: "all 0.3s ease",
+          transition: "transform 0.3s ease, box-shadow 0.3s ease",
           "&:hover": {
             transform: "translateY(-2px)",
             boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
@@ -161,6 +266,31 @@ const DynamicFormField = ({
   permissionValues,
 }) => {
   const { values, errors, touched, handleChange, setFieldValue } = formik;
+  // console.log(values, "values in DynamicFormField");
+  const [dynamicOptions, setDynamicOptions] = useState([]);
+
+  const fetchAutocompleteOptions = async (searchTerm) => {
+    if (!field.fetchurl) return;
+    let fetchurl;
+    if (field.fetchurl && field.searchfor) {
+      fetchurl = `${field.fetchurl}?${field.searchfor}=${searchTerm}`;
+    } else {
+      fetchurl = `${field.fetchurl}`;
+    }
+    try {
+      const response = await RequestServer("get", fetchurl);
+      console.log(response.data, "response from fetchAutocompleteOptions");
+      const updatedData = response.data.map((item) => {
+        return {
+          id: item._id,
+          label: item[field.searchfor],
+        };
+      });
+      setDynamicOptions(updatedData || []);
+    } catch (error) {
+      console.error("Error fetching autocomplete options:", error);
+    }
+  };
 
   // Custom component renderer
   if (customComponents[field.type]) {
@@ -282,11 +412,14 @@ const DynamicFormField = ({
       return (
         <Autocomplete
           disabled={!permissionValues.edit}
-          options={field.options}
+          options={field.fetchurl ? dynamicOptions : field.options || []}
           getOptionLabel={(option) =>
             typeof option === "string" ? option : option.label || option.value
           }
           value={values[field.name] || null}
+          onInputChange={(_, newValue) => {
+            if (field.fetchurl) fetchAutocompleteOptions(newValue);
+          }}
           onChange={(_, newValue) => {
             setFieldValue(field.name, newValue);
           }}
@@ -427,6 +560,7 @@ export const DynamicForm = ({
                     display: "flex",
                     justifyContent: "center",
                     mt: 2,
+                    gap: 2,
                   }}
                 >
                   <Button
