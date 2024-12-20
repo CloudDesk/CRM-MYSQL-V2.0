@@ -1,44 +1,67 @@
 import React from 'react';
 import WebListView from './WebListView';
 import MobileListView from './MobileListView';
+import SharedDataGridSkeleton from '../Skeletons/SharedDataGridSkeleton';
+import NoAccessPage from '../NoAccessPage';
 
 const ListViewContainer = ({
+
     isMobile,
     title,
     subtitle,
     records,
-    columns,
-    mobileFields,
-    loading,
-    permissionValues,
-    onAdd,
-    onView,
-    onDelete,
-    onMultipleDelete
+    columnConfig,
+    onCreateRecord,
+    onEditRecord,
+    onDeleteRecord,
+    permissions,
+    isLoading,
+    isDeleteMode,
+    selectedRecordIds,
+    onToggleDeleteMode,
+    onSelectRecords,
+    ExcelDownload,
+    importConfig,
+
+
+
 }) => {
     // Common props for both views
     const commonProps = {
         title,
         subtitle,
         records,
-        onAdd,
-        onDelete
+        onCreateRecord,
+        onEditRecord,
+        permissions,
+        onDeleteRecord,
+        columnConfig
     };
+
+
+    if (isLoading) {
+        return <SharedDataGridSkeleton />;
+    }
+
+    if (!permissions.read) {
+        return <NoAccessPage />;
+    }
 
     return isMobile ? (
         <MobileListView
             {...commonProps}
-            fields={mobileFields}
-            onEdit={onView}
         />
     ) : (
         <WebListView
             {...commonProps}
-            columns={columns}
-            loading={loading}
-            permissionValues={permissionValues}
-            onView={onView}
-            onMultipleDelete={onMultipleDelete}
+            isLoading={isLoading}
+            isDeleteMode={isDeleteMode}
+            selectedRecordIds={selectedRecordIds}
+            onToggleDeleteMode={onToggleDeleteMode}
+            onSelectRecords={onSelectRecords}
+            ExcelDownload={ExcelDownload}
+            importConfig={importConfig}
+
         />
     );
 };

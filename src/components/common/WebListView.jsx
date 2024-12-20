@@ -7,295 +7,369 @@ import DeleteConfirmDialog from '../../scenes/toast/DeleteConfirmDialog';
 import ModalFileUpload from '../../scenes/dataLoader/ModalFileUpload';
 import { useState } from 'react';
 
+
+// Constants
+const STYLE_CONSTANTS = {
+    COLORS: {
+        PRIMARY: '#4A90E2',
+        PRIMARY_HOVER: '#357ABD',
+        DELETE: '#FF3333',
+        BACKGROUND: '#f5f5f5',
+        WHITE: '#fff',
+        DELETE_HOVER: '#ffebee',
+        HEADER_BG: '#f8f9fa',
+        BORDER: '#e9ecef',
+        ROW_HOVER: '#f5f5f5',
+        SELECTED: '#e3f2fd',
+    },
+    SPACING: {
+        BUTTON_PADDING: '8px 16px',
+        ICON_PADDING: '20px',
+    },
+    DIMENSIONS: {
+        GRID_HEIGHT: 'calc(100vh - 170px)',
+    },
+};
+
+const UI_MESSAGES = {
+    DELETE: {
+        MULTIPLE: (count) => `Are you sure to delete ${count} records?`,
+        SINGLE: 'Are you sure to delete this record?',
+        SUBTITLE: "You can't undo this Operation",
+        SUCCESS: 'Record(s) deleted successfully',
+        ERROR: 'Error deleting record(s)',
+    },
+};
+
+// Styles
+const styles = {
+    container: {
+        p: { xs: 1, sm: 2, md: 3 },
+        height: '100%',
+        backgroundColor: STYLE_CONSTANTS.COLORS.BACKGROUND,
+    },
+    headerContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        mb: 3,
+    },
+    title: {
+        fontSize: '24px',
+        fontWeight: 'bold',
+        color: 'primary.main',
+        mb: 1,
+    },
+    subtitle: {
+        color: 'text.secondary',
+        fontSize: '14px',
+    },
+    actionsContainer: {
+        display: 'flex',
+        gap: 1,
+    },
+    deleteButton: {
+        backgroundColor: STYLE_CONSTANTS.COLORS.WHITE,
+        '&:hover': { backgroundColor: STYLE_CONSTANTS.COLORS.DELETE_HOVER },
+    },
+    importButton: {
+        backgroundColor: STYLE_CONSTANTS.COLORS.PRIMARY,
+        color: STYLE_CONSTANTS.COLORS.WHITE,
+        '&:hover': {
+            backgroundColor: STYLE_CONSTANTS.COLORS.PRIMARY_HOVER,
+        },
+        padding: STYLE_CONSTANTS.SPACING.BUTTON_PADDING,
+        fontWeight: 'bold',
+        textTransform: 'none',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    },
+    newButton: {
+        backgroundColor: '#000000',
+        color: STYLE_CONSTANTS.COLORS.WHITE,
+        '&:hover': {
+            backgroundColor: STYLE_CONSTANTS.COLORS.PRIMARY_HOVER,
+        },
+        fontWeight: 'bold',
+        textTransform: 'none',
+        boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+        transition: 'all 0.3s ease',
+    },
+    gridContainer: {
+        height: STYLE_CONSTANTS.DIMENSIONS.GRID_HEIGHT,
+        width: '100%',
+        backgroundColor: STYLE_CONSTANTS.COLORS.WHITE,
+        borderRadius: '12px',
+        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        overflow: 'hidden',
+    },
+    dataGrid: {
+        height: '100%',
+        '& .MuiDataGrid-root': {
+            border: 'none',
+        },
+        '& .MuiDataGrid-cell': {
+            borderBottom: '1px solid #f0f0f0',
+            '&:focus': {
+                outline: 'none',
+            },
+        },
+        '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: STYLE_CONSTANTS.COLORS.HEADER_BG,
+            borderBottom: `2px solid ${STYLE_CONSTANTS.COLORS.BORDER}`,
+            '& .MuiDataGrid-columnHeader': {
+                '&:focus': {
+                    outline: 'none',
+                },
+            },
+        },
+        '& .MuiDataGrid-virtualScroller': {
+            backgroundColor: STYLE_CONSTANTS.COLORS.WHITE,
+        },
+        '& .MuiDataGrid-footerContainer': {
+            borderTop: `2px solid ${STYLE_CONSTANTS.COLORS.BORDER}`,
+            backgroundColor: STYLE_CONSTANTS.COLORS.HEADER_BG,
+        },
+        '& .MuiDataGrid-row': {
+            '&:hover': {
+                backgroundColor: STYLE_CONSTANTS.COLORS.ROW_HOVER,
+            },
+            '&.Mui-selected': {
+                backgroundColor: STYLE_CONSTANTS.COLORS.SELECTED,
+                '&:hover': {
+                    backgroundColor: STYLE_CONSTANTS.COLORS.SELECTED,
+                },
+            },
+        },
+    },
+    modal: {
+        backdropFilter: "blur(1px)",
+        "& .modal": {
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            borderRadius: "8px",
+            boxShadow: 24,
+            p: 4,
+        },
+    },
+};
+
+
+/**
+ * WebListView Component
+ * A reusable component for displaying data in a grid format with various controls
+ */
+
 const WebListView = ({
     title,
     subtitle,
     records,
-    columns,
-    loading,
-    showDelete,
-    permissionValues,
+    columnConfig,
+    isLoading,
+    isDeleteMode,
+    permissions,
     selectedRecordIds,
-    handleAddRecord,
-    handleDelete,
-    setShowDelete,
-    setSelectedRecordIds,
-    handleOnCellClick,
+    onCreateRecord,
+    onDeleteRecord,
+    onToggleDeleteMode,
+    onSelectRecords,
+    onEditRecord,
     ExcelDownload,
     additionalToolbarActions,
     importConfig
 }) => {
-    // Add state for toast and confirm dialog
-    const [notify, setNotify] = useState({
+    // state Mnagement
+    const [notificationState, setNotificationState] = useState({
         isOpen: false,
         message: '',
         type: '',
     });
 
-    const [confirmDialog, setConfirmDialog] = useState({
+    const [deleteConfirmState, setDeleteConfirmState] = useState({
         isOpen: false,
         title: '',
         subTitle: '',
     });
 
-    // Add import modal state
-    const [importModalOpen, setImportModalOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
-    // Handle import modal
-    const handleImportModalOpen = () => {
-        setImportModalOpen(true);
+    // Modal Handlers
+    const handleImportModalToggle = (shouldOpen = false) => {
+        setIsImportModalOpen(shouldOpen);
     };
 
-    const handleImportModalClose = () => {
-        setImportModalOpen(false);
-    };
+    // Delete Handlers
+    const handleDeleteRequest = (event, selectedIds) => {
+        event.stopPropagation();
 
-    // Handle multiple delete with confirmation
-    const onHandleDelete = (e, selectedIds) => {
-        e.stopPropagation();
-        setConfirmDialog({
+        setDeleteConfirmState({
             isOpen: true,
             title: Array.isArray(selectedIds)
-                ? `Are you sure to delete ${selectedIds.length} records?`
-                : 'Are you sure to delete this record?',
-            subTitle: "You can't undo this Operation",
-            onConfirm: () => confirmDeleteRecord(e, selectedIds),
+                ? UI_MESSAGES.DELETE.MULTIPLE(selectedIds.length)
+                : UI_MESSAGES.DELETE.SINGLE,
+            subTitle: UI_MESSAGES.DELETE.SUBTITLE,
+            onConfirm: () => executeDelete(event, selectedIds),
         });
     };
 
-    // Modified delete confirmation to handle both single and multiple deletes
-    const confirmDeleteRecord = async (e, ids) => {
+    const executeDelete = async (event, ids) => {
         try {
-            // Handle both single record and multiple records
             const result = Array.isArray(ids)
-                ? await handleDelete(e, ids)
-                : await handleDelete(e, ids._id);
-            console.log(result, "result confirmDeleteRecord")
-            if (result && result.success) {
-                setNotify({
-                    isOpen: true,
-                    message: result.message || 'Record(s) deleted successfully',
-                    type: 'success',
-                });
-                // Reset selection after successful delete
-                setShowDelete(false);
-                setSelectedRecordIds([]);
-            } else {
-                setNotify({
-                    isOpen: true,
-                    message: result?.message || 'Error deleting record(s)',
-                    type: 'error',
-                });
-            }
+                ? await onDeleteRecord(event, ids)
+                : await onDeleteRecord(event, ids._id);
+
+            handleDeleteResult(result);
         } catch (error) {
-            setNotify({
-                isOpen: true,
-                message: error.message || 'Error deleting record(s)',
-                type: 'error',
-            });
+            showNotification(error.message || UI_MESSAGES.DELETE.ERROR, 'error');
         } finally {
-            setConfirmDialog({
-                ...confirmDialog,
-                isOpen: false,
-            });
+            closeDeleteConfirmDialog();
         }
     };
 
-    // Update columns to use local delete handler
-    const updatedColumns = columns.map(column => {
-        if (column.field === 'actions') {
+    const handleDeleteResult = (result) => {
+        if (result?.success) {
+            showNotification(result.message || UI_MESSAGES.DELETE.SUCCESS, 'success');
+            resetSelection();
+        } else {
+            showNotification(result?.message || UI_MESSAGES.DELETE.ERROR, 'error');
+        }
+    };
+
+    // Utility Functions
+    const showNotification = (message, type) => {
+        setNotificationState({
+            isOpen: true,
+            message,
+            type,
+        });
+    };
+
+    const closeDeleteConfirmDialog = () => {
+        setDeleteConfirmState(prev => ({
+            ...prev,
+            isOpen: false,
+        }));
+    };
+
+    const resetSelection = () => {
+        onToggleDeleteMode(false);
+        onSelectRecords([]);
+    };
+
+    // Column Configuration
+    const enhanceColumnsWithDelete = (originalColumns) => {
+        return originalColumns.map(column => {
+            if (column.field !== 'actions') return column;
+
             return {
                 ...column,
                 renderCell: (params) => (
-                    <>
-                        {!showDelete && (
-                            <IconButton
-                                onClick={(e) => onHandleDelete(e, params.row)}
-                                style={{ padding: '20px', color: '#FF3333' }}
-                            >
-                                <DeleteIcon />
-                            </IconButton>
-                        )}
-                    </>
+                    !isDeleteMode && (
+                        <IconButton
+                            onClick={(e) => handleDeleteRequest(e, params.row)}
+                            sx={{
+                                padding: STYLE_CONSTANTS.SPACING.ICON_PADDING,
+                                color: STYLE_CONSTANTS.COLORS.DELETE,
+                            }}
+                        >
+                            <DeleteIcon />
+                        </IconButton>
+                    )
                 ),
             };
-        }
-        return column;
-    });
+        });
+    };
+
+    // Render Methods
+    const renderHeader = () => (
+        <Box sx={styles.headerContainer}>
+            <Box>
+                <Typography variant="h2" sx={styles.title}>
+                    {title}
+                </Typography>
+                <Typography variant="subtitle1" sx={styles.subtitle}>
+                    {subtitle}
+                </Typography>
+            </Box>
+            {renderHeaderActions()}
+        </Box>
+    );
+
+    const renderHeaderActions = () => (
+        <Box sx={styles.actionsContainer}>
+            {isDeleteMode ? renderDeleteActions() : renderDefaultActions()}
+        </Box>
+    );
+
+    const renderDeleteActions = () => (
+        <>
+            {permissions.delete && (
+                <Tooltip title="Delete Selected">
+                    <IconButton
+                        onClick={(e) => handleDeleteRequest(e, selectedRecordIds)}
+                        sx={styles.deleteButton}
+                    >
+                        <DeleteIcon sx={{ color: STYLE_CONSTANTS.COLORS.DELETE }} />
+                    </IconButton>
+                </Tooltip>
+            )}
+            {additionalToolbarActions}
+        </>
+    );
+
+    const renderDefaultActions = () => (
+        permissions.create && (
+            <>
+                {importConfig.isImport && (
+                    <Button
+                        variant="contained"
+                        onClick={() => handleImportModalToggle(true)}
+                        sx={styles.importButton}
+                    >
+                        Import
+                    </Button>
+                )}
+                <Button
+                    variant="contained"
+                    onClick={onCreateRecord}
+                    sx={styles.newButton}
+                >
+                    New
+                </Button>
+                <ExcelDownload
+                    data={records}
+                    filename={`${title}Records`}
+                />
+            </>
+        )
+    );
 
     return (
         <>
-            <ToastNotification notify={notify} setNotify={setNotify} />
+            <ToastNotification
+                notify={notificationState}
+                setNotify={setNotificationState}
+            />
             <DeleteConfirmDialog
-                confirmDialog={confirmDialog}
-                setConfirmDialog={setConfirmDialog}
+                confirmDialog={deleteConfirmState}
+                setConfirmDialog={setDeleteConfirmState}
             />
 
-            <Box sx={{
-                p: { xs: 1, sm: 2, md: 3 },
-                height: '100%',
-                backgroundColor: '#f5f5f5',
-            }}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mb: 3,
-                    }}
-                >
-                    <Box>
-                        <Typography
-                            variant="h2"
-                            sx={{
-                                fontSize: '24px',
-                                fontWeight: 'bold',
-                                color: 'primary.main',
-                                mb: 1,
-                            }}
-                        >
-                            {title}
-                        </Typography>
-                        <Typography
-                            variant="subtitle1"
-                            sx={{
-                                color: 'text.secondary',
-                                fontSize: '14px',
-                            }}
-                        >
-                            {subtitle}
-                        </Typography>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        {showDelete ? (
-                            <>
-                                {permissionValues.delete && (
-                                    <Tooltip title="Delete Selected">
-                                        <IconButton
-                                            onClick={(e) => onHandleDelete(e, selectedRecordIds)}
-                                            sx={{
-                                                backgroundColor: '#fff',
-                                                '&:hover': { backgroundColor: '#ffebee' },
-                                            }}
-                                        >
-                                            <DeleteIcon sx={{ color: "#FF3333" }} />
-                                        </IconButton>
-                                    </Tooltip>
-                                )}
-                                {additionalToolbarActions}
-                            </>
-                        ) : (
-                            permissionValues.create && (
-                                <>
-                                    {
-                                        importConfig.isImport &&
-                                        <Button
-                                            variant="contained"
-                                            onClick={handleImportModalOpen}
-                                            sx={{
-                                                backgroundColor: '#4A90E2',
-                                                color: 'white',
-                                                '&:hover': {
-                                                    backgroundColor: '#357ABD',
-                                                },
-                                                padding: '8px 16px',
-                                                fontWeight: 'bold',
-                                                textTransform: 'none',
-                                                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                                            }}
-                                        >
-                                            Import
-                                        </Button>
-                                    }
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleAddRecord}
-                                        sx={{
-                                            backgroundColor: '#000000',
-                                            color: 'white',
-                                            '&:hover': {
-                                                backgroundColor: '#357ABD',
-                                            },
-                                            fontWeight: 'bold',
-                                            textTransform: 'none',
-                                            boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
-                                            transition: 'all 0.3s ease',
-                                        }}
-                                    >
-                                        New
-                                    </Button>
-
-                                    <ExcelDownload
-                                        data={records}
-                                        filename={`${title}Records`}
-                                    />
-                                </>
-                            )
-                        )}
-                    </Box>
-                </Box>
-
-                <Box sx={{
-                    height: 'calc(100vh - 170px)',
-                    width: '100%',
-                    backgroundColor: 'white',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-                    overflow: 'hidden',
-                    '& .MuiDataGrid-root': {
-                        border: 'none',
-                    },
-                    '& .MuiDataGrid-cell': {
-                        borderBottom: '1px solid #f0f0f0',
-                        '&:focus': {
-                            outline: 'none',
-                        },
-                    },
-                    '& .MuiDataGrid-columnHeaders': {
-                        backgroundColor: '#f8f9fa',
-                        borderBottom: '2px solid #e9ecef',
-                        '& .MuiDataGrid-columnHeader': {
-                            '&:focus': {
-                                outline: 'none',
-                            },
-                        },
-                    },
-                    '& .MuiDataGrid-virtualScroller': {
-                        backgroundColor: 'white',
-                    },
-                    '& .MuiDataGrid-footerContainer': {
-                        borderTop: '2px solid #e9ecef',
-                        backgroundColor: '#f8f9fa',
-                    },
-                    '& .MuiDataGrid-row': {
-                        '&:hover': {
-                            backgroundColor: '#f5f5f5',
-                        },
-                        '&.Mui-selected': {
-                            backgroundColor: '#e3f2fd',
-                            '&:hover': {
-                                backgroundColor: '#e3f2fd',
-                            },
-                        },
-                    },
-                    '& .odd-row': {
-                        backgroundColor: '#f8f9fa',
-                    },
-                    '& .even-row': {
-                        backgroundColor: '#ffffff',
-                    },
-                }}>
+            <Box sx={styles.container}>
+                {renderHeader()}
+                <Box sx={styles.gridContainer}>
                     <DataGrid
                         rows={records}
-                        columns={updatedColumns}
+                        columns={enhanceColumnsWithDelete(columnConfig)}
                         getRowId={(row) => row._id}
                         pageSize={10}
                         rowsPerPageOptions={[10, 25, 50]}
                         components={{
                             Pagination: CustomPagination,
                         }}
-                        loading={loading}
+                        loading={isLoading}
                         checkboxSelection
                         disableSelectionOnClick
                         getRowClassName={(params) =>
@@ -304,38 +378,24 @@ const WebListView = ({
                                 : 'odd-row'
                         }
                         onSelectionModelChange={(ids) => {
-                            setShowDelete(Object.keys(ids).length > 0);
-                            setSelectedRecordIds(ids);
-
+                            onToggleDeleteMode(ids.length > 0);
+                            onSelectRecords(ids);
                         }}
-                        onRowClick={handleOnCellClick}
-                        sx={{ height: '100%' }}
+                        onRowClick={onEditRecord}
+                        sx={styles.dataGrid}
                     />
                 </Box>
             </Box>
 
-            {/* Import Modal */}
             <Modal
-                open={importModalOpen}
-                onClose={handleImportModalClose}
-                sx={{
-                    backdropFilter: "blur(1px)",
-                    "& .modal": {
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        backgroundColor: "white",
-                        borderRadius: "8px",
-                        boxShadow: 24,
-                        p: 4,
-                    },
-                }}
+                open={isImportModalOpen}
+                onClose={() => handleImportModalToggle(false)}
+                sx={styles.modal}
             >
                 <div className="modal">
                     <ModalFileUpload
                         object={importConfig.objectName}
-                        handleModal={handleImportModalClose}
+                        handleModal={() => handleImportModalToggle(false)}
                         callBack={importConfig.callBack}
                     />
                 </div>
@@ -344,4 +404,6 @@ const WebListView = ({
     );
 };
 
-export default WebListView; 
+
+
+export default WebListView;

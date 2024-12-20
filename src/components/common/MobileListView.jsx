@@ -16,210 +16,283 @@ import Header from "../Header";
 import ToastNotification from "../../scenes/toast/ToastNotification";
 import DeleteConfirmDialog from "../../scenes/toast/DeleteConfirmDialog";
 
+//constants
+
+const CONSTANTS = {
+  MESSAGES: {
+    DELETE: {
+      TITLE: "Are you sure to delete this Record?",
+      SUBTITLE: "You can't undo this Operation",
+      ERROR: "Error deleting record",
+    },
+    NO_RECORDS: "No Records Found",
+  },
+  MENU_OPTIONS: {
+    EDIT: "Edit",
+    VIEW: "View",
+    DELETE: "Delete",
+  },
+  BUTTON_LABELS: {
+    NEW: "New",
+  },
+  PAGINATION: {
+    DEFAULT_PAGE: 1,
+    DEFAULT_ITEMS: 5,
+  },
+};
+
+const STYLES = {
+  mainContainer: {
+    m: "20px",
+  },
+  headerContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    mb: 3,
+  },
+  newButton: {
+    height: "fit-content",
+  },
+  recordCard: {
+    bgcolor: "aliceblue",
+    m: 2,
+    borderRadius: 1,
+    position: "relative",
+    "&:hover": {
+      bgcolor: "action.hover",
+      transition: "background-color 0.3s",
+    },
+  },
+  fieldContainer: {
+    mb: 1,
+    display: "flex",
+    gap: 1,
+    alignItems: "baseline",
+  },
+  fieldLabel: {
+    component: "span",
+    fontWeight: "bold",
+    minWidth: "120px",
+  },
+  actionContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+  },
+  actionButton: {
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.04)",
+    },
+  },
+  paginationContainer: {
+    mt: 2,
+    display: "flex",
+    justifyContent: "center",
+  },
+  emptyStateCard: {
+    bgcolor: "aliceblue",
+    m: 2,
+    textAlign: "center",
+  },
+};
+
+/**
+ * MobileListView Component
+ * A responsive list view component optimized for mobile devices
+ */
+
 const MobileListView = ({
   title,
   subtitle,
   records,
-  fields,
-  onAdd,
-  onEdit,
-  onDelete,
-  permissionValues,
-  itemsPerPage = 5,
+  columnConfig,
+  onCreateRecord,
+  onEditRecord,
+  onDeleteRecord,
+  permissions,
+  itemsPerPage = CONSTANTS.PAGINATION.DEFAULT_ITEMS,
 }) => {
-  console.log(permissionValues, "permissionValues mobile");
-  const [page, setPage] = useState(1);
-  const [notify, setNotify] = useState({
+  // State Management
+  const [currentPage, setCurrentPage] = useState(
+    CONSTANTS.PAGINATION.DEFAULT_PAGE
+  );
+  const [notification, setNotification] = useState({
     isOpen: false,
     message: "",
     type: "",
   });
-  const [confirmDialog, setConfirmDialog] = useState({
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
     isOpen: false,
     title: "",
     subTitle: "",
   });
-  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
-  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [menuState, setMenuState] = useState({
+    anchorEl: null,
+    selectedRecord: null,
+  });
 
-  const noOfPages = Math.ceil(records.length / itemsPerPage);
+  // Computed Values
+  const totalPages = Math.ceil(records.length / itemsPerPage);
+  const currentPageRecords = records.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Menu handlers
-  const handleMenuOpen = (event, record) => {
-    setMenuAnchorEl(event.currentTarget);
-    setSelectedRecord(record);
+  const handleMenuActions = {
+    open: (event, record) => {
+      setMenuState({
+        anchorEl: event.currentTarget,
+        selectedRecord: record,
+      });
+    },
+    close: () => {
+      setMenuState({
+        anchorEl: null,
+        selectedRecord: null,
+      });
+    },
   };
 
-  const handleMenuClose = () => {
-    setMenuAnchorEl(null);
-    setSelectedRecord(null);
+  // Delete Handlers
+  const handleDeleteActions = {
+    initiate: (e) => {
+      e.stopPropagation();
+      setDeleteConfirmation({
+        isOpen: true,
+        title: CONSTANTS.MESSAGES.DELETE.TITLE,
+        subTitle: CONSTANTS.MESSAGES.DELETE.SUBTITLE,
+        onConfirm: () =>
+          handleDeleteActions.confirm(e, menuState.selectedRecord),
+      });
+    },
+    confirm: async (e, record) => {
+      try {
+        const result = await onDeleteRecord(e, record._id);
+        showNotification(result.message, result.success ? "success" : "error");
+      } catch (error) {
+        showNotification(
+          error.message || CONSTANTS.MESSAGES.DELETE.ERROR,
+          "error"
+        );
+      } finally {
+        closeDeleteConfirmation();
+        handleMenuActions.close();
+      }
+    },
   };
-
-  // Delete handlers
-  const handleDeleteClick = (e) => {
-    e.stopPropagation();
-    setConfirmDialog({
+  // Utility Functions
+  const showNotification = (message, type) => {
+    setNotification({
       isOpen: true,
-      title: "Are you sure to delete this Record?",
-      subTitle: "You can't undo this Operation",
-      onConfirm: () => handleDeleteConfirm(e, selectedRecord),
+      message,
+      type,
     });
   };
 
-  const handleDeleteConfirm = async (e, record) => {
-    console.log(record, "record handleDeleteConfirm");
-    try {
-      const result = await onDelete(e, record._id);
-      console.log(result, "result handleDeleteConfirm");
-      setNotify({
-        isOpen: true,
-        message: result.message,
-        type: result.success ? "success" : "error",
-      });
-    } catch (error) {
-      setNotify({
-        isOpen: true,
-        message: error.message || "Error deleting record",
-        type: "error",
-      });
-    } finally {
-      setConfirmDialog({ ...confirmDialog, isOpen: false });
-      handleMenuClose();
-    }
+  const closeDeleteConfirmation = () => {
+    setDeleteConfirmation((prev) => ({
+      ...prev,
+      isOpen: false,
+    }));
   };
 
-  const handleEditClick = () => {
-    onEdit(selectedRecord);
-    handleMenuClose();
+  const handleEdit = () => {
+    onEditRecord(menuState.selectedRecord);
+    handleMenuActions.close();
   };
+
+  // Render Methods
+  const renderField = (field, record) => {
+    const value = record[field.key];
+    if (field.render) return field.render(value, record);
+    if (field.format) return field.format(value);
+    return value || "---";
+  };
+
+  const renderRecord = (record) => (
+    <CardContent key={record._id} sx={STYLES.recordCard}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={10}>
+          {columnConfig.map((field) => (
+            <Box key={field.key} sx={STYLES.fieldContainer}>
+              <Typography sx={STYLES.fieldLabel}>{field.label}:</Typography>
+              <Typography component="span">
+                {renderField(field, record)}
+              </Typography>
+            </Box>
+          ))}
+        </Grid>
+        <Grid item xs={2} sx={STYLES.actionContainer}>
+          <IconButton
+            onClick={(e) => handleMenuActions.open(e, record)}
+            sx={STYLES.actionButton}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        </Grid>
+      </Grid>
+    </CardContent>
+  );
+
+  const renderRecordsList = () => (
+    <>
+      <Card>
+        {records.length > 0 ? (
+          currentPageRecords.map(renderRecord)
+        ) : (
+          <CardContent sx={STYLES.emptyStateCard}>
+            <Typography>{CONSTANTS.MESSAGES.NO_RECORDS}</Typography>
+          </CardContent>
+        )}
+      </Card>
+
+      {records.length > 0 && (
+        <Box sx={STYLES.paginationContainer}>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(_, value) => setCurrentPage(value)}
+            color="primary"
+            size="large"
+            showFirstButton
+            showLastButton
+          />
+        </Box>
+      )}
+    </>
+  );
 
   return (
     <>
-      <ToastNotification notify={notify} setNotify={setNotify} />
+      <ToastNotification notify={notification} setNotify={setNotification} />
       <DeleteConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
-        moreModalClose={handleMenuClose}
+        confirmDialog={deleteConfirmation}
+        setConfirmDialog={setDeleteConfirmation}
+        moreModalClose={handleMenuActions.close}
       />
 
-      <Box m="20px">
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-          }}
-        >
+      <Box sx={STYLES.mainContainer}>
+        <Box sx={STYLES.headerContainer}>
           <Header title={title} subtitle={subtitle} />
           <Button
             variant="contained"
             color="primary"
-            onClick={onAdd}
-            sx={{ height: "fit-content" }}
+            onClick={onCreateRecord}
+            sx={STYLES.newButton}
           >
-            New
+            {CONSTANTS.BUTTON_LABELS.NEW}
           </Button>
         </Box>
 
-        <Card>
-          {records.length > 0 ? (
-            records
-              .slice((page - 1) * itemsPerPage, page * itemsPerPage)
-              .map((record) => (
-                <CardContent
-                  key={record._id}
-                  sx={{
-                    bgcolor: "aliceblue",
-                    m: 2,
-                    borderRadius: 1,
-                    position: "relative",
-                    "&:hover": {
-                      bgcolor: "action.hover",
-                      transition: "background-color 0.3s",
-                    },
-                  }}
-                >
-                  <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={10}>
-                      {fields.map((field) => (
-                        <Box
-                          key={field.key}
-                          sx={{
-                            mb: 1,
-                            display: "flex",
-                            gap: 1,
-                            alignItems: "baseline",
-                          }}
-                        >
-                          <Typography
-                            component="span"
-                            fontWeight="bold"
-                            minWidth="120px"
-                          >
-                            {field.label}:
-                          </Typography>
-                          <Typography component="span">
-                            {field.render
-                              ? field.render(record[field.key], record)
-                              : field.format
-                              ? field.format(record[field.key])
-                              : record[field.key] || "---"}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Grid>
-                    <Grid
-                      item
-                      xs={2}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                      }}
-                    >
-                      <IconButton
-                        onClick={(e) => handleMenuOpen(e, record)}
-                        sx={{
-                          "&:hover": {
-                            backgroundColor: "rgba(0, 0, 0, 0.04)",
-                          },
-                        }}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              ))
-          ) : (
-            <CardContent
-              sx={{ bgcolor: "aliceblue", m: 2, textAlign: "center" }}
-            >
-              <Typography>No Records Found</Typography>
-            </CardContent>
-          )}
-        </Card>
-
-        {records.length > 0 && (
-          <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
-            <Pagination
-              count={noOfPages}
-              page={page}
-              onChange={(_, value) => setPage(value)}
-              color="primary"
-              size="large"
-              showFirstButton
-              showLastButton
-            />
-          </Box>
-        )}
+        {renderRecordsList()}
 
         <Menu
-          anchorEl={menuAnchorEl}
-          open={Boolean(menuAnchorEl)}
-          onClose={handleMenuClose}
+          anchorEl={menuState.anchorEl}
+          open={Boolean(menuState.anchorEl)}
+          onClose={handleMenuActions.close}
           anchorOrigin={{
             vertical: "bottom",
             horizontal: "right",
@@ -229,11 +302,15 @@ const MobileListView = ({
             horizontal: "right",
           }}
         >
-          <MenuItem onClick={handleEditClick}>
-            {permissionValues?.edit ? "Edit" : "View"}
+          <MenuItem onClick={handleEdit}>
+            {permissions.edit
+              ? CONSTANTS.MENU_OPTIONS.EDIT
+              : CONSTANTS.MENU_OPTIONS.VIEW}
           </MenuItem>
-          {permissionValues?.delete && (
-            <MenuItem onClick={(e) => handleDeleteClick(e)}>Delete</MenuItem>
+          {permissions.delete && (
+            <MenuItem onClick={handleDeleteActions.initiate}>
+              {CONSTANTS.MENU_OPTIONS.DELETE}
+            </MenuItem>
           )}
         </Menu>
       </Box>

@@ -4,41 +4,46 @@ import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
-import "../recordDetailPage/Form.css";
-import "../indexCSS/muiBoxStyles.css";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
-import MobileListView from "../../components/common/MobileListView";
-import WebListView from "../../components/common/WebListView";
-import NoAccessPage from "../../components/NoAccessPage";
+import ListViewContainer from "../../components/common/ListViewContainer";
 
-const Leads = () => {
-  const OBJECT_API = "Enquiry";
-  const urlLead = `/leads`;
-  const urlDelete = `/deleteLead`;
 
-  const theme = useTheme();
-  const navigate = useNavigate();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [records, setRecords] = useState([]);
-  const [fetchError, setFetchError] = useState();
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [showDelete, setShowDelete] = useState(false);
-  const [selectedRecordIds, setSelectedRecordIds] = useState([]);
-  const [permissionValues, setPermissionValues] = useState({});
+// Constants
+const CONSTANTS = {
+  OBJECT_NAME: 'Enquiry',
+  ROUTES: {
+    LEADS: '/leads',
+    DELETE_LEAD: '/deleteLead',
+    NEW_LEAD: '/new-leads',
+    LEAD_DETAIL: '/leadDetailPage',
+  },
+  TITLES: {
+    MAIN: 'Enquiries',
+    WEB_SUBTITLE: 'List Of Enquiries',
+    MOBILE_SUBTITLE: 'List of Enquiries',
+  },
+  ERROR_MESSAGES: {
+    DELETE_MULTIPLE: 'Some records failed to delete',
+    DELETE_SINGLE: 'Failed to delete record',
+    DEFAULT: 'An error occurred',
+  },
+  SUCCESS_MESSAGES: {
+    DELETE_MULTIPLE: 'All records deleted successfully',
+    DELETE_SINGLE: 'Record deleted successfully',
+  },
+};
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
-
-  const mobileFields = [
+// Table configuration
+const TABLE_CONFIG = {
+  mobileFields: [
     { label: "Enquiry Name", key: "fullname" },
     { label: "Lead Source", key: "leadsource" },
     { label: "Lead Status", key: "leadstatus" },
     { label: "Email", key: "email" },
-  ];
-
-  const columns = [
+  ],
+  columns: [
     {
       field: "fullname",
       headerName: "Full Name",
@@ -74,171 +79,243 @@ const Leads = () => {
       align: "center",
       flex: 1,
     },
-  ];
+  ],
+};
 
+/**
+ * Leads Component
+ * Manages the display and interactions for enquiries/leads in both mobile and desktop views
+ */
+const Leads = () => {
+
+  // Hooks
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+
+  // State management
+  const [enquiryRecords, setEnquiryRecords] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [permissions, setPermissions] = useState({});
+
+  // Effects
   useEffect(() => {
-    fetchRecords();
-    fetchPermissions();
+    initializeComponent();
   }, []);
 
-  const fetchRecords = () => {
-    RequestServer("get", urlLead, {})
-      .then((res) => {
-        if (res.success) {
-          setRecords(res.data);
-          setFetchLoading(false);
-          setFetchError(null);
-        } else {
-          setRecords([]);
-          setFetchError(res.error.message);
-          setFetchLoading(false);
-        }
-      })
-      .catch((err) => {
-        setFetchError(err.message);
-        setFetchLoading(false);
-      });
+  // Initialization
+  const initializeComponent = async () => {
+    await Promise.all([
+      fetchEnquiryRecords(),
+      fetchUserPermissions(),
+    ]);
   };
 
-  const fetchPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          setPermissionValues({});
-        });
-    }
-  };
-
-  const handleAddRecord = () => {
-    navigate("/new-leads", { state: { record: {} } });
-  };
-
-  const handleOnCellClick = (e) => {
-    console.log("selected record", e);
-    const item = e.row ? e.row : e;
-    navigate(`/leadDetailPage/${item._id}`, { state: { record: { item } } });
-  };
-
-  const onHandleDelete = async (e, rowId) => {
-    e.stopPropagation();
-    if (Array.isArray(rowId)) {
-      const results = await Promise.all(rowId.map((id) => deleteRecord(e, id)));
-      // If any deletion failed, return error
-      const hasError = results.some((result) => !result.success);
-      if (hasError) {
-        return {
-          success: false,
-          message: "Some records failed to delete",
-        };
-      }
-      return {
-        success: true,
-        message: "All records deleted successfully",
-      };
-    } else {
-      return await deleteRecord(e, rowId);
-    }
-  };
-
-  const deleteRecord = async (e, rowId) => {
-    e.stopPropagation();
+  // Fetches the list of enquiries
+  const fetchEnquiryRecords = async () => {
     try {
-      const res = await RequestServer("delete", `${urlDelete}/${rowId}`, {});
-      console.log(res.data, "res onHandleDelete");
-      if (res.data) {
-        fetchRecords();
+      const response = await RequestServer("get", CONSTANTS.ROUTES.LEADS, {});
+      if (response.success) {
+        setEnquiryRecords(response.data);
+        setFetchError(null);
+      } else {
+        setEnquiryRecords([]);
+        setFetchError(response.error.message);
+      }
+    } catch (error) {
+      setFetchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchUserPermissions = async () => {
+    if (!userRoleDept) return;
+    try {
+      const permissions = await apiCheckPermission(userRoleDept);
+      setPermissions(permissions);
+    } catch (error) {
+      console.error('Error fetching permissions:', error);
+      setPermissions({});
+    }
+  };
+
+  // Navigation handlers
+  const handleCreateEnquiry = () => {
+    navigate(CONSTANTS.ROUTES.NEW_LEAD, { state: { record: {} } });
+  };
+
+  const handleEnquiryDetail = (event) => {
+    const enquiry = event.row || event;
+    navigate(`${CONSTANTS.ROUTES.LEAD_DETAIL}/${enquiry._id}`, {
+      state: { record: { item: enquiry } }
+    });
+  };
+
+  // Delete operations
+  const handleDelete = async (event, recordId) => {
+    event.stopPropagation();
+
+    if (Array.isArray(recordId)) {
+      return await handleBulkDelete(event, recordId);
+    }
+    return await handleSingleDelete(event, recordId);
+  };
+
+  const handleSingleDelete = async (event, recordId) => {
+    try {
+      const response = await RequestServer(
+        "delete",
+        `${CONSTANTS.ROUTES.DELETE_LEAD}/${recordId}`,
+        {}
+      );
+
+      if (response.data) {
+        await fetchEnquiryRecords();
         return {
           success: true,
-          message: "Record deleted successfully",
-        };
-      } else {
-        return {
-          success: false,
-          message: res.error?.message || "Failed to delete record",
+          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
+
+      return {
+        success: false,
+        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+      };
     } catch (error) {
       return {
         success: false,
-        message: error.message || "Error deleting record",
+        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
 
-  if (permissionValues.delete) {
-    columns.push({
-      field: "actions",
-      headerName: "Actions",
-      headerAlign: "center",
-      align: "center",
-      width: 400,
-      flex: 1,
-      renderCell: (params) => (
-        <>
-          {!showDelete && (
+  const handleBulkDelete = async (event, recordIds) => {
+    const deleteResults = await Promise.all(
+      recordIds.map(id => handleSingleDelete(event, id))
+    );
+
+    const hasFailures = deleteResults.some(result => !result.success);
+
+    return {
+      success: !hasFailures,
+      message: hasFailures
+        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+    };
+  };
+
+
+  // Column configuration with conditional delete action
+  const getTableColumns = () => {
+    if (!permissions.delete) return TABLE_CONFIG.columns;
+
+    return [
+      ...TABLE_CONFIG.columns,
+      {
+        field: "actions",
+        headerName: "Actions",
+        headerAlign: "center",
+        align: "center",
+        width: 400,
+        flex: 1,
+        renderCell: (params) => (
+          !isDeleteMode && (
             <IconButton
-              onClick={(e) => onHandleDelete(e, params.row._id)}
+              onClick={(e) => handleDelete(e, params.row._id)}
               style={{ padding: "20px", color: "#FF3333" }}
             >
               <DeleteIcon />
             </IconButton>
-          )}
-        </>
-      ),
-    });
-  }
+          )
+        ),
+      },
+    ];
+  };
 
   return (
-    <>
-      {fetchLoading ? (
-        <SharedDataGridSkeleton />
-      ) : (
-        <Box>
-          {permissionValues.read ? (
-            isMobile ? (
-              <MobileListView
-                title="Enquiries"
-                subtitle="List of Enquiries"
-                records={records}
-                fields={mobileFields}
-                onAdd={handleAddRecord}
-                onEdit={handleOnCellClick}
-                permissionValues={permissionValues}
-                onDelete={permissionValues.delete ? onHandleDelete : null}
-              />
-            ) : (
-              <WebListView
-                title="Enquiry"
-                subtitle="List Of Enquiries"
-                records={records}
-                columns={columns}
-                loading={fetchLoading}
-                showDelete={showDelete}
-                permissionValues={permissionValues}
-                selectedRecordIds={selectedRecordIds}
-                handleAddRecord={handleAddRecord}
-                handleDelete={onHandleDelete}
-                setShowDelete={setShowDelete}
-                setSelectedRecordIds={setSelectedRecordIds}
-                handleOnCellClick={handleOnCellClick}
-                ExcelDownload={ExcelDownload}
-                importConfig={{
-                  objectName: "Enquiry",
-                  isImport: true,
-                  callBack: fetchRecords,
-                }}
-              />
-            )
-          ) : (
-            <NoAccessPage />
-          )}
-        </Box>
-      )}
-    </>
+    <Box>
+      {/* {renderContent()} */}
+      <ListViewContainer
+        isMobile={isMobile}
+        title={CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        records={enquiryRecords}
+        onCreateRecord={handleCreateEnquiry}
+        onEditRecord={handleEnquiryDetail}
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        permissions={permissions}
+
+        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        isLoading={isLoading}
+        isDeleteMode={isDeleteMode}
+        selectedRecordIds={selectedIds}
+        onToggleDeleteMode={setIsDeleteMode}
+        onSelectRecords={setSelectedIds}
+        ExcelDownload={ExcelDownload}
+        importConfig={{
+          objectName: CONSTANTS.OBJECT_NAME,
+          isImport: true,
+          callBack: fetchEnquiryRecords,
+        }}
+      />
+    </Box>
   );
 };
 
 export default Leads;
+
+
+/*
+
+  // Render helpers
+  const renderContent = () => {
+    if (isLoading) return <SharedDataGridSkeleton />;
+    if (!permissions.read) return <NoAccessPage />;
+
+    return isMobile
+      ? renderMobileView()
+      : renderWebView();
+  };
+
+  const renderMobileView = () => (
+    <MobileListView
+      title={CONSTANTS.TITLES.MAIN}
+      subtitle={CONSTANTS.TITLES.MOBILE_SUBTITLE}
+      records={enquiryRecords}
+      columnConfig={TABLE_CONFIG.mobileFields}
+      onCreateRecord={handleCreateEnquiry}
+      onEditRecord={handleEnquiryDetail}
+      permissions={permissions}
+      onDeleteRecord={permissions.delete ? handleDelete : null}
+    />
+  );
+
+  const renderWebView = () => (
+    <WebListView
+      title={CONSTANTS.TITLES.MAIN}
+      subtitle={CONSTANTS.TITLES.WEB_SUBTITLE}
+      records={enquiryRecords}
+      columnConfig={getTableColumns()}
+      isLoading={isLoading}
+      isDeleteMode={isDeleteMode}
+      permissions={permissions}
+      selectedRecordIds={selectedIds}
+      onCreateRecord={handleCreateEnquiry}
+      onDeleteRecord={handleDelete}
+      onToggleDeleteMode={setIsDeleteMode}
+      onSelectRecords={setSelectedIds}
+      onEditRecord={handleEnquiryDetail}
+      ExcelDownload={ExcelDownload}
+      importConfig={{
+        objectName: CONSTANTS.OBJECT_NAME,
+        isImport: true,
+        callBack: fetchEnquiryRecords,
+      }}
+    />
+  );
+*/
