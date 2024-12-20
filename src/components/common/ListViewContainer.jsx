@@ -10,11 +10,13 @@ const ListViewContainer = ({
     title,
     subtitle,
     records,
-    columnConfig,
     onCreateRecord,
     onEditRecord,
     onDeleteRecord,
     permissions,
+
+
+    columnConfig,
     isLoading,
     isDeleteMode,
     selectedRecordIds,
@@ -28,6 +30,7 @@ const ListViewContainer = ({
 }) => {
     // Common props for both views
     const commonProps = {
+        isMobile,
         title,
         subtitle,
         records,
@@ -37,6 +40,9 @@ const ListViewContainer = ({
         onDeleteRecord,
         columnConfig
     };
+
+
+    console.log(columnConfig, "columnConfig")
 
 
     if (isLoading) {

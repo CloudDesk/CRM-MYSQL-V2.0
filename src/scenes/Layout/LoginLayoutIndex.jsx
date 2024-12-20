@@ -3,14 +3,13 @@ import { Routes, Route } from "react-router-dom";
 import ResponsiveAccounts from "../accounts/ResponsiveScreen";
 import ResponsiveContacts from "../contacts/ResponsiveScreen";
 import ResponsiveInventories from "../inventories/ResponsiveScreen";
-import ResponsiveOpportunities from "../opportunities/ResponsiveScreen";
 import ResponsiveTasks from "../tasks/ResponsiveScreen";
 import ResponsiveUsers from "../users/ResponsiveScreen";
 import ContactDetailPage from "../recordDetailPage/ContactDetailPage";
 import AccountDetailPage from "../recordDetailPage/AccountDetailPage";
-// import LeadDetailPage from '../recordDetailPage/LeadDetailPage';
 import LeadDetailPage from "../leads/Forms/LeadDetailPage";
-import OpportunityDetailPage from "../recordDetailPage/OpportunityDetailPage";
+// import OpportunityDetailPage from "../recordDetailPage/OpportunityDetailPage";
+import OpportunityDetailPage from "../opportunities/Forms/DealDetailPage";
 import InventoryDetailPage from "../recordDetailPage/InventoryDetailPage";
 import TaskDetailPage from "../recordDetailPage/TaskDetailPage";
 import UserDetailPage from "../recordDetailPage/UserDetailPage";
@@ -28,6 +27,7 @@ import PageNotFound from "../Errors/PageNotFound";
 import Files from "../Files/index";
 import { DashboardIndex } from "../dashboard/Dashboards";
 import Leads from "../leads";
+import Opportunities from "../opportunities";
 
 function LoginLayoutIndex(props) {
   return (
@@ -37,7 +37,7 @@ function LoginLayoutIndex(props) {
         <Route path="/" exact element={<DashboardIndex />} />
         <Route path="/list/account" element={<ResponsiveAccounts />} />
         <Route path="/list/contact" element={<ResponsiveContacts />} />
-        <Route path="/list/deals" element={<ResponsiveOpportunities />} />
+        <Route path="/list/deals" element={<Opportunities />} />
         <Route path="/list/enquiry" element={<Leads />} />
         <Route path="/list/inventory" element={<ResponsiveInventories />} />
         <Route path="/list/event" element={<ResponsiveTasks />} />

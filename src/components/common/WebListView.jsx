@@ -180,6 +180,7 @@ const WebListView = ({
     additionalToolbarActions,
     importConfig
 }) => {
+    console.log(records, "records **")
     // state Mnagement
     const [notificationState, setNotificationState] = useState({
         isOpen: false,

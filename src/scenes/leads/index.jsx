@@ -8,8 +8,6 @@ import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListViewContainer";
 
-
-
 // Constants
 const CONSTANTS = {
   OBJECT_NAME: 'Enquiry',
