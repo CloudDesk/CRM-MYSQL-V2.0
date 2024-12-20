@@ -173,7 +173,10 @@ const MobileListView = ({
             } catch (error) {
                 showNotification(error.message || CONSTANTS.MESSAGES.DELETE.ERROR, "error");
             } finally {
-                closeDeleteConfirmation();
+                setDeleteConfirmation(prev => ({
+                    ...prev,
+                    isOpen: false,
+                }));
                 handleMenuActions.close();
             }
         },
@@ -188,12 +191,7 @@ const MobileListView = ({
         });
     };
 
-    const closeDeleteConfirmation = () => {
-        setDeleteConfirmation(prev => ({
-            ...prev,
-            isOpen: false,
-        }));
-    };
+
 
     const handleEdit = () => {
         onEditRecord(menuState.selectedRecord);

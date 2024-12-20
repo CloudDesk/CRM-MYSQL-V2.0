@@ -5,56 +5,63 @@ import {
     DialogContent,
     DialogActions,
     Button,
-    Box,
-    IconButton,
     Typography,
-    DialogContentText,
-  } from '@mui/material';
+    CircularProgress,
+} from '@mui/material';
 
-function DeleteConfirmDialog({confirmDialog,setConfirmDialog,moreModalClose}) {
+function DeleteConfirmDialog({ confirmDialog, setConfirmDialog, moreModalClose }) {
 
-    const handleCloseNo =()=>{
-        setConfirmDialog({...confirmDialog, isOpen:false})
-        if(moreModalClose){
+    const handleCloseNo = () => {
+        setConfirmDialog({ ...confirmDialog, isOpen: false })
+        if (moreModalClose) {
             moreModalClose()
         }
     }
 
-    const handleCloseYes=()=>{
-        confirmDialog.onConfirm()
-        if(moreModalClose){
+    const handleCloseYes = () => {
+        setConfirmDialog({ ...confirmDialog, isLoading: true });
+        confirmDialog.onConfirm();
+        if (moreModalClose) {
             moreModalClose()
         }
     }
 
 
-  return (
-    <Dialog open={confirmDialog.isOpen} onClose={()=>setConfirmDialog({...confirmDialog, isOpen:false})}>
-        <DialogTitle>
+    return (
+        <Dialog open={confirmDialog.isOpen} onClose={() => !confirmDialog.isLoading && handleCloseNo()}>
+            <DialogTitle>
 
-        </DialogTitle>
+            </DialogTitle>
 
-        <DialogContent>
-            <Typography variant='h5'>
-                {confirmDialog.title}
-            </Typography>
-            <Typography variant='subtitle2'>
-                {confirmDialog.subTitle}
-            </Typography>
-        </DialogContent>
-        <DialogActions>
-        <Button 
-            variant='contained' 
-            color='inherit'
-            onClick={handleCloseNo}>No</Button>
-        <Button
-            variant='contained' 
-            color='warning' 
-            onClick={handleCloseYes}>Yes</Button>
-        </DialogActions>
+            <DialogContent>
+                <Typography variant='h5'>
+                    {confirmDialog.title}
+                </Typography>
+                <Typography variant='subtitle2'>
+                    {confirmDialog.subTitle}
+                </Typography>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant='contained'
+                    color='inherit'
+                    disabled={confirmDialog.isLoading}
+                    onClick={handleCloseNo}>No</Button>
+                <Button
+                    variant='contained'
+                    color='warning'
+                    disabled={confirmDialog.isLoading}
+                    onClick={handleCloseYes}>
+                    {confirmDialog.isLoading ? (
+                        <CircularProgress size={24} color="inherit" />
+                    ) : (
+                        'Yes'
+                    )}
+                </Button>
+            </DialogActions>
 
-    </Dialog>
-  )
+        </Dialog>
+    )
 }
 
 export default DeleteConfirmDialog

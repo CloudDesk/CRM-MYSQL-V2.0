@@ -4,7 +4,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CustomPagination from './CustomPagination';
 import ToastNotification from '../../scenes/toast/ToastNotification';
 import DeleteConfirmDialog from '../../scenes/toast/DeleteConfirmDialog';
-import ModalFileUpload from '../../scenes/dataLoader/ModalFileUpload';
+import FileUploadComponent from '../../scenes/dataLoader/ModalFileUpload';
 import { useState } from 'react';
 
 
@@ -394,7 +394,7 @@ const WebListView = ({
                 sx={styles.modal}
             >
                 <div className="modal">
-                    <ModalFileUpload
+                    <FileUploadComponent
                         object={importConfig.objectName}
                         handleModal={() => handleImportModalToggle(false)}
                         callBack={importConfig.callBack}

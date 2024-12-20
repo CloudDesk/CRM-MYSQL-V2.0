@@ -1,136 +1,179 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Formik, Form, Field, ErrorMessage, useField } from "formik";
-import * as Yup from "yup";
+import { useState } from "react";
 import {
-    Grid, Button, FormControl, Stack, Alert, DialogActions,
-    Autocomplete, TextField, Table
+    Box,
+    Typography,
+    Paper,
+    CircularProgress,
+    Alert,
+    Button,
+    IconButton,
 } from "@mui/material";
-import axios from 'axios'
-import "../formik/FormStyles.css"
+import {
+    CloudUpload as UploadIcon,
+    Close as CloseIcon,
+    Description as FileIcon,
+    Error as ErrorIcon,
+} from '@mui/icons-material';
+import axios from 'axios';
 import PreviewUpsert from "./PreviewUpsert";
 import { appConfig } from "../config";
 
 const generatePreview = `${appConfig.server}/generatePreview`;
 
-const ModalFileUpload = ({ object, handleModal, callBack }) => {
+const FileUploadComponent = ({ object, handleModal, callBack }) => {
+    const [uploadedData, setUploadedData] = useState([]);
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const [uplodedData, setUplodedData] = useState([])
-    const [uplodedFile, setUploadedFile] = useState()
+    const handleFileSend = async (file) => {
+        setIsLoading(true);
+        setError(null);
 
-    const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
-    useEffect(() => {
+        const formData = new FormData();
+        formData.append('file', file);
 
-    }, [])
+        try {
+            const response = await axios.post(generatePreview, formData);
+            setUploadedData(response.data);
+        } catch (error) {
+            setError(error.message || 'Error uploading file');
+            setUploadedFile(null);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    const initialValues = {
-        file: null,
-        attachments: null,
-        object: ''
+    const handleDrop = (event) => {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        if (file && file.type === 'text/csv') {
+            setUploadedFile(file);
+            handleFileSend(file);
+        } else {
+            setError('Please upload a CSV file');
+        }
+    };
+
+    const handleFileSelect = (event) => {
+        const file = event.target.files[0];
+        if (file && file.type === 'text/csv') {
+            setUploadedFile(file);
+            handleFileSend(file);
+        } else {
+            setError('Please upload a CSV file');
+        }
+    };
+
+    if (uploadedData.length > 0) {
+        return (
+            <PreviewUpsert
+                callBack={callBack}
+                object={object}
+                data={uploadedData}
+                file={uploadedFile}
+                ModalClose={handleModal}
+            />
+        );
     }
-    const SUPPORTED_FORMATS = ['text/csv'];
-    const FILE_SIZE = 1024 * 1024
-    const validationSchema = Yup.object({
-        object: Yup
-            .string()
-            .required('Required'),
-    })
-
-    const fileSendValue = (obj, files) => {
-
-        let formData = new FormData();
-        formData.append('file', files)
-        console.log('modified formData', formData);
-        axios.post(generatePreview, formData)
-
-            .then((res) => {
-                console.log(' Submission  response', res.data);
-                setUplodedData(res.data)
-
-            })
-            .catch((error) => {
-                console.log('task form Submission  error', error);
-            })
-    }
-
-    const formSubmission = async (values, { resetForm }) => {
-        console.log('inside form Submission', values);
-        console.log('inside form Submission', values.attachments);
-
-
-    }
-
-
-
 
     return (
+        <Box sx={{ p: 3 }}>
+            <Typography variant="h4" align="center" gutterBottom sx={{ mb: 3 }}>
+                Data Loader
+            </Typography>
 
-        <div>
-            <div style={{ textAlign: "center", marginBottom: "10px" }}>
-                <h3>Data Loader</h3>
-            </div>
-            {uplodedData.length > 0 ?
+            <Paper
+                sx={{
+                    p: 4,
+                    border: '2px dashed',
+                    borderColor: 'primary.main',
+                    borderRadius: 2,
+                    bgcolor: 'background.default',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                        borderColor: 'primary.dark',
+                        bgcolor: 'action.hover',
+                    },
+                }}
+                onDrop={handleDrop}
+                onDragOver={(e) => e.preventDefault()}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 2,
+                    }}
+                >
+                    {isLoading ? (
+                        <CircularProgress />
+                    ) : uploadedFile ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <FileIcon sx={{ fontSize: 24 }} />
+                            <Typography>{uploadedFile.name}</Typography>
+                            <IconButton
+                                size="small"
+                                onClick={() => setUploadedFile(null)}
+                                sx={{ ml: 1 }}
+                            >
+                                <CloseIcon sx={{ fontSize: 18 }} />
+                            </IconButton>
+                        </Box>
+                    ) : (
+                        <>
+                            <UploadIcon sx={{ fontSize: 48, color: 'primary.main' }} />
+                            <Box sx={{ textAlign: 'center' }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Drag and drop your CSV file here
+                                </Typography>
+                                <Typography color="textSecondary" gutterBottom>
+                                    or
+                                </Typography>
+                                <Button
+                                    component="label"
+                                    variant="contained"
+                                    startIcon={<UploadIcon />}
+                                    sx={{ mt: 1 }}
+                                >
+                                    Browse Files
+                                    <input
+                                        type="file"
+                                        hidden
+                                        accept=".csv"
+                                        onChange={handleFileSelect}
+                                    />
+                                </Button>
+                            </Box>
+                        </>
+                    )}
+                </Box>
+            </Paper>
 
-                <>
-                    <PreviewUpsert callBack={callBack} object={object} data={uplodedData} file={uplodedFile} ModalClose={handleModal} />
-                </> :
+            {error && (
+                <Alert
+                    severity="error"
+                    icon={<ErrorIcon />}
+                    sx={{ mt: 2 }}
+                    onClose={() => setError(null)}
+                >
+                    {error}
+                </Alert>
+            )}
 
+            <Typography
+                variant="caption"
+                color="textSecondary"
+                display="block"
+                textAlign="center"
+                sx={{ mt: 2 }}
+            >
+                Supported file type: CSV
+            </Typography>
+        </Box>
+    );
+};
 
-
-                <Grid item xs={12} style={{ margin: "20px" }}>
-
-
-                    <Formik
-                        initialValues={initialValues}
-                        validationSchema={validationSchema}
-                        onSubmit={(values, { resetForm }) => formSubmission(values, { resetForm })}
-                    >
-                        {(props) => {
-                            const {
-                                values,
-                                dirty,
-                                isSubmitting,
-                                handleChange,
-                                handleSubmit,
-                                handleReset,
-                                setFieldValue,
-                            } = props;
-
-
-                            return (
-                                <>
-                                    <Form className="my-form">
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={12} md={12}>
-
-                                                <label htmlFor="file">Upload File</label>
-                                                <Field name="file" type="file"
-                                                    className="form-input"
-                                                    accept=".csv"
-                                                    onChange={(event) => {
-                                                        setFieldValue("attachments", (event.target.files[0]));
-                                                        setUploadedFile(event.target.files[0])
-                                                        fileSendValue(values.object, (event.target.files[0]))
-                                                    }}
-                                                />
-                                                <div style={{ color: 'red' }}>
-                                                    <ErrorMessage name="file" />
-                                                </div>
-                                            </Grid>
-                                        </Grid>
-                                    </Form>
-                                </>
-                            )
-                        }}
-                    </Formik>
-
-
-                </Grid>
-            }
-        </div>
-
-    )
-
-
-
-}
-export default ModalFileUpload
+export default FileUploadComponent;
