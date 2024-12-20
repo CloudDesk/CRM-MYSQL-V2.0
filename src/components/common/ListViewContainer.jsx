@@ -3,42 +3,57 @@ import WebListView from './WebListView';
 import MobileListView from './MobileListView';
 
 const ListViewContainer = ({
+
     isMobile,
     title,
     subtitle,
     records,
-    columns,
-    mobileFields,
-    loading,
-    permissionValues,
-    onAdd,
-    onView,
-    onDelete,
-    onMultipleDelete
+    columnConfigMobile,
+    columnConfigWeb,
+    onCreateRecord,
+    onEditRecord,
+    onDeleteRecord,
+    permissions,
+    isLoading,
+    isDeleteMode,
+    selectedRecordIds,
+    onToggleDeleteMode,
+    onSelectRecords,
+    ExcelDownload,
+    importConfig,
+
+
+
 }) => {
     // Common props for both views
     const commonProps = {
         title,
         subtitle,
         records,
-        onAdd,
-        onDelete
+        onCreateRecord,
+        onEditRecord,
+        permissions
     };
 
     return isMobile ? (
         <MobileListView
             {...commonProps}
-            fields={mobileFields}
-            onEdit={onView}
+            columnConfig={columnConfigMobile}
+            onDeleteRecord={permissions.delete ? handleDelete : null}
         />
     ) : (
         <WebListView
             {...commonProps}
-            columns={columns}
-            loading={loading}
-            permissionValues={permissionValues}
-            onView={onView}
-            onMultipleDelete={onMultipleDelete}
+            columnConfig={columnConfigWeb}
+            isLoading={isLoading}
+            isDeleteMode={isDeleteMode}
+            selectedRecordIds={selectedRecordIds}
+            onToggleDeleteMode={onToggleDeleteMode}
+            onSelectRecords={onSelectRecords}
+            onDeleteRecord={onDeleteRecord}
+            ExcelDownload={ExcelDownload}
+            importConfig={importConfig}
+
         />
     );
 };
