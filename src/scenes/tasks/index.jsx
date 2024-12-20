@@ -1,188 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { Box, Modal, IconButton, Tooltip, Pagination } from "@mui/material";
+import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ToastNotification from "../toast/ToastNotification";
-import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
+import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import SharedDataGrid from "../../components/SharedDataGrid";
-import {
-  DataGrid,
-  GridToolbar,
-  gridPageCountSelector,
-  gridPageSelector,
-  useGridApiContext,
-  useGridSelector,
-} from "@mui/x-data-grid";
-import { tokens } from "../../theme";
-import { useTheme } from "@mui/material";
-import { Button } from "@mui/material";
-import ExcelDownload from "../Excel";
-import { getPermissions } from "../Auth/getPermission";
-import NoAccess from "../NoAccess/NoAccess";
-import "../indexCSS/muiBoxStyles.css";
-import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
+import ListViewContainer from "../../components/common/ListViewContainer";
 
-const Task = () => {
-  const OBJECT_API = "Event";
-  const urlTask = `/Task`;
-  const urlDelete = `/deleteTask`;
+// Constants
+const CONSTANTS = {
+  OBJECT_NAME: 'Event',
+  ROUTES: {
+    TASK: '/Task',
+    DELETE_TASK: '/deleteTask',
+    NEW_TASK: '/new-task',
+    TASK_DETAIL: '/taskDetailPage',
+  },
+  TITLES: {
+    MAIN: 'Tasks',
+    WEB_SUBTITLE: 'List Of Tasks',
+    MOBILE_SUBTITLE: 'List of Tasks',
+  },
+  ERROR_MESSAGES: {
+    DELETE_MULTIPLE: 'Some tasks failed to delete',
+    DELETE_SINGLE: 'Failed to delete task',
+    DEFAULT: 'An error occurred',
+  },
+  SUCCESS_MESSAGES: {
+    DELETE_MULTIPLE: 'All tasks deleted successfully',
+    DELETE_SINGLE: 'Task deleted successfully',
+  },
+  IMPORT_CONFIG: {
+    objectName: 'Event',
+    isImport: false,
+    callBack: null,
+  },
+};
 
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
-  const navigate = useNavigate();
-  const [records, setRecords] = useState([]);
-  const [fetchLoading, setFetchLoading] = useState(true);
-  const [fetchError, setFetchError] = useState();
-  // notification
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  //dialog
-  const [confirmDialog, setConfirmDialog] = useState({
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
-
-  const [showDelete, setShowDelete] = useState(false);
-  const [selectedRecordIds, setSelectedRecordIds] = useState();
-  const [selectedRecordDatas, setSelectedRecordDatas] = useState();
-  const [permissionValues, setPermissionValues] = useState({});
-
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
-
-  useEffect(() => {
-    fetchRecords();
-    fetchPermissions();
-  }, []);
-
-  const fetchRecords = () => {
-    RequestServer("get", urlTask, {})
-      .then((res) => {
-        console.log(res, "index page res");
-        if (res.success) {
-          setRecords(res.data);
-          setFetchError(null);
-          setFetchLoading(false);
-        } else {
-          setRecords([]);
-          setFetchError(res.error.message);
-          setFetchLoading(false);
-        }
-      })
-      .catch((err) => {
-        setFetchError(err.message);
-        setFetchLoading(false);
-      });
-  };
-
-  const fetchPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, "res");
-          setPermissionValues(res);
-        })
-        .catch((error) => {
-          setPermissionValues({});
-        });
-    }
-    // const getPermission = getPermissions("Task")
-    // setPermissionValues(getPermission)
-  };
-
-  const handleAddRecord = () => {
-    navigate("/new-task", { state: { record: {} } });
-  };
-
-  const handleOnCellClick = (e) => {
-    console.log("selected record", e);
-    const item = e.row;
-    navigate(`/taskDetailPage/${item._id}`, { state: { record: { item } } });
-  };
-
-  const onHandleDelete = (e, row) => {
-    e.stopPropagation();
-    console.log("req delete rec", row);
-    setConfirmDialog({
-      isOpen: true,
-      title: `Are you sure to delete this Record ?`,
-      subTitle: "You can't undo this Operation",
-      onConfirm: () => {
-        onConfirmDeleteRecord(row);
-      },
-    });
-  };
-
-  const onConfirmDeleteRecord = (row) => {
-    if (row.length) {
-      console.log("if row", row);
-      row.forEach((element) => {
-        onebyoneDelete(element);
-      });
-    } else {
-      console.log("else", row._id);
-      onebyoneDelete(row._id);
-    }
-  };
-
-  const onebyoneDelete = async (row) => {
-    console.log("onebyoneDelete rec id", row);
-    try {
-      let res = await RequestServer("delete", `${urlDelete}/${row}`, {});
-      if (res.success) {
-        console.log("api delete response", res);
-        setNotify({
-          isOpen: true,
-          message: res.data,
-          type: "success",
-        });
-        fetchRecords();
-      } else {
-        console.log("api delete error", res);
-        setNotify({
-          isOpen: true,
-          message: res.error.message,
-          type: "error",
-        });
+// Table configuration
+const TABLE_CONFIG = {
+  mobileFields: [
+    { label: "Subject", key: "subject" },
+    {
+      label: "Related To", key: "realatedTo",
+      render: (value, row) => {
+        if (row?.object === "Account") return row?.accountname;
+        if (row?.object === "Enquiry") return row?.leadname;
+        if (row?.object === "Deals") return row?.opportunityname;
+        return "---";
       }
-    } catch (error) {
-      console.log("api delete error", error);
-      setNotify({
-        isOpen: true,
-        message: error.message,
-        type: "error",
-      });
-    } finally {
-      setConfirmDialog({
-        ...confirmDialog,
-        isOpen: false,
-      });
-    }
-  };
-
-  function CustomPagination() {
-    const apiRef = useGridApiContext();
-    const page = useGridSelector(apiRef, gridPageSelector);
-    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
-    return (
-      <Pagination
-        color="primary"
-        count={pageCount}
-        page={page + 1}
-        onChange={(event, value) => apiRef.current.setPage(value - 1)}
-      />
-    );
-  }
-
-  const columns = [
+    },
+    { label: "Object", key: "object" },
+  ],
+  columns: [
     {
       field: "subject",
       headerName: "Subject",
@@ -192,21 +63,19 @@ const Task = () => {
     },
     {
       field: "realatedTo",
-      headerName: "Realated To",
+      headerName: "Related To",
       headerAlign: "center",
       align: "center",
       flex: 1,
       renderCell: (params) => {
-        console.log(params.row, "params.row");
         if (params.row?.object === "Account") {
           return <div className="rowitem">{params.row?.accountname}</div>;
         } else if (params.row?.object === "Enquiry") {
           return <div className="rowitem">{params.row?.leadname}</div>;
         } else if (params.row.object === "Deals") {
           return <div className="rowitem">{params.row?.opportunityname}</div>;
-        } else {
-          <div className="rowitem">{null}</div>;
         }
+        return <div className="rowitem">---</div>;
       },
     },
     {
@@ -216,71 +85,172 @@ const Task = () => {
       align: "center",
       flex: 1,
     },
-  ];
-  if (permissionValues.delete) {
-    columns.push({
-      field: "actions",
-      headerName: "Actions",
-      headerAlign: "center",
-      align: "center",
-      width: 400,
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <>
-            {!showDelete ? (
-              <>
-                {/* <IconButton style={{ padding: '20px', color: '#0080FF' }}>
-                    <EditIcon onClick={(e) => handleOnCellClick(e, params.row)} />
-                  </IconButton> */}
-                <IconButton style={{ padding: "20px", color: "#FF3333" }}>
-                  <DeleteIcon onClick={(e) => onHandleDelete(e, params.row)} />
-                </IconButton>
-              </>
-            ) : (
-              ""
-            )}
-          </>
-        );
-      },
+  ],
+};
+
+const Tasks = () => {
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+
+  const [records, setRecords] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [permissions, setPermissions] = useState({});
+
+  useEffect(() => {
+    initializeComponent();
+  }, []);
+
+  const initializeComponent = async () => {
+    await Promise.all([
+      fetchRecords(),
+      fetchPermissions(),
+    ]);
+  };
+
+  const fetchRecords = async () => {
+    try {
+      const response = await RequestServer("get", CONSTANTS.ROUTES.TASK, {});
+      if (response.success) {
+        setRecords(response.data);
+        setFetchError(null);
+      } else {
+        setRecords([]);
+        setFetchError(response.error.message);
+      }
+    } catch (error) {
+      setFetchError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchPermissions = async () => {
+    if (!userRoleDept) return;
+    try {
+      const permissions = await apiCheckPermission(userRoleDept);
+      setPermissions(permissions);
+    } catch (error) {
+      console.error('Error fetching permissions:', error);
+      setPermissions({});
+    }
+  };
+
+  const handleCreateRecord = () => {
+    navigate(CONSTANTS.ROUTES.NEW_TASK, { state: { record: {} } });
+  };
+
+  const handleEditRecord = (event) => {
+    const item = event.row || event;
+    navigate(`${CONSTANTS.ROUTES.TASK_DETAIL}/${item._id}`, {
+      state: { record: { item } }
     });
-  }
+  };
+
+  const handleDelete = async (event, recordId) => {
+    event.stopPropagation();
+
+    if (Array.isArray(recordId)) {
+      return await handleBulkDelete(event, recordId);
+    }
+    return await handleSingleDelete(event, recordId);
+  };
+
+  const handleSingleDelete = async (event, recordId) => {
+    try {
+      const response = await RequestServer(
+        "delete",
+        `${CONSTANTS.ROUTES.DELETE_TASK}/${recordId}`,
+        {}
+      );
+
+      if (response.data) {
+        await fetchRecords();
+        return {
+          success: true,
+          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+        };
+      }
+
+      return {
+        success: false,
+        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+      };
+    }
+  };
+
+  const handleBulkDelete = async (event, recordIds) => {
+    const deleteResults = await Promise.all(
+      recordIds.map(id => handleSingleDelete(event, id))
+    );
+
+    const hasFailures = deleteResults.some(result => !result.success);
+
+    return {
+      success: !hasFailures,
+      message: hasFailures
+        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+    };
+  };
+
+  const getTableColumns = () => {
+    if (!permissions.delete) return TABLE_CONFIG.columns;
+
+    return [
+      ...TABLE_CONFIG.columns,
+      {
+        field: "actions",
+        headerName: "Actions",
+        headerAlign: "center",
+        align: "center",
+        width: 400,
+        flex: 1,
+        renderCell: (params) => (
+          !isDeleteMode && (
+            <IconButton
+              onClick={(e) => handleDelete(e, params.row._id)}
+              style={{ padding: "20px", color: "#FF3333" }}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )
+        ),
+      },
+    ];
+  };
 
   return (
-    <>
-      <ToastNotification notify={notify} setNotify={setNotify} />
-      <DeleteConfirmDialog
-        confirmDialog={confirmDialog}
-        setConfirmDialog={setConfirmDialog}
+    <Box>
+      <ListViewContainer
+        isMobile={isMobile}
+        title={CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        records={records}
+        onCreateRecord={handleCreateRecord}
+        onEditRecord={handleEditRecord}
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        permissions={permissions}
+        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        isLoading={isLoading}
+        isDeleteMode={isDeleteMode}
+        selectedRecordIds={selectedIds}
+        onToggleDeleteMode={setIsDeleteMode}
+        onSelectRecords={setSelectedIds}
+        ExcelDownload={ExcelDownload}
+        importConfig={CONSTANTS.IMPORT_CONFIG}
       />
-      {fetchLoading ? (
-        <SharedDataGridSkeleton />
-      ) : (
-        <Box>
-          {permissionValues.read ? (
-            <SharedDataGrid
-              title="Tasks"
-              subtitle="List Of Tasks"
-              records={records}
-              columns={columns}
-              loading={fetchLoading}
-              showDelete={showDelete}
-              permissionValues={permissionValues}
-              selectedRecordIds={selectedRecordIds}
-              handleImportModalOpen={null}
-              handleAddRecord={handleAddRecord}
-              handleDelete={onHandleDelete}
-              setShowDelete={setShowDelete}
-              setSelectedRecordIds={setSelectedRecordIds}
-              setSelectedRecordDatas={setSelectedRecordDatas}
-              handleOnCellClick={handleOnCellClick}
-              CustomPagination={CustomPagination}
-              ExcelDownload={ExcelDownload}
-            />
-          ) : null}
-        </Box>
-      )}
-    </>
+    </Box>
   );
 };
-export default Task;
+
+export default Tasks;

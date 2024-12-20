@@ -1,10 +1,5 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import ResponsiveAccounts from "../accounts/ResponsiveScreen";
-import ResponsiveContacts from "../contacts/ResponsiveScreen";
-import ResponsiveInventories from "../inventories/ResponsiveScreen";
-import ResponsiveTasks from "../tasks/ResponsiveScreen";
-import ResponsiveUsers from "../users/ResponsiveScreen";
 import ContactDetailPage from "../recordDetailPage/ContactDetailPage";
 import AccountDetailPage from "../recordDetailPage/AccountDetailPage";
 import LeadDetailPage from "../leads/Forms/LeadDetailPage";
@@ -20,14 +15,19 @@ import FlexOpportunities from "../Flex/FlexOpportunities";
 import FlexTasks from "../Flex/FlexTasks";
 import FileUploadUpdated from "../fileUpload/FileUpdated";
 import RoleDetailPage from "../recordDetailPage/RoleDetailPage";
-import RoleIndex from "../Roles";
+// import RoleIndex from "../Roles";
 import PermissionDetailPage from "../recordDetailPage/PermissionDetailPage";
 import PermissionSets from "../permissionSets";
 import PageNotFound from "../Errors/PageNotFound";
-import Files from "../Files/index";
+// import Files from "../Files/index";
 import { DashboardIndex } from "../dashboard/Dashboards";
 import Leads from "../leads";
 import Opportunities from "../opportunities";
+import Accounts from "../accounts";
+import Contacts from "../contacts";
+import Inventories from "../inventories";
+import Tasks from "../tasks";
+import Users from "../users";
 
 function LoginLayoutIndex(props) {
   return (
@@ -35,17 +35,18 @@ function LoginLayoutIndex(props) {
       <Routes>
         {/* <Route path="/" exact element={<StaticDashboardIndex />} /> */}
         <Route path="/" exact element={<DashboardIndex />} />
-        <Route path="/list/account" element={<ResponsiveAccounts />} />
-        <Route path="/list/contact" element={<ResponsiveContacts />} />
+        <Route path="/list/account" element={<Accounts />} />
+        <Route path="/list/contact" element={<Contacts />} />
         <Route path="/list/deals" element={<Opportunities />} />
         <Route path="/list/enquiry" element={<Leads />} />
-        <Route path="/list/inventory" element={<ResponsiveInventories />} />
-        <Route path="/list/event" element={<ResponsiveTasks />} />
-        <Route path="/list/user" element={<ResponsiveUsers />} />
-        <Route path="/list/role" element={<RoleIndex />} />
+        <Route path="/list/inventory" element={<Inventories />} />
+        <Route path="/list/event" element={<Tasks />} />
+        <Route path="/list/user" element={<Users />} />
         <Route path="/list/permissions" element={<PermissionSets />} />
-        <Route path="/list/file" element={<Files />} />
         <Route path="/list/dashboard" element={<DashboardIndex />} />
+
+        {/* <Route path="/list/file" element={<Files />} /> */}
+        {/* <Route path="/list/role" element={<RoleIndex />} /> */}
 
         <Route path="/new-contacts" element={<ContactDetailPage />} />
         <Route path="/new-users" element={<UserDetailPage />} />
