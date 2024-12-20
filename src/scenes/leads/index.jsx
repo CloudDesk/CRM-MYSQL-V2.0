@@ -6,10 +6,8 @@ import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import SharedDataGridSkeleton from "../../components/Skeletons/SharedDataGridSkeleton";
-import MobileListView from "../../components/common/MobileListView";
-import WebListView from "../../components/common/WebListView";
-import NoAccessPage from "../../components/NoAccessPage";
+import ListViewContainer from "../../components/common/ListViewContainer";
+
 
 
 // Constants
@@ -239,6 +237,40 @@ const Leads = () => {
     ];
   };
 
+  return (
+    <Box>
+      {/* {renderContent()} */}
+      <ListViewContainer
+        isMobile={isMobile}
+        title={CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        records={enquiryRecords}
+        onCreateRecord={handleCreateEnquiry}
+        onEditRecord={handleEnquiryDetail}
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        permissions={permissions}
+
+        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        isLoading={isLoading}
+        isDeleteMode={isDeleteMode}
+        selectedRecordIds={selectedIds}
+        onToggleDeleteMode={setIsDeleteMode}
+        onSelectRecords={setSelectedIds}
+        ExcelDownload={ExcelDownload}
+        importConfig={{
+          objectName: CONSTANTS.OBJECT_NAME,
+          isImport: true,
+          callBack: fetchEnquiryRecords,
+        }}
+      />
+    </Box>
+  );
+};
+
+export default Leads;
+
+
+/*
 
   // Render helpers
   const renderContent = () => {
@@ -286,12 +318,4 @@ const Leads = () => {
       }}
     />
   );
-
-  return (
-    <Box>
-      {renderContent()}
-    </Box>
-  );
-};
-
-export default Leads;
+*/

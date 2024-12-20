@@ -1,6 +1,8 @@
 import React from 'react';
 import WebListView from './WebListView';
 import MobileListView from './MobileListView';
+import SharedDataGridSkeleton from '../Skeletons/SharedDataGridSkeleton';
+import NoAccessPage from '../NoAccessPage';
 
 const ListViewContainer = ({
 
@@ -8,8 +10,7 @@ const ListViewContainer = ({
     title,
     subtitle,
     records,
-    columnConfigMobile,
-    columnConfigWeb,
+    columnConfig,
     onCreateRecord,
     onEditRecord,
     onDeleteRecord,
@@ -32,25 +33,32 @@ const ListViewContainer = ({
         records,
         onCreateRecord,
         onEditRecord,
-        permissions
+        permissions,
+        onDeleteRecord,
+        columnConfig
     };
+
+
+    if (isLoading) {
+        return <SharedDataGridSkeleton />;
+    }
+
+    if (!permissions.read) {
+        return <NoAccessPage />;
+    }
 
     return isMobile ? (
         <MobileListView
             {...commonProps}
-            columnConfig={columnConfigMobile}
-            onDeleteRecord={permissions.delete ? handleDelete : null}
         />
     ) : (
         <WebListView
             {...commonProps}
-            columnConfig={columnConfigWeb}
             isLoading={isLoading}
             isDeleteMode={isDeleteMode}
             selectedRecordIds={selectedRecordIds}
             onToggleDeleteMode={onToggleDeleteMode}
             onSelectRecords={onSelectRecords}
-            onDeleteRecord={onDeleteRecord}
             ExcelDownload={ExcelDownload}
             importConfig={importConfig}
 

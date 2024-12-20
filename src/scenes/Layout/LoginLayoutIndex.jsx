@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import ResponsiveAccounts from "../accounts/ResponsiveScreen";
 import ResponsiveContacts from "../contacts/ResponsiveScreen";
 import ResponsiveInventories from "../inventories/ResponsiveScreen";
-import ResponsiveLeads from "../leads/ResponsiveScreen";
 import ResponsiveOpportunities from "../opportunities/ResponsiveScreen";
 import ResponsiveTasks from "../tasks/ResponsiveScreen";
 import ResponsiveUsers from "../users/ResponsiveScreen";
