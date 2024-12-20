@@ -1,51 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { DynamicForm } from "../../../components/Form/DynamicForm";
-import {
-  generateOpportunityInitialValues,
-  metaDataFields,
-  opportunityFormFields,
-} from "../../formik/InitialValues/initialValues";
 import { apiCheckPermission } from "../../Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getLoginUserRoleDept } from "../../Auth/userRoleDept";
 import { RequestServer } from "../../api/HttpReq";
 import ToastNotification from "../../toast/ToastNotification";
-import { format } from "date-fns";
+import {
+  accountformfields,
+  generateAccountInitialValues,
+  metaDataFields,
+} from "../../formik/InitialValues/initialValues";
+import { da } from "date-fns/locale";
 
-const OBJECT_API = "Deals";
-const url = `/UpsertOpportunity`;
-// const fetchLeadsbyName = `/LeadsbyName`;
-// const fetchInventoriesbyName = `/InventoryName`;
+const OBJECT_API = "Account";
+const upsertAccountURL = `/UpsertAccount`;
 
-const DealDetailPage = ({ props }) => {
+const AccountDetailPage = ({ props }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log(location.state.record.item, "location.state.record.item");
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
   console.log(currentUser, "currentUser");
 
   console.log(props, "props");
-  const existingOpportunity = props;
+  const exisitingAccount = props;
 
-  const initialValues = generateOpportunityInitialValues(existingOpportunity);
-
-  const [permissionValues, setPermissionValues] = useState({});
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
     type: "",
   });
-
-  const formFields = [
-    ...opportunityFormFields,
-    ...(existingOpportunity ? metaDataFields : []),
-  ];
+  const [permissionValues, setPermissionValues] = useState({});
 
   const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
+    console.log("passed record", location.state.record.item);
     fetchObjectPermissions();
   }, []);
 
@@ -53,61 +44,71 @@ const DealDetailPage = ({ props }) => {
     if (userRoleDpt) {
       apiCheckPermission(userRoleDpt)
         .then((res) => {
+          console.log(res, " deals apiCheckPermission promise res");
           setPermissionValues(res);
         })
         .catch((err) => {
-          console.log(err, "res apiCheckPermission error");
+          console.log(err, "deals res apiCheckPermission error");
           setPermissionValues({});
         });
     }
   };
 
-  const handleSubmit = async (values, { isSubmitting }) => {
-    console.log(values, "values");
-    let dateSeconds = new Date().getTime();
-    let closeDateSec = existingOpportunity
-      ? existingOpportunity?.closedate
-      : new Date(values.closedate).getTime();
+  const initialValues = generateAccountInitialValues(exisitingAccount);
 
-    if (existingOpportunity) {
-      values._id = existingOpportunity._id;
-      values.closedate = closeDateSec;
+  const formFields = [
+    ...accountformfields,
+    ...(exisitingAccount ? metaDataFields : []),
+  ];
+  const handleSubmit = async (values, { isSubmitting }) => {
+    console.log("Account Form -> values", values);
+
+    let dateSeconds = new Date().getTime();
+    if (exisitingAccount) {
+      values._id = exisitingAccount._id;
+      //   values.inventoryid =
+      //     typeof values.inventoryname === "string"
+      //       ? exisitingAccount.inventoryid
+      //       : values.inventoryname.id;
+      values.createddate = exisitingAccount.createddate;
+      values.createdby = exisitingAccount.createdby;
       values.modifieddate = dateSeconds;
       values.modifiedby = currentUser;
-      values.createddate = existingOpportunity.createddate;
-      values.createdby = existingOpportunity.createdby;
-    } else if (!existingOpportunity) {
+    } else if (!exisitingAccount) {
+      //   values.inventoryid = values.inventoryname.id;
       values.createddate = dateSeconds;
       values.modifieddate = dateSeconds;
       values.createdby = currentUser;
       values.modifiedby = currentUser;
-      values.closedate = closeDateSec;
     }
-    console.log(values, "values after change");
+    console.log(values, "values after changing");
     try {
-      const response = await RequestServer("post", url, values);
+      const response = await RequestServer("post", upsertAccountURL, values);
       console.log(response, "response");
       if (response.success) {
         setNotify({
           isOpen: true,
-          message: "Opportunity saved successfully",
+          message: "Account created successfully",
           type: "success",
         });
         setTimeout(() => {
-          navigate("/list/deals");
+          navigate("/list/account");
         }, 1500);
       } else {
         setNotify({
           isOpen: true,
-          message: "Error saving Opportunity",
+          message: "Failed to create account",
           type: "error",
         });
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
+      setNotify({
+        isOpen: true,
+        message: "Failed to create account",
+        type: "error",
+      });
     }
-
-    console.log("after change form submission value", values);
   };
 
   return (
@@ -117,12 +118,14 @@ const DealDetailPage = ({ props }) => {
         fields={formFields}
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        formTitle={existingOpportunity ? "Edit Deal" : "New Deal"}
-        submitButtonText={existingOpportunity ? "Update Deal" : "Create Deal"}
+        formTitle={exisitingAccount ? "Edit Account" : "New Account"}
+        submitButtonText={
+          exisitingAccount ? "Update Account" : "Create Account"
+        }
         permissionValues={permissionValues}
       />
     </div>
   );
 };
 
-export default DealDetailPage;
+export default AccountDetailPage;

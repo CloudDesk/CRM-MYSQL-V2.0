@@ -266,17 +266,17 @@ const DynamicFormField = ({
   permissionValues,
 }) => {
   const { values, errors, touched, handleChange, setFieldValue } = formik;
-  // console.log(values, "values in DynamicFormField");
+  console.log(values, "values in DynamicFormField");
   const [dynamicOptions, setDynamicOptions] = useState([]);
 
   const fetchAutocompleteOptions = async (searchTerm) => {
     if (!field.fetchurl) return;
     let fetchurl;
-    if (field.fetchurl && field.searchfor) {
-      fetchurl = `${field.fetchurl}?${field.searchfor}=${searchTerm}`;
-    } else {
-      fetchurl = `${field.fetchurl}`;
-    }
+    // if (field.fetchurl && field.searchfor) {
+    //   fetchurl = `${field.fetchurl}?${field.searchfor}=${searchTerm}`;
+    // } else {
+    fetchurl = `${field.fetchurl}`;
+    // }
     try {
       const response = await RequestServer("get", fetchurl);
       console.log(response.data, "response from fetchAutocompleteOptions");

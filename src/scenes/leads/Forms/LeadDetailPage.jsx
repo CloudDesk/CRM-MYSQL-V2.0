@@ -83,6 +83,8 @@ const LeadDetailPage = ({ props }) => {
       values.modifiedby = currentUser;
     } else if (!existingLead) {
       console.log("inisde new lead");
+      values.leadid = values.leadname.id;
+      values.inventoryid = values.inventoryname.id;
       values.createddate = new Date().getTime();
       values.modifieddate = new Date().getTime();
       values.createdby = currentUser;
@@ -154,8 +156,8 @@ const LeadDetailPage = ({ props }) => {
         fields={formFields}
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        formTitle={existingLead ? "Edit Lead" : "New Lead"}
-        submitButtonText={existingLead ? "Update Lead" : "Create Lead"}
+        formTitle={existingLead ? "Edit Enquiry" : "New Enquiry"}
+        submitButtonText={existingLead ? "Update Enquiry" : "Create Enquiry"}
         permissionValues={permissionValues}
       />
     </div>

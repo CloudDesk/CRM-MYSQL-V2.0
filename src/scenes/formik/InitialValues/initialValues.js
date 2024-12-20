@@ -1,12 +1,58 @@
 import * as Yup from 'yup';
 import { format } from 'date-fns';
-import { IndustryPickList, LeadMonthPicklist, LeadsDemoPicklist, LeadSourcePickList, LeadStatusPicklist, OppStagePicklist, OppTypePicklist } from '../../../data/pickLists';
+import { AccRatingPickList, AccTypePickList, IndustryPickList, LeadMonthPicklist, LeadsDemoPicklist, LeadSourcePickList, LeadStatusPicklist, OppStagePicklist, OppTypePicklist } from '../../../data/pickLists';
 import { Grid, Typography } from '@mui/material';
 import { FetchInventoryData } from '../../../utility/FetchData/FetchInventoryData';
 
 const phoneRegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
-
+  // Metadata
+  export const metaDataFields = [{
+    name: 'createddate',
+    label: 'Created Date',
+    type: 'text',
+    xs: 12,
+    md: 6,
+    props: {
+      disabled: true
+    },
+    defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+  },
+  {
+    name: 'modifieddate',
+    label: 'Modified Date',
+    type: 'text',
+    xs: 12,
+    md: 6,
+    props: {
+      disabled: true
+    },
+    defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+  },
+  {
+    name: 'createdby',
+    label: 'Created By',
+    type: 'text',
+    xs: 12,
+    md: 6,
+    props: {
+      disabled: true
+    },
+  },
+  {
+    name: 'modifiedby',
+    label: 'Modified By',
+    type: 'text',
+    xs: 12,
+    md: 6,
+    props: {
+      disabled: true
+    },    
+  },
+  
+  // Additional Notes
+ 
+];
 
 // Lead Initial Values
 export const leadFormFields = [
@@ -204,53 +250,7 @@ export const leadFormFields = [
     }
   }
 ]
-  // Metadata
-  export const metaDataFields = [{
-    name: 'createddate',
-    label: 'Created Date',
-    type: 'text',
-    xs: 12,
-    md: 6,
-    props: {
-      disabled: true
-    },
-    defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
-  },
-  {
-    name: 'modifieddate',
-    label: 'Modified Date',
-    type: 'text',
-    xs: 12,
-    md: 6,
-    props: {
-      disabled: true
-    },
-    defaultValue: () => format(new Date(), 'yyyy-MM-dd HH:mm:ss')
-  },
-  {
-    name: 'createdby',
-    label: 'Created By',
-    type: 'text',
-    xs: 12,
-    md: 6,
-    props: {
-      disabled: true
-    },
-  },
-  {
-    name: 'modifiedby',
-    label: 'Modified By',
-    type: 'text',
-    xs: 12,
-    md: 6,
-    props: {
-      disabled: true
-    },    
-  },
-  
-  // Additional Notes
- 
-];
+
 
 export const generateLeadInitialValues = (existingLead = {}) => {
     console.log(existingLead,"existingLead");
@@ -271,7 +271,7 @@ export const generateLeadInitialValues = (existingLead = {}) => {
   
       // Created By
       defaultValues.createdby = existingLead.createdby
-        ? existingLead.createdby.userFullName  + " " + format(existingLead.createddate,"MM/dd/yyyy")
+        ? existingLead.createdby.userFullName  + " - " + format(existingLead.createddate,"MMMM dd, yyyy hh:mm a")
         // {
         //     userId: existingLead.createdby.userId || 0,
         //     userName: existingLead.createdby.userName || '',
@@ -284,7 +284,7 @@ export const generateLeadInitialValues = (existingLead = {}) => {
       // Modified By
       defaultValues.modifiedby = existingLead.modifiedby
         ? 
-        existingLead.modifiedby.userFullName  + " " + format(existingLead.modifieddate,"MM/dd/yyyy")
+        existingLead.modifiedby.userFullName  + " - " + format(existingLead.modifieddate,"MMMM dd, yyyy hh:mm a")
         // {
         //     userId: existingLead.modifiedby.userId || 0,
         //     userName: existingLead.modifiedby.userName || '',
@@ -501,21 +501,198 @@ export const generateLeadInitialValues = (existingLead = {}) => {
       defaultValues.createddate = format(existingOpportunity.createddate, 'MM/dd/yyyy') ?? Date.now();
       defaultValues.modifieddate = format(existingOpportunity.modifieddate, 'MM/dd/yyyy') ?? Date.now();
       if(existingOpportunity.inventoryname !== null){
-        defaultValues.inventoryname = JSON.parse(existingOpportunity.inventoryname).label ?? '';
-      }
+        defaultValues.inventoryname = existingOpportunity.inventoryname.startsWith("{") 
+        ? JSON.parse(existingOpportunity.inventoryname).label || existingOpportunity.inventoryname 
+        : existingOpportunity.inventoryname;
+            }
         if(existingOpportunity.leadname !== null){
-        defaultValues.leadname = JSON.parse(existingOpportunity.leadname).label ?? '';
+          defaultValues.leadname = existingOpportunity.leadname.startsWith("{") 
+          ? JSON.parse(existingOpportunity.leadname).label || existingOpportunity.leadname 
+          : existingOpportunity.leadname;
         }
       // Created By
       defaultValues.createdby = existingOpportunity.createdby
-        ? existingOpportunity.createdby.userFullName + " " + format(existingOpportunity.createddate, "MM/dd/yyyy")
+        ? existingOpportunity.createdby.userFullName + " - " + format(existingOpportunity.createddate, "MMMM dd, yyyy hh:mm a")
         : null;
   
       // Modified By
       defaultValues.modifiedby = existingOpportunity.modifiedby
-        ? existingOpportunity.modifiedby.userFullName + " " + format(existingOpportunity.modifieddate, "MM/dd/yyyy")
+        ? existingOpportunity.modifiedby.userFullName + " - " + format(existingOpportunity.modifieddate, "MMMM dd, yyyy hh:mm a")
         : null;
     }
   
     return defaultValues;
   };
+
+  // Account Initial Values
+
+  export const accountformfields = [
+    {
+      name: "accountname",
+      label: "Account Name",
+      type: "text",
+      required: true,
+      xs: 12,
+      md: 6,
+      validator: Yup.string()
+        .min(2, "Account name must be at least 2 characters")
+        .max(100, "Account name must be less than 100 characters")
+        .required("Account Name is required"),
+      props: {
+        placeholder: "Enter Account Name",
+      },
+    },
+    {
+      name: "accountnumber",
+      label: "Account Number",
+      type: "text",
+      xs: 12,
+      md: 6,
+      validator: Yup.string().max(20, "Account Number must be less than 20 characters"),
+      props: {
+        placeholder: "Enter Account Number",
+      },
+    },
+    {
+      name:'inventoryname',
+      label:'Inventory Name',
+      type:'autocomplete',
+      xs:12,
+      md:6,
+      fetchurl:`/InventoryName`,
+      searchfor:"propertyname",
+      options:[],
+
+    },
+    {
+      name: "annualrevenue",
+      label: "Annual Revenue",
+      type: "number",
+      xs: 12,
+      md: 6,
+      validator: Yup.number()
+        .positive("Annual Revenue must be a positive number")
+        .nullable(),
+      props: {
+        placeholder: "Enter Annual Revenue",
+      },
+    },
+    {
+      name: "phone",
+      label: "Phone",
+      type: "text",
+      xs: 12,
+      md: 6,
+      validator: Yup.string().matches(
+        /^[+]?[0-9]*$/,
+        "Phone must contain only numbers and optional '+'"
+      ),
+      props: {
+        placeholder: "Enter Phone Number",
+      },
+    },
+    {
+      name: "rating",
+      label: "Rating",
+      type: "select",
+      xs: 12,
+      md: 6,
+      options: AccRatingPickList, // Define or import ratingpicklist
+      props: {
+        displayEmpty: true,
+      },
+    },
+    {
+      name: "type",
+      label: "Account Type",
+      type: "select",
+      xs: 12,
+      md: 6,
+      options: AccTypePickList, // Define or import accounttypepicklist
+      props: {
+        displayEmpty: true,
+      },
+    },
+   
+    {
+      name: "industry",
+      label: "Industry",
+      type: "select",
+      xs: 12,
+      md: 6,
+      options: IndustryPickList, // Define or import industrypicklist
+      props: {
+        displayEmpty: true,
+      },
+    },
+    {
+      name: "billingcountry",
+      label: "Billing Country",
+      type: "text",
+      xs: 12,
+      md: 6,
+      props: {
+        placeholder: "Enter Billing Country",
+      },
+    },
+    {
+      name: "billingcity",
+      label: "Billing City",
+      type: "text",
+      xs: 12,
+      md: 6,
+      props: {
+        placeholder: "Enter Billing City",
+      },
+    },
+    {
+      name: "billingaddress",
+      label: "Billing Address",
+      type: "text",
+      multiline: true,
+      xs: 12,
+      props: {
+        multiline: true,
+        rows: 3,
+        placeholder: "Enter Billing Address",
+      },
+    },
+    
+    // {
+    //   name: "inventoryid",
+    //   label: "Inventory ID",
+    //   type: "text",
+    //   xs: 12,
+    //   md: 6,
+    //   props: {
+    //     placeholder: "Enter Inventory ID",
+    //   },
+    // },
+  ];
+  
+  export const generateAccountInitialValues = (existingAccount = {}) => {
+    console.log(existingAccount,"existingAccount from generateAccountInitialValues");
+    const defaultValues = accountformfields.reduce((acc, field) => {
+      acc[field.name] = existingAccount[field.name] ?? "";
+      return acc;
+    }, {});
+  
+    if (Object.keys(existingAccount).length > 0) {
+      defaultValues.inventoryname = existingAccount.inventoryname.startsWith("{") ? JSON.parse(existingAccount.inventoryname).label || existingAccount.inventoryname : existingAccount.inventoryname;
+      defaultValues.createddate = format(existingAccount.createddate, "MM/dd/yyyy") ?? Date.now();
+      defaultValues.modifieddate = format(existingAccount.modifieddate, "MM/dd/yyyy") ?? Date.now();
+        // Created By
+        defaultValues.createdby = existingAccount.createdby
+        ? existingAccount.createdby.userFullName + " - " + format(existingAccount.createddate, "MMMM dd, yyyy hh:mm a")
+        : null;
+  
+      // Modified By
+      defaultValues.modifiedby = existingAccount.modifiedby
+        ? existingAccount.modifiedby.userFullName + " - " + format(existingAccount.modifieddate, "MMMM dd, yyyy hh:mm a")
+
+        : null;
+    }
+  
+    return defaultValues;
+  };
+  
