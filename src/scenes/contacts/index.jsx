@@ -10,29 +10,29 @@ import ListViewContainer from "../../components/common/ListViewContainer";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Contact',
+  OBJECT_NAME: "Contact",
   ROUTES: {
-    CONTACTS: '/contacts',
-    DELETE_CONTACT: '/deleteContact',
-    NEW_CONTACT: '/new-contacts',
-    CONTACT_DETAIL: '/contactDetailPage',
+    CONTACTS: "/contacts",
+    DELETE_CONTACT: "/deleteContact",
+    NEW_CONTACT: "/new-contacts",
+    CONTACT_DETAIL: "/contactDetailPage",
   },
   TITLES: {
-    MAIN: 'Contacts',
-    WEB_SUBTITLE: 'List Of Contacts',
-    MOBILE_SUBTITLE: 'List of Contacts',
+    MAIN: "Contacts",
+    WEB_SUBTITLE: "List Of Contacts",
+    MOBILE_SUBTITLE: "List of Contacts",
   },
   ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some contacts failed to delete',
-    DELETE_SINGLE: 'Failed to delete contact',
-    DEFAULT: 'An error occurred',
+    DELETE_MULTIPLE: "Some contacts failed to delete",
+    DELETE_SINGLE: "Failed to delete contact",
+    DEFAULT: "An error occurred",
   },
   SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All contacts deleted successfully',
-    DELETE_SINGLE: 'Contact deleted successfully',
+    DELETE_MULTIPLE: "All contacts deleted successfully",
+    DELETE_SINGLE: "Contact deleted successfully",
   },
   IMPORT_CONFIG: {
-    objectName: 'Contact',
+    objectName: "Contact",
     isImport: false,
     callBack: null,
   },
@@ -43,20 +43,20 @@ const TABLE_CONFIG = {
   mobileFields: [
     {
       key: "lastname",
-      label: "Last Name"
+      label: "Last Name",
     },
     {
       key: "accountname",
-      label: "Account Name"
+      label: "Account Name",
     },
     {
       key: "phone",
-      label: "Phone"
+      label: "Phone",
     },
     {
       key: "email",
-      label: "Email"
-    }
+      label: "Email",
+    },
   ],
   columns: [
     {
@@ -74,7 +74,13 @@ const TABLE_CONFIG = {
       flex: 1,
       renderCell: (params) => {
         if (params.row.accountname) {
-          return <div className="rowitem">{params.row.accountname}</div>;
+          return (
+            <div className="rowitem">
+              {params.row.accountname.startsWith("{")
+                ? JSON.parse(params.row.accountname).label
+                : params.row.accountname || ""}
+            </div>
+          );
         }
         return <div className="rowitem">{null}</div>;
       },
@@ -129,16 +135,17 @@ const Contacts = () => {
 
   // Initialization
   const initializeComponent = async () => {
-    await Promise.all([
-      fetchContactRecords(),
-      fetchPermissions(),
-    ]);
+    await Promise.all([fetchContactRecords(), fetchPermissions()]);
   };
 
   // Fetches the list of contacts
   const fetchContactRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.CONTACTS, {});
+      const response = await RequestServer(
+        "get",
+        CONSTANTS.ROUTES.CONTACTS,
+        {}
+      );
       if (response.success) {
         setContactRecords(response.data);
         setFetchError(null);
@@ -159,7 +166,7 @@ const Contacts = () => {
       const permissions = await apiCheckPermission(userRoleDept);
       setPermissions(permissions);
     } catch (error) {
-      console.error('Error fetching permissions:', error);
+      console.error("Error fetching permissions:", error);
       setPermissions({});
     }
   };
@@ -172,7 +179,7 @@ const Contacts = () => {
   const handleContactDetail = (event) => {
     const contact = event.row || event;
     navigate(`${CONSTANTS.ROUTES.CONTACT_DETAIL}/${contact._id}`, {
-      state: { record: { item: contact } }
+      state: { record: { item: contact } },
     });
   };
 
@@ -216,10 +223,10 @@ const Contacts = () => {
 
   const handleBulkDelete = async (event, recordIds) => {
     const deleteResults = await Promise.all(
-      recordIds.map(id => handleSingleDelete(event, id))
+      recordIds.map((id) => handleSingleDelete(event, id))
     );
 
-    const hasFailures = deleteResults.some(result => !result.success);
+    const hasFailures = deleteResults.some((result) => !result.success);
 
     return {
       success: !hasFailures,
@@ -242,7 +249,7 @@ const Contacts = () => {
         align: "center",
         width: 400,
         flex: 1,
-        renderCell: (params) => (
+        renderCell: (params) =>
           !isDeleteMode && (
             <IconButton
               onClick={(e) => handleDelete(e, params.row._id)}
@@ -250,8 +257,7 @@ const Contacts = () => {
             >
               <DeleteIcon />
             </IconButton>
-          )
-        ),
+          ),
       },
     ];
   };
@@ -261,11 +267,17 @@ const Contacts = () => {
       <ListViewContainer
         isMobile={isMobile}
         title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        subtitle={
+          isMobile
+            ? CONSTANTS.TITLES.MOBILE_SUBTITLE
+            : CONSTANTS.TITLES.WEB_SUBTITLE
+        }
         records={contactRecords}
         onCreateRecord={handleCreateContact}
         onEditRecord={handleContactDetail}
-        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        onDeleteRecord={
+          isMobile ? (permissions.delete ? handleDelete : null) : handleDelete
+        }
         permissions={permissions}
         columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}

@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import {
+  Box,
   TextField,
   Select,
   MenuItem,
@@ -20,7 +21,11 @@ import {
   FormHelperText,
   ThemeProvider,
   createTheme,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNavigate } from "react-router-dom";
 import { RequestServer } from "../../scenes/api/HttpReq";
 
@@ -192,7 +197,7 @@ const elegantTheme = createTheme({
         root: {
           borderRadius: 12,
           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-          padding: "32px",
+          padding: "25px",
           transition: "box-shadow 0.3s ease",
           "&:hover": {
             boxShadow: "0 12px 32px rgba(0,0,0,0.12)",
@@ -245,15 +250,16 @@ const elegantTheme = createTheme({
 const generateValidationSchema = (fields) => {
   const schemaFields = {};
 
-  fields.forEach((field) => {
-    let validator = field.validator || Yup.mixed();
+  Array.isArray(fields) &&
+    fields?.forEach((field) => {
+      let validator = field.validator || Yup.mixed();
 
-    if (field.required) {
-      validator = validator.required(`${field.label} is required`);
-    }
+      if (field.required) {
+        validator = validator.required(`${field.label} is required`);
+      }
 
-    schemaFields[field.name] = validator;
-  });
+      schemaFields[field.name] = validator;
+    });
 
   return Yup.object().shape(schemaFields);
 };
@@ -264,10 +270,43 @@ const DynamicFormField = ({
   formik,
   customComponents = {},
   permissionValues,
+  fields,
+  onFieldChange, // Add this new prop
 }) => {
   const { values, errors, touched, handleChange, setFieldValue } = formik;
-  console.log(values, "values in DynamicFormField");
+  // console.log(values, "values in DynamicFormField");
+
   const [dynamicOptions, setDynamicOptions] = useState([]);
+
+  const getNestedValue = (obj, path) => {
+    return path.split(".").reduce((acc, part) => {
+      // Handle array notation like "permissionsets[0]"
+      const arrayMatch = part.match(/(\w+)\[(\d+)\]/);
+      if (arrayMatch) {
+        const [_, arrayName, index] = arrayMatch;
+        return (acc?.[arrayName] || [])[parseInt(index, 10)];
+      }
+      return acc?.[part];
+    }, obj);
+  };
+
+  // Create a wrapper for handleChange that will call both Formik's handleChange and our custom onFieldChange
+  const handleFieldChange = (e) => {
+    handleChange(e); // Original Formik handleChange
+    if (onFieldChange) {
+      onFieldChange(field.name, e.target.value, setFieldValue); // Call the custom handler
+    }
+  };
+
+  // Create a wrapper for setFieldValue that includes our custom onFieldChange
+  const handleSetFieldValue = (name, value) => {
+    console.log(`Setting field value for ${name} to ${value}`);
+    setFieldValue(name, value);
+    if (onFieldChange) {
+      console.log("inside onFieldChange");
+      onFieldChange(name, value, setFieldValue);
+    }
+  };
 
   const fetchAutocompleteOptions = async (searchTerm) => {
     if (!field.fetchurl) return;
@@ -313,7 +352,7 @@ const DynamicFormField = ({
           label={field.label}
           type={field.type}
           value={values[field.name] || ""}
-          onChange={handleChange}
+          onChange={handleFieldChange} // Use the new wrapper
           error={touched[field.name] && Boolean(errors[field.name])}
           helperText={touched[field.name] && errors[field.name]}
           disabled={!permissionValues.edit}
@@ -322,26 +361,64 @@ const DynamicFormField = ({
       );
 
     case "select":
+      const handleSelectChange = async (e) => {
+        const value = e.target.value;
+        handleFieldChange(e); // Use the new wrapper
+
+        if (field.onChange && typeof field.onChange === "function") {
+          await field.onChange(value, formik);
+        }
+
+        // Handle dependent fields
+        if (field.onChange) {
+          const dependentField = fields.find((f) => f.name === field.onChange);
+          if (dependentField && dependentField.dependsOn) {
+            const options = dependentField.dependsOn.options[value] || [];
+            // First set field value to empty
+            setFieldValue(`${dependentField.name}`, "");
+            // Then set the options in a separate field
+            setFieldValue(`${dependentField.name}Options`, options);
+          }
+        }
+      };
+
+      // Get options - either static or dynamic
+      // Get options - either from dynamic options or static options
+      const selectOptions =
+        values[`${field.name}Options`] || field.options || [];
       return (
         <FormControl
           fullWidth
           error={touched[field.name] && Boolean(errors[field.name])}
-          disabled={!permissionValues.edit}
+          disabled={
+            !permissionValues.edit ||
+            (field.dependsOn && !values[field.dependsOn.field])
+          }
         >
           <InputLabel>{field.label}</InputLabel>
           <Select
-            disabled={!permissionValues.edit}
+            disabled={
+              !permissionValues.edit ||
+              (field.dependsOn && !values[field.dependsOn.field])
+            }
             name={field.name}
             label={field.label}
             value={values[field.name] || ""}
-            onChange={handleChange}
+            onChange={handleSelectChange}
             {...field.props}
           >
-            {field.options.map((option) => (
-              <MenuItem key={option.text} value={option.value}>
-                {option.value}
-              </MenuItem>
-            ))}
+            {/* <MenuItem value="">
+              <em>Select {field.label}</em>
+            </MenuItem> */}
+            {Array.isArray(selectOptions) &&
+              selectOptions.map((option) => (
+                <MenuItem
+                  key={option.value || option}
+                  value={option.value || option}
+                >
+                  {option.label || option.text || option || option.value}
+                </MenuItem>
+              ))}
           </Select>
           {touched[field.name] && errors[field.name] && (
             <FormHelperText>{errors[field.name]}</FormHelperText>
@@ -384,8 +461,11 @@ const DynamicFormField = ({
           control={
             <Checkbox
               disabled={!permissionValues.edit}
-              checked={!!values[field.name]}
-              onChange={(e) => setFieldValue(field.name, e.target.checked)}
+              checked={!!getNestedValue(values, field.name)} // Make sure the field name is unique for each checkbox
+              onChange={(e) => {
+                // Use Formik's setFieldValue to update the specific checkbox state
+                handleSetFieldValue(field.name, e.target.checked);
+              }}
               {...field.props}
             />
           }
@@ -413,9 +493,12 @@ const DynamicFormField = ({
         <Autocomplete
           disabled={!permissionValues.edit}
           options={field.fetchurl ? dynamicOptions : field.options || []}
-          getOptionLabel={(option) =>
-            typeof option === "string" ? option : option.label || option.value
-          }
+          getOptionLabel={(option) => {
+            console.log(option, "option from getOptionLabel autocomplete");
+            return typeof option === "string"
+              ? option
+              : option.label || option.value;
+          }}
           value={values[field.name] || null}
           onInputChange={(_, newValue) => {
             if (field.fetchurl) fetchAutocompleteOptions(newValue);
@@ -500,12 +583,24 @@ export const DynamicForm = ({
   formProps = {},
   gridProps = { spacing: 2 },
   permissionValues,
+  renderActionButtons,
+  onFieldChange, // Add this new prop
+  formref,
 }) => {
+  console.log(formref, "formref in DynamicForm");
+  console.log(fields, "fields in DynamicForm");
   console.log(permissionValues, "permissionValues in DynamicForm");
+  console.log(renderActionButtons, "renderActionButtons in DynamicForm");
   // Generate validation schema if not provided
   const schema = useMemo(() => {
     return validationSchema || generateValidationSchema(fields);
   }, [fields, validationSchema]);
+
+  const [expanded, setExpanded] = useState(false);
+
+  const handleAccordionChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false);
+  };
 
   const navigate = useNavigate();
   return (
@@ -518,20 +613,31 @@ export const DynamicForm = ({
           ...formProps.paperSx,
         }}
       >
-        {formTitle && (
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{
-              mb: 3,
-              textAlign: "center",
-              borderBottom: "2px solid #3A5A8C",
-              paddingBottom: 1.5,
-            }}
-          >
-            {formTitle}
-          </Typography>
-        )}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 3,
+            borderBottom: "2px solid #3A5A8C",
+            paddingBottom: 1.5,
+          }}
+        >
+          {formTitle && (
+            <Typography
+              variant="h4"
+              sx={{
+                flex: 1,
+                textAlign: "center",
+              }}
+            >
+              {formTitle}
+            </Typography>
+          )}
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {renderActionButtons && renderActionButtons()}
+          </Box>
+        </Box>
 
         <Formik
           initialValues={initialValues}
@@ -540,18 +646,112 @@ export const DynamicForm = ({
           enableReinitialize
         >
           {(formik) => (
-            <Form {...formProps}>
+            <Form ref={formref} {...formProps}>
               <Grid container {...gridProps} spacing={3}>
-                {fields.map((field) => (
-                  <Grid item xs={field.xs || 12} md={field.md} key={field.name}>
-                    <DynamicFormField
-                      field={field}
-                      formik={formik}
-                      customComponents={customComponents}
-                      permissionValues={permissionValues}
-                    />
-                  </Grid>
-                ))}
+                {Array.isArray(fields) &&
+                  fields.map((field) => {
+                    if (field.type === "section") {
+                      return (
+                        <Grid item xs={12} key={`accordion-${field.name}`}>
+                          <Accordion
+                            expanded={expanded === field.name}
+                            onChange={handleAccordionChange(field.name)}
+                          >
+                            <AccordionSummary
+                              expandIcon={<ExpandMoreIcon />}
+                              aria-controls={`${field.name}-content`}
+                              id={`${field.name}-header`}
+                            >
+                              <Typography variant="h6">
+                                {field.label}
+                              </Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: 10,
+                                }}
+                              >
+                                {field.sections.map((section, sectionIndex) => (
+                                  <Box key={section.object} sx={{ mb: 3 }}>
+                                    <Typography
+                                      variant="subtitle1"
+                                      sx={{
+                                        mb: 2,
+                                        pb: 1,
+                                        borderBottom: "1px solid #eee",
+                                        fontWeight: "bold",
+                                      }}
+                                    >
+                                      {section.object}
+                                    </Typography>
+                                    <Grid container spacing={1}>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          flexWrap: "wrap",
+                                          gap: 10,
+                                          width: "100%",
+                                          justifyContent: "space-between",
+                                        }}
+                                      >
+                                        {section.fields.map((subField) => {
+                                          const uniqueName = `permissionsets[${sectionIndex}].permissions.${subField.name}`;
+
+                                          return (
+                                            <div
+                                              key={`${section.object}-${subField.name}`}
+                                            >
+                                              <DynamicFormField
+                                                field={{
+                                                  ...subField,
+                                                  name: uniqueName, // Ensure this field name is unique for each checkbox
+                                                }}
+                                                formik={formik}
+                                                customComponents={
+                                                  customComponents
+                                                }
+                                                permissionValues={
+                                                  permissionValues
+                                                }
+                                                fields={fields}
+                                                onFieldChange={onFieldChange}
+                                              />
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </Grid>
+                                  </Box>
+                                ))}
+                              </div>
+                            </AccordionDetails>
+                          </Accordion>
+                        </Grid>
+                      );
+                    } else {
+                      return (
+                        <Grid
+                          item
+                          xs={field.xs || 12}
+                          md={field.md}
+                          key={field.name}
+                        >
+                          <DynamicFormField
+                            field={field}
+                            formik={formik}
+                            customComponents={customComponents}
+                            permissionValues={permissionValues}
+                            fields={fields}
+                            onFieldChange={onFieldChange}
+                          />
+                        </Grid>
+                      );
+                    }
+                  })}
 
                 <Grid
                   item

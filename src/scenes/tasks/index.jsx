@@ -10,29 +10,29 @@ import ListViewContainer from "../../components/common/ListViewContainer";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Event',
+  OBJECT_NAME: "Event",
   ROUTES: {
-    TASK: '/Task',
-    DELETE_TASK: '/deleteTask',
-    NEW_TASK: '/new-task',
-    TASK_DETAIL: '/taskDetailPage',
+    TASK: "/Task",
+    DELETE_TASK: "/deleteTask",
+    NEW_TASK: "/new-task",
+    TASK_DETAIL: "/taskDetailPage",
   },
   TITLES: {
-    MAIN: 'Tasks',
-    WEB_SUBTITLE: 'List Of Tasks',
-    MOBILE_SUBTITLE: 'List of Tasks',
+    MAIN: "Tasks",
+    WEB_SUBTITLE: "List Of Tasks",
+    MOBILE_SUBTITLE: "List of Tasks",
   },
   ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some tasks failed to delete',
-    DELETE_SINGLE: 'Failed to delete task',
-    DEFAULT: 'An error occurred',
+    DELETE_MULTIPLE: "Some tasks failed to delete",
+    DELETE_SINGLE: "Failed to delete task",
+    DEFAULT: "An error occurred",
   },
   SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All tasks deleted successfully',
-    DELETE_SINGLE: 'Task deleted successfully',
+    DELETE_MULTIPLE: "All tasks deleted successfully",
+    DELETE_SINGLE: "Task deleted successfully",
   },
   IMPORT_CONFIG: {
-    objectName: 'Event',
+    objectName: "Event",
     isImport: false,
     callBack: null,
   },
@@ -43,13 +43,14 @@ const TABLE_CONFIG = {
   mobileFields: [
     { label: "Subject", key: "subject" },
     {
-      label: "Related To", key: "realatedTo",
+      label: "Related To",
+      key: "realatedto",
       render: (value, row) => {
         if (row?.object === "Account") return row?.accountname;
         if (row?.object === "Enquiry") return row?.leadname;
         if (row?.object === "Deals") return row?.opportunityname;
         return "---";
-      }
+      },
     },
     { label: "Object", key: "object" },
   ],
@@ -62,7 +63,7 @@ const TABLE_CONFIG = {
       flex: 1,
     },
     {
-      field: "realatedTo",
+      field: "realatedto",
       headerName: "Related To",
       headerAlign: "center",
       align: "center",
@@ -106,10 +107,7 @@ const Tasks = () => {
   }, []);
 
   const initializeComponent = async () => {
-    await Promise.all([
-      fetchRecords(),
-      fetchPermissions(),
-    ]);
+    await Promise.all([fetchRecords(), fetchPermissions()]);
   };
 
   const fetchRecords = async () => {
@@ -135,7 +133,7 @@ const Tasks = () => {
       const permissions = await apiCheckPermission(userRoleDept);
       setPermissions(permissions);
     } catch (error) {
-      console.error('Error fetching permissions:', error);
+      console.error("Error fetching permissions:", error);
       setPermissions({});
     }
   };
@@ -147,7 +145,7 @@ const Tasks = () => {
   const handleEditRecord = (event) => {
     const item = event.row || event;
     navigate(`${CONSTANTS.ROUTES.TASK_DETAIL}/${item._id}`, {
-      state: { record: { item } }
+      state: { record: { item } },
     });
   };
 
@@ -190,10 +188,10 @@ const Tasks = () => {
 
   const handleBulkDelete = async (event, recordIds) => {
     const deleteResults = await Promise.all(
-      recordIds.map(id => handleSingleDelete(event, id))
+      recordIds.map((id) => handleSingleDelete(event, id))
     );
 
-    const hasFailures = deleteResults.some(result => !result.success);
+    const hasFailures = deleteResults.some((result) => !result.success);
 
     return {
       success: !hasFailures,
@@ -215,7 +213,7 @@ const Tasks = () => {
         align: "center",
         width: 400,
         flex: 1,
-        renderCell: (params) => (
+        renderCell: (params) =>
           !isDeleteMode && (
             <IconButton
               onClick={(e) => handleDelete(e, params.row._id)}
@@ -223,8 +221,7 @@ const Tasks = () => {
             >
               <DeleteIcon />
             </IconButton>
-          )
-        ),
+          ),
       },
     ];
   };
@@ -234,11 +231,17 @@ const Tasks = () => {
       <ListViewContainer
         isMobile={isMobile}
         title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        subtitle={
+          isMobile
+            ? CONSTANTS.TITLES.MOBILE_SUBTITLE
+            : CONSTANTS.TITLES.WEB_SUBTITLE
+        }
         records={records}
         onCreateRecord={handleCreateRecord}
         onEditRecord={handleEditRecord}
-        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
+        onDeleteRecord={
+          isMobile ? (permissions.delete ? handleDelete : null) : handleDelete
+        }
         permissions={permissions}
         columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}

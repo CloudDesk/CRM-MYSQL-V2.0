@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from "react";
 import PropTypes from 'prop-types';
 import { Box, Grid, Button, DialogActions } from "@mui/material";
 import { useLocation, useNavigate } from 'react-router-dom';
-import InventoryDetailPage from "../recordDetailPage/InventoryDetailPage";
+// import InventoryDetailPage from "../recordDetailPage/InventoryDetailPage";
+import InventoryDetailPage from "../inventories/Forms/InventoryDetailPage";
 import InventoryRelatedItems from "../inventories/RelatedItems";
 
 function Item(props) {

@@ -161,7 +161,6 @@ const PermissiionSetForm = ({ item }) => {
     let dateSeconds = new Date().getTime();
     // let createDateSec = new Date(values.createdDate).getTime();
 
-
     // values.roleDetails = values.roleDetails;
     // values.permissionSets = JSON.stringify(values.permissionSets);
     values.permissionsets = JSON.stringify(values.permissionsets);
@@ -317,7 +316,6 @@ const PermissiionSetForm = ({ item }) => {
                             : !permissionValues.edit
                         }
                         className="form-customSelect"
-
                       >
                         <MenuItem value="">
                           <em>None</em>
@@ -341,7 +339,6 @@ const PermissiionSetForm = ({ item }) => {
                             : !permissionValues.edit
                         }
                         className="form-customSelect"
-
                       >
                         <MenuItem value="">
                           <em>None</em>
