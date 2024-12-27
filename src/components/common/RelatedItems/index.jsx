@@ -166,6 +166,7 @@ const RelatedItems = ({
                             onConfirm: () => handleDelete(section, item._id)
                         });
                     }}
+                    icon={section.icon}
                 />
             ))}
 
