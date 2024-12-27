@@ -1,6 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Card, CardContent, Box, Button, Typography, Modal
@@ -14,8 +12,6 @@ import ToastNotification from '../toast/ToastNotification';
 import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
 import '../recordDetailPage/Form.css'
 import { RequestServer } from "../api/HttpReq";
-import { getPermissions } from "../Auth/getPermission";
-import NoAccess from "../NoAccess/NoAccess";
 import NoAccessCard from "../NoAccess/NoAccessCard";
 import {apiCheckPermission} from '../Auth/apiCheckPermission'
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';

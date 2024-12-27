@@ -1,25 +1,62 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Card, CardContent, Box, Button, Typography, Modal
-  , IconButton, Grid, Accordion, AccordionSummary, AccordionDetails, Pagination, Menu, MenuItem
-} from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React from "react";
 import ModalAccTask from "../tasks/ModalAccTask";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import ToastNotification from "../toast/ToastNotification";
 import ModalConAccount from "../contacts/ModalConAccount";
-import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
-import '../recordDetailPage/Form.css'
-import { RequestServer } from "../api/HttpReq";
-import { getPermissions } from "../Auth/getPermission";
-import NoAccessCard from "../NoAccess/NoAccessCard";
-import {apiCheckPermission} from '../Auth/apiCheckPermission'
-import { getLoginUserRoleDept } from '../Auth/userRoleDept';
+import RelatedItems from "../../components/common/RelatedItems";
 
 
-const AccountRelatedItems = ({ item }) => {
+const AccountRelatedItems = ({ props }) => {
+console.log("AccountRelatedItems",props)
+const exisitingAccount = props;
+  const sections = [
+    {
+      key: 'task',
+      title: 'Event Logs',
+      objectApi: 'Enquiry',
+      fetchUrl: '/getTaskbyAccountId?accountid=',
+      deleteUrl: '/deleteTask',
+      detailUrl: '/taskDetailPage',
+      displayFields: [
+        { key: 'subject', label: 'Subject' },
+        { 
+          key: 'startdate', 
+          label: 'Date&Time',
+          format: (date) => date ? new Date(date).toLocaleDateString() : '---'
+        },
+        { key: 'description', label: 'Description' }
+      ]
+    },
+    {
+      key: 'contact',
+      title: 'Contacts',
+      objectApi: 'Contact',
+      fetchUrl: '/getContactsbyAccountId?accountid=',
+      detailUrl:'/contactDetailPage',
+      deleteUrl:'/deleteContact',
+      displayFields: [
+        { key: 'fullname', label: 'Name' },
+        { key: 'phone', label: 'Phone' },
+        { key: 'email', label: 'Email' }
+      ],
+     
+    }
+  ];
 
+  const modals = [
+    {
+      key: 'task',
+      component: ModalAccTask
+    },
+    {
+      key: 'contact',
+      component: ModalConAccount
+    }
+  ];
+  return <RelatedItems parentId={exisitingAccount._id} sections={sections} modals={modals} />;
+ 
+}
+export default AccountRelatedItems
+
+  /*
   const OBJECT_API_task="Enquiry"
   const OBJECT_API_contact="Contact"
   const taskDeleteURL = `/deleteTask`;
@@ -439,7 +476,7 @@ const AccountRelatedItems = ({ item }) => {
         </AccordionDetails>
       </Accordion>
 
-      {/* Contact table */}
+      // Contact table 
       <Accordion >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
@@ -552,7 +589,9 @@ const AccountRelatedItems = ({ item }) => {
           <ModalAccTask handleModal={handleTaskModalClose} />
         </div>
       </Modal>
-      {/* Contact Modal*/}
+
+
+     // Contact Modal
 
       <Modal
         open={contactModalOpen}
@@ -561,18 +600,15 @@ const AccountRelatedItems = ({ item }) => {
         aria-describedby="modal-modal-description"
         sx={{ backdropFilter: "blur(1px)" }}
       >
-        {/* <Box sx={ModalStyle}> */}
         <div className="modal">
           <ModalConAccount handleModal={handleConatctModalClose} />
-          {/* </Box> */}
         </div>
       </Modal>
 
     </>
-  )
+  )*/
 
-}
-export default AccountRelatedItems
+
 
 
 

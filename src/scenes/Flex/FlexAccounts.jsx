@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { Box, Grid, Button, DialogActions } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Box, Grid, } from "@mui/material";
+import { useLocation, } from "react-router-dom";
 
 // import AccountDetailPage from "../recordDetailPage/AccountDetailPage";
 import AccountDetailPage from "../accounts/Forms/AccountDetailPage";
 import AccountRelatedItems from "../accounts/RelatedItems";
+import Loader from "../../components/Loader";
 
 function Item(props) {
   const { sx, ...other } = props;
@@ -44,11 +45,16 @@ Item.propTypes = {
 const FlexAccounts = (item) => {
   const [passedRecord, setPassedRecord] = useState();
   const location = useLocation();
-
+  console.log("flex acc")
   useEffect(() => {
     console.log("passed record", location.state.record.item);
     setPassedRecord(location.state.record.item);
-  }, []);
+  }, [location.state]);
+
+
+  if (!passedRecord) {
+    return <Loader />
+  }
 
   return (
     <div style={{ width: "100%" }}>

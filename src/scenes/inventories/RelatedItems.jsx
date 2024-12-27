@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Card, CardContent, Box, Button, Typography, Modal
@@ -12,7 +12,6 @@ import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
 import ModalInventoryAccount from "../accounts/ModalAccountInventory";
 import '../recordDetailPage/Form.css'
 import { RequestServer } from "../api/HttpReq";
-import { getPermissions } from "../Auth/getPermission";
 import NoAccessCard from "../NoAccess/NoAccessCard";
 import {apiCheckPermission} from '../Auth/apiCheckPermission'
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';

@@ -21,7 +21,7 @@ import { TaskInitialValues } from "../formik/InitialValues/formValues";
 const UpsertUrl = `/UpsertTask`;
 const fetchUsersbyName = `/usersByName`;
 
-const ModalAccTask = ({ item, handleModal }) => {
+const ModalAccTask = ({ handleModal, parentId, onSuccess }) => {
 
     const [taskParentRecord, setTaskParentRecord] = useState();
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
@@ -102,6 +102,7 @@ const ModalAccTask = ({ item, handleModal }) => {
                     message: res.data,
                     type: 'success'
                 })
+                onSuccess();
             })
             .catch((error) => {
                 console.log('task form Submission  error', error);
@@ -117,6 +118,8 @@ const ModalAccTask = ({ item, handleModal }) => {
                 }, 2000)
             })
     }
+
+
 
     return (
         <Grid item xs={12} style={{ margin: "20px" }}>

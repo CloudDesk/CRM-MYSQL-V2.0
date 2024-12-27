@@ -10,8 +10,6 @@ import {
   metaDataFields,
   TaskFormFields,
 } from "../../formik/InitialValues/initialValues";
-import { de } from "date-fns/locale";
-import { format } from "date-fns";
 
 const OBJECT_API = "Event";
 const TaskUpsertURL = `/UpsertTask`;

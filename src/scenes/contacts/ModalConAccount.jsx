@@ -18,7 +18,7 @@ import { ContactInitialValues } from "../formik/InitialValues/formValues";
 
 const UpsertUrl = `/UpsertContact`;
 
-const ModalConAccount = ({ item, handleModal }) => {
+const ModalConAccount = ({ handleModal, parentId, onSuccess }) => {
 
     const [accountParentRecord, setAccountParentRecord] = useState();
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
@@ -87,6 +87,7 @@ const ModalConAccount = ({ item, handleModal }) => {
                         message: res.data,
                         type: 'success'
                     })
+                    onSuccess();
                 } else {
                     setNotify({
                         isOpen: true,

@@ -6,7 +6,7 @@ import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import ListViewContainer from "../../components/common/ListViewContainer";
+import ListViewContainer from "../../components/common/ListView/ListViewContainer";
 
 // Constants
 const CONSTANTS = {
