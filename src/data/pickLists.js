@@ -175,6 +175,7 @@ export const TaskObjectPicklist = [
 
 export const UserRolePicklist = [
   // {text:'None',value:''},
+  { text: "Admin", value: "Admin" },
   { text: "CEO", value: "CEO" },
   { text: "Sales Director", value: "Sales Director" },
   { text: "Sales Manager", value: "Sales Manager" },
@@ -233,16 +234,16 @@ export const RolesCategories = [
   { text: "M", value: "M" },
   { text: "TL", value: "TL" },
   { text: "Rep", value: "Rep" },
- 
+
 ];
 
-export const RolesDepartment=[
-    { text: "Sales", value: "Sales" },
-    { text: "Operation", value: "Operation" },
-    { text: "Marketing", value: "Marketing" },
+export const RolesDepartment = [
+  { text: "Sales", value: "Sales" },
+  { text: "Operation", value: "Operation" },
+  { text: "Marketing", value: "Marketing" },
 ]
 
-export const Objects=[
+export const Objects = [
   { text: "Account", value: "Account" },
   { text: "Contact", value: "Contact" },
   { text: "Opportunity", value: "Opportunity" },
@@ -250,18 +251,18 @@ export const Objects=[
   { text: "Inventory", value: "Inventory" },
 ]
 
-export const TaskStatus=[
-  {text:'Open',value:'Open'},
-  {text:'Working',value:'Working'},
-  {text:'Closed',value:'Closed'},
+export const TaskStatus = [
+  { text: 'Open', value: 'Open' },
+  { text: 'Working', value: 'Working' },
+  { text: 'Closed', value: 'Closed' },
 ]
 
-export const DashboardChartTypePicklist=[  
-  {text:'Line',value:'line'},
-  {text:'Bar',value:'bar'},
-  {text:'Pie',value:'pie'},
-  {text:'Donut',value:'donut'},
-  {text:'Radar',value:'radar'},
-  {text:'RadialBar',value:'radialBar'},  
-  {text:'PolarArea',value:'polarArea'},  
+export const DashboardChartTypePicklist = [
+  { text: 'Line', value: 'line' },
+  { text: 'Bar', value: 'bar' },
+  { text: 'Pie', value: 'pie' },
+  { text: 'Donut', value: 'donut' },
+  { text: 'Radar', value: 'radar' },
+  { text: 'RadialBar', value: 'radialBar' },
+  { text: 'PolarArea', value: 'polarArea' },
 ]

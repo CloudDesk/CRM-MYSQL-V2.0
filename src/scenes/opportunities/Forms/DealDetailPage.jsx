@@ -65,9 +65,7 @@ const DealDetailPage = ({ props }) => {
   const handleSubmit = async (values, { isSubmitting }) => {
     console.log(values, "values");
     let dateSeconds = new Date().getTime();
-    let closeDateSec = existingOpportunity
-      ? existingOpportunity?.closedate
-      : new Date(values.closedate).getTime();
+    let closeDateSec = new Date(values.closedate).getTime();
 
     if (existingOpportunity) {
       values._id = existingOpportunity._id;
