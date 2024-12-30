@@ -8,9 +8,9 @@ const AccountRelatedItems = ({ props }) => {
   const exisitingAccount = props;
   const sections = [
     {
-      key: 'task',
+      key: 'event',
       title: 'Event Logs',
-      objectApi: 'Enquiry',
+      objectApi: 'Event',
       fetchUrl: '/getTaskbyAccountId?accountid=',
       deleteUrl: '/deleteTask',
       detailUrl: '/taskDetailPage',
@@ -44,7 +44,7 @@ const AccountRelatedItems = ({ props }) => {
 
   const modals = [
     {
-      key: 'task',
+      key: 'event',
       component: ModalAccTask
     },
     {

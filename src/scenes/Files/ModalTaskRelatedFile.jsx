@@ -5,15 +5,18 @@ import {
 import ToastNotification from "../toast/ToastNotification";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import { POST_FILE } from "../api/endUrls";
+import { OBJECT_API_EVENT, POST_FILE } from "../api/endUrls";
 import { RequestServerFiles } from "../api/HttpReqFiles";
 import { apiMethods } from "../api/methods";
 import './FileModal.css'
+import { useLocation } from "react-router-dom";
 
 const URL_postRecords = `/upsertfiles`
 
-const ModalTaskFileUpload = ({ record, handleModal }) => {
-
+const ModalTaskFileUpload = ({ handleModal }) => {
+    const location = useLocation();
+    console.log(location.state, "ModalTaskFileUpload")
+    const record = location.state.record.item;
     console.log(record, "record ModalTaskFileUpload")
 
     const [notify, setNotify] = useState({ isOpen: false, message: "", type: "", });
@@ -29,7 +32,7 @@ const ModalTaskFileUpload = ({ record, handleModal }) => {
     const handleUploadButtonClick = () => {
         let dateSeconds = new Date().getTime();
         let userDetails = (sessionStorage.getItem("loggedInUser"))
-        let relatedObj = { id: record.taskId, object: record.OBJECT_API }
+        let relatedObj = { id: record.taskId || record._id, object: record.OBJECT_API || OBJECT_API_EVENT }
 
         const commonFormData = new FormData();
         commonFormData.append("relatedto", JSON.stringify(relatedObj));
@@ -37,7 +40,7 @@ const ModalTaskFileUpload = ({ record, handleModal }) => {
         commonFormData.append("modifieddate", dateSeconds);
         commonFormData.append("createdby", (userDetails));
         commonFormData.append("modifiedby", (userDetails));
-        commonFormData.append("eventid", (record.taskId));
+        commonFormData.append("eventid", (record.taskId || record._id));
 
         selectedFiles.forEach((file) => {
             const formData = new FormData();

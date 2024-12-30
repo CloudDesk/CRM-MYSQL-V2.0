@@ -1,24 +1,71 @@
-import React, { useEffect, useState, } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Card, CardContent, Box, Button, Typography, Modal
-  , IconButton, Grid, Accordion, AccordionSummary, AccordionDetails, Pagination, Menu, MenuItem
-} from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import React from "react";
 import ModalInventoryOpportunity from "../opportunities/ModalInventoryOpp";
-import ToastNotification from "../toast/ToastNotification";
-import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
 import ModalInventoryAccount from "../accounts/ModalAccountInventory";
-import '../recordDetailPage/Form.css'
-import { RequestServer } from "../api/HttpReq";
-import NoAccessCard from "../NoAccess/NoAccessCard";
-import {apiCheckPermission} from '../Auth/apiCheckPermission'
-import { getLoginUserRoleDept } from '../Auth/userRoleDept';
+import RelatedItems from "../../components/common/RelatedItems";
 
 
-const InventoryRelatedItems = ({ item }) => {
+const InventoryRelatedItems = ({ props }) => {
 
+  const existingInventory = props;
+  
+  const sections = [
+    {
+      key: 'deal',
+      title: 'Deal',
+      objectApi: 'Deals',
+      fetchUrl: '/getOpportunitiesbyInvid?inventoryid=',
+      deleteUrl: '/deleteOpportunity',
+      detailUrl: '/opportunityDetailPage',
+      icon: 'deal',
+      displayFields: [
+        { key: 'opportunityname', label: 'Name' },
+        { key: 'stage', label: 'Stage' },
+        { 
+          key: 'closedate', 
+          label: 'Close Date',
+          format: (date) => date ? new Date(date).toLocaleDateString() : '---'
+        }
+      ],
+    },
+    {
+      key: 'account',
+      title: 'Accounts',
+      objectApi: 'Account',
+      fetchUrl: '/getAccountbyInventory?inventoryid=',
+      deleteUrl: '/deleteAccount',
+      detailUrl: '/accountDetailPage',
+      icon: 'account',
+      displayFields: [
+        { key: 'accountname', label: 'Name' },
+        { key: 'accountnumber', label: 'Account Number' },
+        { key: 'rating', label: 'Rating' }
+      ],
+    }
+  ];
+
+  const modals = [
+    {
+      key: 'deal',
+      component: ModalInventoryOpportunity
+    },
+    {
+      key: 'account',
+      component: ModalInventoryAccount
+    }
+  ];
+
+  return (
+    <RelatedItems
+      parentId={existingInventory._id} 
+      sections={sections} 
+      modals={modals}
+    />
+  );
+
+}
+export default InventoryRelatedItems
+
+  /*
   const OBJECT_API_account="Account"
   const OBJECT_API_opportunity="Deals"
   const opportunityDeleteURL = `/deleteOpportunity`;
@@ -543,9 +590,8 @@ const InventoryRelatedItems = ({ item }) => {
         sx={{ backdropFilter: "blur(1px)" }}
       >
         <div className="modal">
-          {/* <Box sx={ModalStyle}> */}
           <ModalInventoryOpportunity handleModal={handleOpportunityModalClose} />
-          {/* </Box> */}
+    
         </div>
       </Modal>
 
@@ -557,9 +603,8 @@ const InventoryRelatedItems = ({ item }) => {
         sx={{ backdropFilter: "blur(1px)" }}
       >
         <div className="modal">
-          {/* <Box sx={ModalStyle}> */}
           <ModalInventoryAccount handleModal={handleAccountModalClose} />
-          {/* </Box> */}
+    
         </div>
       </Modal>
 
@@ -569,7 +614,7 @@ const InventoryRelatedItems = ({ item }) => {
 
 }
 export default InventoryRelatedItems
-
+*/
 
 
 

@@ -1,39 +1,31 @@
-import { Box, CardContent, Grid, IconButton, Menu, MenuItem, Typography } from "@mui/material";
-import { useState } from "react";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Box, CardContent, IconButton, Typography } from "@mui/material";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ContactsIcon from '@mui/icons-material/Contacts';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import EventIcon from '@mui/icons-material/Event';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import { useState } from "react";
 
 // Icon mapping
 const ICON_MAP = {
-    'task': EventIcon,
+    'event': EventIcon,
     'contact': ContactsIcon,
-    // Add more icon mappings as needed
+    'account': AccountBoxIcon,
+    'deal': LocalOfferIcon,
 };
 
 // Common ItemCard component for rendering individual items
 const ItemCard = ({ item, onEdit, onDelete, permissions, displayFields, sectionIcon }) => {
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [menuOpen, setMenuOpen] = useState(false);
-
-    const handleMenuClick = (event) => {
-        setAnchorEl(event.currentTarget);
-        setMenuOpen(true);
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        setMenuOpen(false);
-    };
-    console.log(sectionIcon, "sectionIcon")
+    const [isViewHovered, setIsViewHovered] = useState(false);
+    const [isDeleteHovered, setIsDeleteHovered] = useState(false);
 
     // Get the icon component
     const IconComponent = ICON_MAP[sectionIcon] || AssignmentIcon;
 
-    console.log(IconComponent, sectionIcon, "IconComponent")
     return (
         <CardContent
             sx={{
@@ -52,14 +44,14 @@ const ItemCard = ({ item, onEdit, onDelete, permissions, displayFields, sectionI
                         width: 40,
                         height: 40,
                         borderRadius: "50%",
-                        bgcolor: "primary.light",
+                        bgcolor: "#f0f0f0",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         mr: 2
                     }}
                 >
-                    <IconComponent sx={{ color: 'white' }} />
+                    <IconComponent sx={{ color: '#666' }} />
                 </Box>
                 <Box sx={{ flexGrow: 1 }}>
                     {displayFields.map((field, index) => (
@@ -89,24 +81,54 @@ const ItemCard = ({ item, onEdit, onDelete, permissions, displayFields, sectionI
                         <IconButton
                             size="small"
                             onClick={() => onEdit(item)}
+                            onMouseEnter={() => setIsViewHovered(true)}
+                            onMouseLeave={() => setIsViewHovered(false)}
                             sx={{
                                 bgcolor: "background.paper",
-                                '&:hover': { bgcolor: "action.hover" }
+                                border: 'none',
+                                '&:hover': {
+                                    bgcolor: "rgba(25, 118, 210, 0.04)",
+                                }
                             }}
                         >
-                            <VisibilityOutlinedIcon fontSize="small" />
+                            {isViewHovered ? (
+                                <VisibilityIcon
+                                    fontSize="small"
+                                    sx={{ color: '#1976d2' }}
+                                />
+                            ) : (
+                                <VisibilityOutlinedIcon
+                                    fontSize="small"
+                                    sx={{ color: '#1976d2' }}
+                                />
+                            )}
                         </IconButton>
                     )}
                     {permissions.delete && (
                         <IconButton
                             size="small"
                             onClick={(e) => onDelete(e, item)}
+                            onMouseEnter={() => setIsDeleteHovered(true)}
+                            onMouseLeave={() => setIsDeleteHovered(false)}
                             sx={{
                                 bgcolor: "background.paper",
-                                '&:hover': { bgcolor: "action.hover" }
+                                border: 'none',
+                                '&:hover': {
+                                    bgcolor: "rgba(211, 47, 47, 0.04)",
+                                }
                             }}
                         >
-                            <DeleteOutlineIcon fontSize="small" />
+                            {isDeleteHovered ? (
+                                <DeleteIcon
+                                    fontSize="small"
+                                    sx={{ color: '#d32f2f' }}
+                                />
+                            ) : (
+                                <DeleteOutlineIcon
+                                    fontSize="small"
+                                    sx={{ color: '#d32f2f' }}
+                                />
+                            )}
                         </IconButton>
                     )}
                 </Box>
@@ -118,6 +140,18 @@ const ItemCard = ({ item, onEdit, onDelete, permissions, displayFields, sectionI
 export default ItemCard;
 
 /*
+ // const [anchorEl, setAnchorEl] = useState(null);
+    // const [menuOpen, setMenuOpen] = useState(false);
+
+    // const handleMenuClick = (event) => {
+    //     setAnchorEl(event.currentTarget);
+    //     setMenuOpen(true);
+    // };
+
+    // const handleMenuClose = () => {
+    //     setAnchorEl(null);
+    //     setMenuOpen(false);
+    // };
   <CardContent>
   <Grid container spacing={2}>
                 <Grid item xs={10} md={10}>
