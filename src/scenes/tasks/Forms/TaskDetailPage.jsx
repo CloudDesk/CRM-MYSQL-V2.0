@@ -30,6 +30,7 @@ const TaskDetailPage = ({ props }) => {
     type: "",
   });
   const [permissionValues, setPermissionValues] = useState({});
+  const [relatedToOptions, setRelatedToOptions] = useState([]);
 
   const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
@@ -55,10 +56,46 @@ const TaskDetailPage = ({ props }) => {
 
   const initialValues = generateTaskInitialValues(existingTask);
 
+  const fetchRelatedToOptions = async (object) => {
+    const urlMap = {
+      Account: fetchAccountUrl,
+      Enquiry: fetchLeadUrl,
+      Deals: fetchOpportunityUrl,
+    };
+
+    const fetchUrl = urlMap[object];
+    console.log(fetchUrl, "fetchUrl");
+    if (!fetchUrl) return [];
+    try {
+      const response = await RequestServer("get", fetchUrl);
+      console.log(response.data, "response.data from fetchRelatedToOptions");
+      return response.data.map((item) => ({
+        value: item.fullname || item.opportunityname || item.accountname,
+        label: item.fullname || item.opportunityname || item.accountname,
+      }));
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    if (existingTask) {
+      fetchRelatedToOptions(existingTask.object).then((options) => {
+        setRelatedToOptions(options);
+        initialValues.relatedto = existingTask.relatedto;
+      });
+    }
+  }, [existingTask, existingTask?.object]);
+
   const formFields = [
     ...TaskFormFields(existingTask),
     ...(existingTask ? metaDataFields : []),
   ];
+
+  const fetchAccountUrl = `/accountsname`;
+  const fetchLeadUrl = `/LeadsbyName`;
+  const fetchOpportunityUrl = `/opportunitiesbyName`;
 
   const handleSubmit = async (values) => {
     console.log(values, "handleSubmit values from TaskDetailPage");
@@ -119,7 +156,12 @@ const TaskDetailPage = ({ props }) => {
     <div>
       <ToastNotification notify={notify} setNotify={setNotify} />
       <DynamicForm
-        fields={formFields}
+        fields={formFields.map(field => {
+          if (field.name === "relatedto") {
+            field.options = relatedToOptions;
+          }
+          return field;
+        })}
         initialValues={initialValues}
         onSubmit={handleSubmit}
         formTitle={existingTask ? "Edit Task" : "New Task"}

@@ -69,12 +69,16 @@ const TABLE_CONFIG = {
       align: "center",
       flex: 1,
       renderCell: (params) => {
+        console.log(params, "params from related to bind");
         if (params.row?.object === "Account") {
-          return <div className="rowitem">{params.row?.accountname}</div>;
+          // return <div className="rowitem">{params.row?.accountname}</div>;
+          return <div className="rowitem">{params.row?.relatedto}</div>;
         } else if (params.row?.object === "Enquiry") {
-          return <div className="rowitem">{params.row?.leadname}</div>;
+          // return <div className="rowitem">{params.row?.leadname}</div>;
+          return <div className="rowitem">{params.row?.relatedto}</div>;
         } else if (params.row.object === "Deals") {
-          return <div className="rowitem">{params.row?.opportunityname}</div>;
+          // return <div className="rowitem">{params.row?.opportunityname}</div>;
+          return <div className="rowitem">{params.row?.relatedto}</div>;
         }
         return <div className="rowitem">---</div>;
       },

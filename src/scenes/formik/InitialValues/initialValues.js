@@ -1245,6 +1245,7 @@ const fetchOpportunityUrl = `/opportunitiesbyName`;
 const fetchUsersbyName = `/usersByName`;
 
 export const TaskFormFields = (isExistingTask = false) => {
+  console.log(isExistingTask, "isExistingTask from TaskFormFields");
   const fields = [
     {
       name: "subject", // Lowercase key
@@ -1265,7 +1266,7 @@ export const TaskFormFields = (isExistingTask = false) => {
       md: 6,
       options: TaskObjectPicklist,
       onChange: async (value, formik) => {
-        console.log(value,"value");
+        console.log(value,"value from object onchange");
         // Reset the relatedto field when object changes
         formik.setFieldValue('relatedto', '');
         
@@ -1302,6 +1303,7 @@ export const TaskFormFields = (isExistingTask = false) => {
         placeholder: "Select Object"
       }
     },
+   
     {
       name: "relatedto",
       label: "Related To",
@@ -1364,10 +1366,18 @@ export const TaskFormFields = (isExistingTask = false) => {
         placeholder: "Enter Description",
       },
     },
-    
-   
   ];
 
+  if(isExistingTask){
+    fields.map(field => {
+      if(field.name === "relatedto"){
+        field.options = [];
+      }
+
+      return field;
+    }
+    )
+  }
      
 
   return fields;
@@ -1382,15 +1392,11 @@ export const generateTaskInitialValues = (existingTask = {}) => {
     return acc;
   }, {});
 
-  // fetch the related to items based on the object
- fetchRelatedToOptions(existingTask.object)
-  .then(relatedOptions => {
-      console.log(relatedOptions,"relatedOptions from generateTaskInitialValues");
-      defaultValues.relatedToOptions = relatedOptions;
-  })
-  .catch(error => {
-      console.error('Error:', error);
+if(existingTask.object){
+  fetchRelatedToOptions(existingTask.object).then((options) => {
+    defaultValues.relatedtoOptions = options;
   });
+}
 
   if (Object.keys(existingTask).length > 0) {
     // defaultValues.relatedToOptions = relatedToOptions;
