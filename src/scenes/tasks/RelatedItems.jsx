@@ -23,7 +23,13 @@ const TaskRelatedItems = ({ props }) => {
         { key: 'filename', label: 'File Name' },
         { key: 'size', label: 'Size', format: (size) => (size / 1024).toFixed(2) + ' KB' },
 
-      ]
+      ],
+      onItemClick: (item) => {
+        console.log(item, "onItemClick")
+        if (item.fileurl) {
+          window.open(item.fileurl, '_blank');
+        }
+      }
     }
   ];
 
@@ -34,7 +40,7 @@ const TaskRelatedItems = ({ props }) => {
       component: ModalTaskFileUpload
     }
   ];
-
+  console.log(existingTask, "existingTask")
   return (
     <RelatedItems
       parentId={existingTask._id}

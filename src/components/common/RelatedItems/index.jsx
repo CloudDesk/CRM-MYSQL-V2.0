@@ -140,6 +140,17 @@ const RelatedItems = ({
         }
     };
 
+    const handleItemClick = (section, item) => {
+        if (section.onItemClick) {
+            section.onItemClick(item);
+        } else {
+            navigate(`${section.detailUrl}/${item._id}`, {
+                state: { record: { item } }
+            });
+        }
+    };
+
+
     return (
         <div>
             <Typography variant="h2" sx={{ textAlign: "center", mb: 2 }}>
@@ -154,9 +165,7 @@ const RelatedItems = ({
                     permissions={permissions[section.key] || {}}
                     displayFields={section.displayFields}
                     onAdd={() => setModalStates(prev => ({ ...prev, [section.key]: true }))}
-                    onEdit={(item) => navigate(`${section.detailUrl}/${item._id}`, {
-                        state: { record: { item } }
-                    })}
+                    onEdit={(item) => handleItemClick(section, item)}
                     onDelete={(e, item) => {
                         e.stopPropagation();
                         setConfirmDialog({
