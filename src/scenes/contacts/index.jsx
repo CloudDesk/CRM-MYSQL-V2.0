@@ -11,7 +11,7 @@ import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.contact.name,
+  OBJECT_NAME: appConfig.objects.contact.apiName,
   ROUTES: {
     CONTACTS: appConfig.objects.contact.base,
     DELETE_CONTACT: appConfig.objects.contact.delete,
@@ -19,9 +19,9 @@ const CONSTANTS = {
     CONTACT_DETAIL: appConfig.objects.contact.detail,
   },
   TITLES: {
-    MAIN: appConfig.objects.contact.name,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.contact.name}`,
-    MOBILE_SUBTITLE: `List of ${appConfig.objects.contact.name}`,
+    MAIN: appConfig.objects.contact.apiName,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.contact.name.plural}`,
+    MOBILE_SUBTITLE: `List of  ${appConfig.objects.contact.name.plural}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: "Some contacts failed to delete",

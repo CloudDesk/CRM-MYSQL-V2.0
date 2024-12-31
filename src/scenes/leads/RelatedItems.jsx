@@ -32,7 +32,7 @@ const existingLead = props
       objectApi: appConfig.objects.opportunity.apiName ||'Deals',
       fetchUrl: appConfig.objects.lead.r_opportunity,
       deleteUrl: appConfig.objects.opportunity.delete,
-      detailUrl:appConfig.objects.opportunity.delete,
+      detailUrl:appConfig.objects.opportunity.detail,
       icon: 'deal',
       displayFields: [
         { key: 'opportunityname', label: 'Deal Name' },

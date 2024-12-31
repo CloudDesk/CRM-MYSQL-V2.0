@@ -11,17 +11,17 @@ import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.account.apiName,
+  OBJECT_NAME: appConfig.objects.inventory.apiName,
   ROUTES: {
-    INVENTORY: appConfig.objects.account.base,
-    DELETE_INVENTORY: appConfig.objects.account.delete || '/deleteInventory',
-    NEW_INVENTORY: appConfig.objects.account.new || '/new-inventories',
-    INVENTORY_DETAIL: appConfig.objects.account.detail || '/inventoryDetailPage',
+    INVENTORY: appConfig.objects.inventory.base,
+    DELETE_INVENTORY: appConfig.objects.inventory.delete || '/deleteInventory',
+    NEW_INVENTORY: appConfig.objects.inventory.new || '/new-inventories',
+    INVENTORY_DETAIL: appConfig.objects.inventory.detail || '/inventoryDetailPage',
   },
   TITLES: {
-    MAIN: appConfig.objects.account.apiName,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.account.apiName}`,
-    MOBILE_SUBTITLE: `List Of ${appConfig.objects.account.apiName}`,
+    MAIN: appConfig.objects.inventory.apiName,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.inventory.apiName}`,
+    MOBILE_SUBTITLE: `List Of ${appConfig.objects.inventory.apiName}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some records failed to delete',
