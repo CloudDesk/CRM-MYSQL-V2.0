@@ -5,19 +5,18 @@ import RelatedItems from "../../components/common/RelatedItems";
 
 const OpportunityRelatedItems = ({ props }) => {
   const existingOpportunity = props;
-  const OBJECT_API_task="Enquiry"
   const taskDeleteURL = `/deleteTask`;
   const urlTaskbyOppId = `/getTaskbyOpportunityId?opportunityid=`;
   
   
   const sections = [
     {
-      key: 'enquiry',
-      title: OBJECT_API_task,
-      objectApi: OBJECT_API_task,
+      key: 'event',
+      title: "Event",
+      objectApi: "Event",
       fetchUrl: urlTaskbyOppId,
       deleteUrl: taskDeleteURL,
-      icon: 'enquiry',
+      icon: 'event',
       displayFields: [
         { key: 'subject', label: 'Subject' },
         { key: 'startdate', label: 'Start Date', format: (date) => new Date(date).toLocaleDateString() },
@@ -28,7 +27,7 @@ const OpportunityRelatedItems = ({ props }) => {
 
   const modals = [
     {
-      key: 'enquiry',
+      key: 'event',
       component: ModalOppTask
     }
   ];

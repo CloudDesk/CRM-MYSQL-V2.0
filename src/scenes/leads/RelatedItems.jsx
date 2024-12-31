@@ -12,12 +12,13 @@ const existingLead = props
  
   const sections = [
     {
-      key: 'enquiry',
-      title: 'Enquiry',
-      objectApi: 'Enquiry',
+      key: 'event',
+      title: 'Event',
+      objectApi: 'Event',
       fetchUrl: urlTaskbyLeadId,
       deleteUrl: taskDeleteURL,
-      icon: 'enquiry',
+      detailUrl:'/taskDetailPage',
+      icon: 'event',
       displayFields: [
         { key: 'subject', label: 'Subject' },
         { key: 'startdate', label: 'Start Date', format: (date) => new Date(date).toLocaleDateString() },
@@ -30,6 +31,7 @@ const existingLead = props
       objectApi: 'Deals',
       fetchUrl: urlOppbyLeadId,
       deleteUrl: opportunityDeleteURL,
+      detailUrl:'/opportunityDetailPage',
       icon: 'deal',
       displayFields: [
         { key: 'opportunityname', label: 'Deal Name' },
@@ -41,7 +43,7 @@ const existingLead = props
 
   const modals = [
     {
-      key: 'enquiry',
+      key: 'event',
       component: ModalLeadTask
     },
     {

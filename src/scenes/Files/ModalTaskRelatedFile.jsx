@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import {
     Button, Typography, Box
 } from "@mui/material";
 import ToastNotification from "../toast/ToastNotification";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import { OBJECT_API_EVENT, POST_FILE } from "../api/endUrls";
+import { OBJECT_API_EVENT } from "../api/endUrls";
 import { RequestServerFiles } from "../api/HttpReqFiles";
 import { apiMethods } from "../api/methods";
-import './FileModal.css'
 import { useLocation } from "react-router-dom";
 
 const URL_postRecords = `/upsertfiles`

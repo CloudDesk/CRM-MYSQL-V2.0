@@ -1,9 +1,9 @@
 import React from "react";
-import AccountDetailPage from "../accounts/Forms/AccountDetailPage";
-import AccountRelatedItems from "../accounts/RelatedItems";
+import AccountDetailPage from "./Forms/AccountDetailPage";
+import AccountRelatedItems from "./RelatedItems";
 import FlexLayout from "../../components/common/FlexLayout";
 
-const FlexAccounts = () => {
+const AccountDetailsWithRelatedItems = () => {
   return (
     <FlexLayout
       DetailComponent={AccountDetailPage}
@@ -11,4 +11,4 @@ const FlexAccounts = () => {
     />
   );
 };
-export default FlexAccounts;
+export default AccountDetailsWithRelatedItems;

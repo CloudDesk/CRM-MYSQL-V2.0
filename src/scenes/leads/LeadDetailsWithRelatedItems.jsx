@@ -1,9 +1,9 @@
 import React from "react";
-import LeadDetailPage from "../leads/Forms/LeadDetailPage";
-import LeadRelatedItems from "../leads/RelatedItems";
+import LeadDetailPage from "./Forms/LeadDetailPage";
+import LeadRelatedItems from "./RelatedItems";
 import FlexLayout from "../../components/common/FlexLayout";
 
-const FlexLeads = () => {
+const LeadDetailsWithRelatedItems = () => {
   return (
     <FlexLayout
       DetailComponent={LeadDetailPage}
@@ -11,4 +11,4 @@ const FlexLeads = () => {
     />
   )
 };
-export default FlexLeads;
+export default LeadDetailsWithRelatedItems;

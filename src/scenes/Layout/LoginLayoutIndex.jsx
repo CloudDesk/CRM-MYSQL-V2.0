@@ -1,31 +1,22 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-// import ContactDetailPage from "../recordDetailPage/ContactDetailPage";
 import ContactDetailPage from "../contacts/Forms/ContactDetailPage";
-// import AccountDetailPage from "../recordDetailPage/AccountDetailPage";
 import AccountDetailPage from "../accounts/Forms/AccountDetailPage";
 import LeadDetailPage from "../leads/Forms/LeadDetailPage";
-// import OpportunityDetailPage from "../recordDetailPage/OpportunityDetailPage";
 import OpportunityDetailPage from "../opportunities/Forms/DealDetailPage";
-// import InventoryDetailPage from "../recordDetailPage/InventoryDetailPage";
 import InventoryDetailPage from "../inventories/Forms/InventoryDetailPage";
-// import TaskDetailPage from "../recordDetailPage/TaskDetailPage";
 import TaskDetailPage from "../tasks/Forms/TaskDetailPage";
-// import UserDetailPage from "../recordDetailPage/UserDetailPage";
 import UserDetailPage from "../users/Forms/UserDetailPage";
-import FlexAccounts from "../Flex/FlexAccounts";
-import FlexInventories from "../Flex/FlexInventory";
-import FlexLeads from "../Flex/FlexLeads";
-import FlexOpportunities from "../Flex/FlexOpportunities";
-import FlexTasks from "../Flex/FlexTasks";
+import AccountDetailsWithRelatedItems from "../accounts/AccountDetailsWithRelatedItems";
+import InventoryDetailsWithRelatedItems from "../inventories/InventoryDetailsWithRelatedItems";
+import LeadDetailsWithRelatedItems from "../leads/LeadDetailsWithRelatedItems";
+import OpportunityDetailsWithRelatedItems from "../opportunities/OpportunityDetailsWithRelatedItems";
+import TaskDetailsWithRelatedItems from "../tasks/TaskDetailsWithRelatedItems";
 import FileUploadUpdated from "../fileUpload/FileUpdated";
 import RoleDetailPage from "../recordDetailPage/RoleDetailPage";
-// import RoleIndex from "../Roles";
-// import PermissionDetailPage from "../recordDetailPage/PermissionDetailPage";
 import PermissionDetailPage from "../permissionSets/Forms/PermissionDetailPage";
 import PermissionSets from "../permissionSets";
 import PageNotFound from "../Errors/PageNotFound";
-// import Files from "../Files/index";
 import { DashboardIndex } from "../dashboard/Dashboards";
 import Leads from "../leads";
 import Opportunities from "../opportunities";
@@ -50,9 +41,6 @@ function LoginLayoutIndex(props) {
         <Route path="/list/permissions" element={<PermissionSets />} />
         <Route path="/list/dashboard" element={<DashboardIndex />} />
 
-        {/* <Route path="/list/file" element={<Files />} /> */}
-        {/* <Route path="/list/role" element={<RoleIndex />} /> */}
-
         <Route path="/new-contacts" element={<ContactDetailPage />} />
         <Route path="/new-users" element={<UserDetailPage />} />
         <Route path="/new-task" element={<TaskDetailPage />} />
@@ -63,15 +51,15 @@ function LoginLayoutIndex(props) {
         <Route path="/new-role" element={<RoleDetailPage />} />
         <Route path="/new-permission" element={<PermissionDetailPage />} />
 
-        <Route path="/accountDetailPage/:id" element={<FlexAccounts />} />
-        <Route path="/taskDetailPage/:id" element={<FlexTasks />} />
-        <Route path="/inventoryDetailPage/:id" element={<FlexInventories />} />
+        <Route path="/accountDetailPage/:id" element={<AccountDetailsWithRelatedItems />} />
+        <Route path="/taskDetailPage/:id" element={<TaskDetailsWithRelatedItems />} />
+        <Route path="/inventoryDetailPage/:id" element={<InventoryDetailsWithRelatedItems />} />
         <Route path="/contactDetailPage/:id" element={<ContactDetailPage />} />
         <Route path="/userDetailPage/:id" element={<UserDetailPage />} />
-        <Route path="/leadDetailPage/:id" element={<FlexLeads />} />
+        <Route path="/leadDetailPage/:id" element={<LeadDetailsWithRelatedItems />} />
         <Route
           path="/opportunityDetailPage/:id"
-          element={<FlexOpportunities />}
+          element={<OpportunityDetailsWithRelatedItems />}
         />
         <Route path="/roleDetailPage/:id" element={<RoleDetailPage />} />
         <Route
@@ -81,6 +69,10 @@ function LoginLayoutIndex(props) {
 
         <Route path="/file" element={<FileUploadUpdated />} />
         <Route path="*" element={<PageNotFound />} />
+
+
+        {/* <Route path="/list/file" element={<Files />} /> */}
+        {/* <Route path="/list/role" element={<RoleIndex />} /> */}
         {/* <Route path="/leadDetailPage/:Id" element={<LeadDetailPage/>} /> */}
         {/* <Route path="/accountDetailPage/:id" element={<FlexAccounts/>} /> */}
         {/* <Route path="/dataLoader" element={<DataLoadPage />} /> */}

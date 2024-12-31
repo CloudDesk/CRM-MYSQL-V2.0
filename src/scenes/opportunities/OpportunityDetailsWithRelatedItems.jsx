@@ -1,9 +1,9 @@
 import React from "react";
-import OpportunityDetailPage from "../opportunities/Forms/DealDetailPage";
-import OpportunityRelatedItems from "../opportunities/RelatedItems";
+import OpportunityDetailPage from "./Forms/DealDetailPage";
+import OpportunityRelatedItems from "./RelatedItems";
 import FlexLayout from "../../components/common/FlexLayout";
 
-const FlexOpportunities = (item) => {
+const OpportunityDetailsWithRelatedItems = (item) => {
   return (
     <FlexLayout
       DetailComponent={OpportunityDetailPage}
@@ -11,4 +11,4 @@ const FlexOpportunities = (item) => {
     />
   )
 };
-export default FlexOpportunities;
+export default OpportunityDetailsWithRelatedItems;

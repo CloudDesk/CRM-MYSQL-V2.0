@@ -144,6 +144,7 @@ const RelatedItems = ({
         if (section.onItemClick) {
             section.onItemClick(item);
         } else {
+
             navigate(`${section.detailUrl}/${item._id}`, {
                 state: { record: { item } }
             });

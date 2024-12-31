@@ -1,9 +1,9 @@
 import React from "react";
-import InventoryDetailPage from "../inventories/Forms/InventoryDetailPage";
-import InventoryRelatedItems from "../inventories/RelatedItems";
+import InventoryDetailPage from "./Forms/InventoryDetailPage";
+import InventoryRelatedItems from "./RelatedItems";
 import FlexLayout from "../../components/common/FlexLayout";
 
-const FlexInventories = () => {
+const InventoryDetailsWithRelatedItems = () => {
   return (
     <FlexLayout
       DetailComponent={InventoryDetailPage}
@@ -11,4 +11,4 @@ const FlexInventories = () => {
     />
   )
 }
-export default FlexInventories
+export default InventoryDetailsWithRelatedItems
