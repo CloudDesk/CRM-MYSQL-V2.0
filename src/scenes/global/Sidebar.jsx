@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Drawer,
@@ -74,6 +74,25 @@ const Sidebar = ({
   const navigate = useNavigate();
   const loggedInUserData = JSON.parse(sessionStorage.getItem("loggedInUser"));
 
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+
+    const matchedPage = tableNamearr.find(page =>
+      currentPath.includes(page.toNav.toLowerCase())
+    );
+
+    if (matchedPage) {
+      setSelected(matchedPage.title);
+    }
+  }, [tableNamearr, setSelected]);
+
+  useEffect(() => {
+    const persistedSelectedItem = sessionStorage.getItem('selectedSidebarItem');
+    if (persistedSelectedItem) {
+      setSelected(persistedSelectedItem);
+    }
+  }, [setSelected]);
+
   const getIcon = (title) => {
     switch (title) {
       case 'Enquiry': return <QuestionAnswerIcon />;
@@ -94,6 +113,9 @@ const Sidebar = ({
   const handleMenuItemClick = (page) => {
     navigate(page.toNav);
     setSelected(page.title);
+
+    sessionStorage.setItem('selectedSidebarItem', page.title);
+
     if (isMobile) setIsSidebarOpen(false);
   };
 

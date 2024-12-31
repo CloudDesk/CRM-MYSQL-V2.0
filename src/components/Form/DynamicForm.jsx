@@ -24,8 +24,10 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  IconButton,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { useNavigate } from "react-router-dom";
 import { RequestServer } from "../../scenes/api/HttpReq";
 
@@ -343,7 +345,6 @@ const DynamicFormField = ({
     case "number":
     case "password":
     case "tel":
-    case "url":
       return (
         <TextField
           fullWidth
@@ -358,6 +359,46 @@ const DynamicFormField = ({
           disabled={!permissionValues.edit}
           {...field.props}
         />
+      )
+    case "url":
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {!permissionValues.edit ? (
+            <Typography
+              component="a"
+              href={values[field.name] || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ color: 'primary.main', textDecoration: 'underline', cursor: 'pointer' }}
+            >
+              {values[field.name] || "No URL provided"}
+            </Typography>
+          ) : (
+            <TextField
+              fullWidth
+              variant={field.variant || "outlined"}
+              name={field.name}
+              label={field.label}
+              type="text"
+              value={values[field.name] || ""}
+              onChange={handleFieldChange}
+              error={touched[field.name] && Boolean(errors[field.name])}
+              helperText={touched[field.name] && errors[field.name]}
+              {...field.props}
+            />
+          )}
+          {values[field.name] && (
+            <IconButton
+              href={values[field.name]}
+              target="_blank"
+              rel="noopener noreferrer"
+              size="small"
+              sx={{ color: 'primary.main' }}
+            >
+              <OpenInNewIcon />
+            </IconButton>
+          )}
+        </Box>
       );
 
     case "select":

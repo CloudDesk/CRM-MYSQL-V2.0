@@ -19,8 +19,8 @@ const CONSTANTS = {
   },
   TITLES: {
     MAIN: 'Deals',
-    WEB_SUBTITLE: 'List Of Deals 22',
-    MOBILE_SUBTITLE: 'List of Deals 22',
+    WEB_SUBTITLE: 'List Of Deals ',
+    MOBILE_SUBTITLE: 'List of Deals ',
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some dealRecords failed to delete',
