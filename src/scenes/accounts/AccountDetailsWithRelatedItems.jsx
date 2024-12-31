@@ -1,11 +1,11 @@
 import React from "react";
 import AccountDetailPage from "./Forms/AccountDetailPage";
 import AccountRelatedItems from "./RelatedItems";
-import FlexLayout from "../../components/common/FlexLayout";
+import FlexiblePageLayout from "../../components/common/layout/FlexiblePageLayout";
 
 const AccountDetailsWithRelatedItems = () => {
   return (
-    <FlexLayout
+    <FlexiblePageLayout
       DetailComponent={AccountDetailPage}
       RelatedItemsComponent={AccountRelatedItems}
     />

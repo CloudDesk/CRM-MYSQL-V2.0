@@ -1,11 +1,11 @@
 import React from "react";
 import LeadDetailPage from "./Forms/LeadDetailPage";
 import LeadRelatedItems from "./RelatedItems";
-import FlexLayout from "../../components/common/FlexLayout";
+import FlexiblePageLayout from "../../components/common/layout/FlexiblePageLayout";
 
 const LeadDetailsWithRelatedItems = () => {
   return (
-    <FlexLayout
+    <FlexiblePageLayout
       DetailComponent={LeadDetailPage}
       RelatedItemsComponent={LeadRelatedItems}
     />

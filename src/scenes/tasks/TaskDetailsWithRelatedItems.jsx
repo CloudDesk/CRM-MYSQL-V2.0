@@ -1,11 +1,11 @@
 import React from "react";
 import TaskDetailPage from "./Forms/TaskDetailPage";
 import TaskRelatedItems from "./RelatedItems";
-import FlexLayout from "../../components/common/FlexLayout";
+import FlexiblePageLayout from "../../components/common/layout/FlexiblePageLayout";
 
 const TaskDetailsWithRelatedItems = () => {
   return (
-    <FlexLayout
+    <FlexiblePageLayout
       DetailComponent={TaskDetailPage}
       RelatedItemsComponent={TaskRelatedItems}
     />

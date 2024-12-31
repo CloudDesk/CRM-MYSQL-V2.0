@@ -7,20 +7,20 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-
+import { appConfig } from "../config";
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Account',
+  OBJECT_NAME: appConfig.objects.account.apiName,
   ROUTES: {
-    ACCOUNTS: '/accounts',
-    DELETE_ACCOUNT: '/deleteAccount',
-    NEW_ACCOUNT: '/new-accounts',
-    ACCOUNT_DETAIL: '/accountDetailPage',
+    ACCOUNTS: appConfig.objects.account.base || '/accounts',
+    DELETE_ACCOUNT: appConfig.objects.account.delete || '/deleteAccount',
+    NEW_ACCOUNT: appConfig.objects.account.new || '/new-accounts',
+    ACCOUNT_DETAIL: appConfig.objects.account.detail || '/accountDetailPage',
   },
   TITLES: {
-    MAIN: 'Accounts',
-    WEB_SUBTITLE: 'List Of Accounts',
-    MOBILE_SUBTITLE: 'List of Accounts',
+    MAIN: appConfig.objects.account.apiName,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.account.apiName}`,
+    MOBILE_SUBTITLE: `List of ${appConfig.objects.account.apiName}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some accounts failed to delete',

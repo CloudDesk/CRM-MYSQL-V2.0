@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import Loader from '../Loader';
-import { Item } from './Item';
+import Loader from '../../Loader';
+import { ContentBox } from './ContentBox';
 
-const FlexLayout = ({ DetailComponent, RelatedItemsComponent }) => {
+const FlexiblePageLayout = ({ DetailComponent, RelatedItemsComponent }) => {
     const [passedRecord, setPassedRecord] = useState();
     const location = useLocation();
 
@@ -30,14 +30,14 @@ const FlexLayout = ({ DetailComponent, RelatedItemsComponent }) => {
             >
                 <Grid container>
                     <Grid item xs={12} md={8}>
-                        <Item>
+                        <ContentBox>
                             <DetailComponent props={passedRecord} />
-                        </Item>
+                        </ContentBox>
                     </Grid>
                     <Grid item xs={12} md={4}>
-                        <Item>
+                        <ContentBox>
                             <RelatedItemsComponent props={passedRecord} />
-                        </Item>
+                        </ContentBox>
                     </Grid>
                 </Grid>
             </Box>
@@ -47,4 +47,4 @@ const FlexLayout = ({ DetailComponent, RelatedItemsComponent }) => {
 
 
 
-export default FlexLayout;
+export default FlexiblePageLayout;

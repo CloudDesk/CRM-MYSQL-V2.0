@@ -10,10 +10,14 @@ import {
   generateAccountInitialValues,
   metaDataFields,
 } from "../../formik/InitialValues/initialValues";
-import { da } from "date-fns/locale";
+import { appConfig } from "../../config";
 
-const OBJECT_API = "Account";
-const upsertAccountURL = `/UpsertAccount`;
+
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.account.apiName,
+  upsert: appConfig.objects.account.upsert,
+  list: appConfig.objects.account.list
+}
 
 const AccountDetailPage = ({ props }) => {
   const location = useLocation();
@@ -32,7 +36,7 @@ const AccountDetailPage = ({ props }) => {
   });
   const [permissionValues, setPermissionValues] = useState({});
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
@@ -83,7 +87,7 @@ const AccountDetailPage = ({ props }) => {
     }
     console.log(values, "values after changing");
     try {
-      const response = await RequestServer("post", upsertAccountURL, values);
+      const response = await RequestServer("post", CONSTANTS.upsert, values);
       console.log(response, "response");
       if (response.success) {
         setNotify({
@@ -92,7 +96,7 @@ const AccountDetailPage = ({ props }) => {
           type: "success",
         });
         setTimeout(() => {
-          navigate("/list/account");
+          navigate(CONSTANTS.list);
         }, 1500);
       } else {
         setNotify({

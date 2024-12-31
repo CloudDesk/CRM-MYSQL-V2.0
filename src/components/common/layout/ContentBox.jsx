@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Box } from '@mui/material';
 
-export const Item = ({ sx, ...other }) => {
+export const ContentBox = ({ sx, ...other }) => {
     return (
         <Box
             sx={{
@@ -22,7 +22,7 @@ export const Item = ({ sx, ...other }) => {
     );
 };
 
-Item.propTypes = {
+ContentBox.propTypes = {
     sx: PropTypes.oneOfType([
         PropTypes.arrayOf(
             PropTypes.oneOfType([PropTypes.func, PropTypes.object, PropTypes.bool])
