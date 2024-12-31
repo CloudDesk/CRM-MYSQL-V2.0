@@ -10,7 +10,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getLoginUserRoleDept } from "../../Auth/userRoleDept";
 import { RequestServer } from "../../api/HttpReq";
 import ToastNotification from "../../toast/ToastNotification";
-import { format } from "date-fns";
+import { appConfig } from "../../config";
+
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.opportunity.apiName,
+  upsert: appConfig.objects.opportunity.upsert,
+  list: appConfig.objects.opportunity.list,
+}
 
 const OBJECT_API = "Deals";
 const url = `/UpsertOpportunity`;
@@ -42,7 +48,7 @@ const DealDetailPage = ({ props }) => {
     ...(existingOpportunity ? metaDataFields : []),
   ];
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
@@ -83,7 +89,7 @@ const DealDetailPage = ({ props }) => {
     }
     console.log(values, "values after change");
     try {
-      const response = await RequestServer("post", url, values);
+      const response = await RequestServer("post", CONSTANTS.upsert, values);
       console.log(response, "response");
       if (response.success) {
         setNotify({
@@ -92,7 +98,7 @@ const DealDetailPage = ({ props }) => {
           type: "success",
         });
         setTimeout(() => {
-          navigate("/list/deals");
+          navigate(CONSTANTS.list);
         }, 1500);
       } else {
         setNotify({

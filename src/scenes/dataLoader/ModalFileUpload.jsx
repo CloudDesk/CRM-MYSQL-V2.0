@@ -19,6 +19,9 @@ import PreviewUpsert from "./PreviewUpsert";
 import { appConfig } from "../config";
 
 const generatePreview = `${appConfig.server}/generatePreview`;
+const CONSTANTS = {
+    preview: appConfig.api.dataLoader.preview
+}
 
 const FileUploadComponent = ({ object, handleModal, callBack }) => {
     const [uploadedData, setUploadedData] = useState([]);
@@ -34,7 +37,7 @@ const FileUploadComponent = ({ object, handleModal, callBack }) => {
         formData.append('file', file);
 
         try {
-            const response = await axios.post(generatePreview, formData);
+            const response = await axios.post(CONSTANTS.preview, formData);
             setUploadedData(response.data);
         } catch (error) {
             setError(error.message || 'Error uploading file');

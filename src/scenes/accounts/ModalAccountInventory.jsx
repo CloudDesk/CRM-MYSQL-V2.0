@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import * as Yup from "yup";
+import { useLocation } from 'react-router-dom';
 import { Grid } from "@mui/material";
 import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from '../api/HttpReq';
 import { accountformfields, generateAccountInitialValues } from '../formik/InitialValues/initialValues';
 import { DynamicForm } from "../../components/Form/DynamicForm";
+import { appConfig } from '../config';
 
-const url = `/UpsertAccount`;
+const url = appConfig.objects.account.upsert;
 
 const ModalInventoryAccount = ({ item, handleModal }) => {
     const [inventoryParentRecord, setInventoryParentRecord] = useState();
     const location = useLocation();
-    const navigate = useNavigate();
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' });
 
     useEffect(() => {

@@ -7,20 +7,21 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
+import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Inventory',
+  OBJECT_NAME: appConfig.objects.account.apiName,
   ROUTES: {
-    INVENTORY: '/inventories',
-    DELETE_INVENTORY: '/deleteInventory',
-    NEW_INVENTORY: '/new-inventories',
-    INVENTORY_DETAIL: '/inventoryDetailPage',
+    INVENTORY: appConfig.objects.account.base,
+    DELETE_INVENTORY: appConfig.objects.account.delete || '/deleteInventory',
+    NEW_INVENTORY: appConfig.objects.account.new || '/new-inventories',
+    INVENTORY_DETAIL: appConfig.objects.account.detail || '/inventoryDetailPage',
   },
   TITLES: {
-    MAIN: 'Inventories',
-    WEB_SUBTITLE: 'List Of Inventories',
-    MOBILE_SUBTITLE: 'List of Inventories',
+    MAIN: appConfig.objects.account.apiName,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.account.apiName}`,
+    MOBILE_SUBTITLE: `List Of ${appConfig.objects.account.apiName}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some records failed to delete',
@@ -32,7 +33,7 @@ const CONSTANTS = {
     DELETE_SINGLE: 'Record deleted successfully',
   },
   IMPORT_CONFIG: {
-    objectName: 'Inventory',
+    objectName: appConfig.objects.account.name,
     isImport: false,
     callBack: null,
   },

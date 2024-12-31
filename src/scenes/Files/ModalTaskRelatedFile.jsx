@@ -6,8 +6,13 @@ import { RequestServerFiles } from "../api/HttpReqFiles";
 import { apiMethods } from "../api/methods";
 import { useLocation } from "react-router-dom";
 import FileUpload from "../../components/File";
+import { appConfig } from "../config";
 
 const URL_postRecords = `/upsertfiles`
+
+const CONSTANTS = {
+    upsert: appConfig.api.files.upsert
+}
 
 const ModalTaskFileUpload = ({ handleModal }) => {
     const location = useLocation();
@@ -48,7 +53,7 @@ const ModalTaskFileUpload = ({ handleModal }) => {
     };
 
     const uploadSingleFile = (formData) => {
-        RequestServerFiles(apiMethods.post, URL_postRecords, formData)
+        RequestServerFiles(apiMethods.post, CONSTANTS.upsert, formData)
             .then(res => {
                 console.log("RequestServerFiles response", res)
                 if (res.success) {

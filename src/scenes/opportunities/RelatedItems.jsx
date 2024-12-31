@@ -1,6 +1,7 @@
 import React from "react";
 import ModalOppTask from "../tasks/ModalOppTask";
 import RelatedItems from "../../components/common/RelatedItems";
+import { appConfig } from "../config";
 
 
 const OpportunityRelatedItems = ({ props }) => {
@@ -11,11 +12,11 @@ const OpportunityRelatedItems = ({ props }) => {
   
   const sections = [
     {
-      key: 'event',
-      title: "Event",
-      objectApi: "Event",
-      fetchUrl: urlTaskbyOppId,
-      deleteUrl: taskDeleteURL,
+      key: appConfig.objects.task.key,
+      title: appConfig.objects.task.name.plural,
+      objectApi:  appConfig.objects.task.apiName,
+      fetchUrl: appConfig.objects.opportunity.r_task,
+      deleteUrl: appConfig.objects.task.delete,
       icon: 'event',
       displayFields: [
         { key: 'subject', label: 'Subject' },

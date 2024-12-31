@@ -7,20 +7,21 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
+import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Permissions',
+  OBJECT_NAME: appConfig.objects.permission.apiName,
   ROUTES: {
-    PERMISSIONS: '/getPermissions',
-    DELETE_PERMISSION: '/deletePermission',
-    NEW_PERMISSION: '/new-permission',
-    PERMISSION_DETAIL: '/permissionDetailPage',
+    PERMISSIONS: appConfig.objects.permission.base || '/getPermissions',
+    DELETE_PERMISSION: appConfig.objects.permission.delete || '/deletePermission',
+    NEW_PERMISSION: appConfig.objects.permission.new || '/new-permission',
+    PERMISSION_DETAIL: appConfig.objects.permission.detail || '/permissionDetailPage',
   },
   TITLES: {
-    MAIN: 'Permission Sets',
-    WEB_SUBTITLE: 'List Of Permission Sets',
-    MOBILE_SUBTITLE: 'List of Permission Sets',
+    MAIN: appConfig.objects.permission.name.singular,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.permission.name.plural}`,
+    MOBILE_SUBTITLE: `List Of ${appConfig.objects.permission.name.plural}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some permissions failed to delete',
@@ -32,7 +33,7 @@ const CONSTANTS = {
     DELETE_SINGLE: 'Permission deleted successfully',
   },
   IMPORT_CONFIG: {
-    objectName: 'Permissions',
+    objectName: appConfig.objects.permission.apiName,
     isImport: false,
     callBack: null,
   },

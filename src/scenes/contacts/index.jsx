@@ -7,20 +7,21 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
+import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: "Contact",
+  OBJECT_NAME: appConfig.objects.contact.name,
   ROUTES: {
-    CONTACTS: "/contacts",
-    DELETE_CONTACT: "/deleteContact",
-    NEW_CONTACT: "/new-contacts",
-    CONTACT_DETAIL: "/contactDetailPage",
+    CONTACTS: appConfig.objects.contact.base,
+    DELETE_CONTACT: appConfig.objects.contact.delete,
+    NEW_CONTACT: appConfig.objects.contact.new,
+    CONTACT_DETAIL: appConfig.objects.contact.detail,
   },
   TITLES: {
-    MAIN: "Contacts",
-    WEB_SUBTITLE: "List Of Contacts",
-    MOBILE_SUBTITLE: "List of Contacts",
+    MAIN: appConfig.objects.contact.name,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.contact.name}`,
+    MOBILE_SUBTITLE: `List of ${appConfig.objects.contact.name}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: "Some contacts failed to delete",

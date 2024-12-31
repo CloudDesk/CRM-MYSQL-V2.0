@@ -10,10 +10,16 @@ import {
   metaDataFields,
   PermissionSetFormFields,
 } from "../../formik/InitialValues/initialValues";
+import { appConfig } from "../../config";
 
 const OBJECT_API = "Permissions";
 const upsertPermissionURL = `/upsertPermission`;
 
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.permission.apiName,
+  upsert: appConfig.objects.permission.upsert,
+  list: appConfig.objects.permission.list
+}
 const PermissionDetailPage = ({ props }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,7 +38,7 @@ const PermissionDetailPage = ({ props }) => {
   });
   const [permissionValues, setPermissionValues] = useState({});
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
@@ -94,7 +100,7 @@ const PermissionDetailPage = ({ props }) => {
 
     console.log("values after modified", values);
     try {
-      const response = await RequestServer("post", upsertPermissionURL, values);
+      const response = await RequestServer("post", CONSTANTS.upsert, values);
       console.log(response, "response");
       if (response.success) {
         setNotify({
@@ -107,7 +113,7 @@ const PermissionDetailPage = ({ props }) => {
           type: "success",
         });
         setTimeout(() => {
-          navigate("/list/permissions");
+          navigate(CONSTANTS.list);
         }, 1500);
       } else {
         setNotify({

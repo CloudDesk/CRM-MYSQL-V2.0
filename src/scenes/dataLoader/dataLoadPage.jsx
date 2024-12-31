@@ -15,6 +15,14 @@ const UpsertAccountUrl=`${appConfig.server}dataloaderAccount`;
 const UpsertOppUrl=`${appConfig.server}/dataloaderOpportunity`;
 const generatePreview =`${appConfig.server}/generatePreview`;
 
+const CONSTANTS ={
+    preview:appConfig.api.dataLoader.preview,
+    upsertLead:appConfig.api.dataLoader.upsertLead,
+    upsertAccount:appConfig.api.dataLoader.upsertAccount,
+    upsertOpportunity:appConfig.api.dataLoader.upsertOpportunity
+}
+
+
 const DataLoadPage = () => {
     useEffect(() => {
        
@@ -30,32 +38,16 @@ const DataLoadPage = () => {
     const validationSchema = Yup.object({
         object: Yup
             .string()
-            .required('Required'),
-        
-        // file:Yup.mixed()
-        // .required('Required')
-        //         .test(
-        //             "fileSize",
-        //             "File is too large",
-        //             value => !value || (value && value.size <= FILE_SIZE)
-        //         )
-        //         .test(
-        //             "fileFormat",
-        //             "Unsupported Format",
-        //             value => !value || (value => value && SUPPORTED_FORMATS.includes(value.type))
-        //         )
-                        
-       
-
+            .required('Required')
     })
     
-    const fileSendValue =(obj,files)=>{
+    const fileSendValue =async(obj,files)=>{
 
         let formData = new FormData();
         formData.append('file',files)
         formData.append('object',obj);
         console.log('modified formData',formData);
-         axios.post(generatePreview, formData)
+       await  axios.post(CONSTANTS.preview, formData)
     
             .then((res) => {
                 console.log('task form Submission  response', res);             
@@ -72,7 +64,10 @@ const DataLoadPage = () => {
         formData.append('file',values.attachments);
         formData.append('object',values.object);
         
-        let url = (values.object==='Account')? UpsertAccountUrl : (values.object==='Lead')?UpsertLeadUrl : (values.object==='Opportunity')?UpsertOppUrl:''; 
+        let url = (values.object==='Account')? CONSTANTS.upsertAccount 
+        : (values.object==='Lead')?CONSTANTS.upsertLead 
+        : (values.object==='Opportunity')?CONSTANTS.upsertOpportunity
+        :''; 
 
         console.log('url',url);
         console.log('modified formData',formData);
@@ -100,11 +95,7 @@ const DataLoadPage = () => {
                 {(props) => {
                     const {
                         values,
-                        dirty,
                         isSubmitting,
-                        handleChange,
-                        handleSubmit,
-                        handleReset,
                         setFieldValue,
                     } = props;
 

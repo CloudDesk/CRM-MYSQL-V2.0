@@ -5,9 +5,16 @@ import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from '../api/HttpReq';
 import { opportunityFormFields, generateOpportunityInitialValues } from '../formik/InitialValues/initialValues';
 import { DynamicForm } from "../../components/Form/DynamicForm";
+import { appConfig } from '../config';
 
 const url = `/UpsertOpportunity`;
 const fetchLeadsbyName = `/LeadsbyName`;
+
+const CONSTANTS = {
+    upsert: appConfig.objects.opportunity.upsert,
+    getLeadsByName: appConfig.objects.lead.fetchLeadsByFirstName,
+    getAllLeads: appConfig.objects.lead.fetchAllLeads
+}
 
 const ModalInventoryOpportunity = ({ item, handleModal }) => {
     const [inventoryParentRecord, setInventoryParentRecord] = useState();
@@ -25,7 +32,7 @@ const ModalInventoryOpportunity = ({ item, handleModal }) => {
     const FetchLeadsbyName = (isNameSearch, newInputValue) => {
         console.log('inside FetchLeadsbyName fn');
         console.log('newInputValue', newInputValue);
-        let url = isNameSearch ? `${fetchLeadsbyName}?firstname=${newInputValue}` : fetchLeadsbyName;
+        let url = isNameSearch ? `${CONSTANTS.getLeadsByName}${newInputValue}` : CONSTANTS.getAllLeads;
 
         RequestServer("get", url, {})
             .then((res) => {
@@ -80,7 +87,7 @@ const ModalInventoryOpportunity = ({ item, handleModal }) => {
 
         console.log('after change form submission value', values);
 
-        await RequestServer("post", url, values)
+        await RequestServer("post", CONSTANTS.upsert, values)
             .then((res) => {
                 console.log('post response', res);
                 if (res.success) {
@@ -125,7 +132,7 @@ const ModalInventoryOpportunity = ({ item, handleModal }) => {
                     ...field,
                     type: 'autocomplete',
                     options: leadsRecords,
-                    fetchurl: fetchLeadsbyName,
+                    fetchurl: CONSTANTS.getAllLeads,
                     searchfor: 'firstname',
                     onChange: (value, formik) => {
                         if (!value) {

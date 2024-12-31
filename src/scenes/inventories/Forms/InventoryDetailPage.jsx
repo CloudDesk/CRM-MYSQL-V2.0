@@ -11,9 +11,16 @@ import {
   metaDataFields,
 } from "../../formik/InitialValues/initialValues";
 import { InvCitiesPickList } from "../../../data/pickLists";
+import { appConfig } from "../../config";
 
 const OBJECT_API = "Inventory";
 const upsertInventoryURL = `/UpsertInventory`;
+
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.inventory.apiName,
+  upsert: appConfig.objects.inventory.upsert,
+  list: appConfig.objects.inventory.list
+}
 
 const InventoryDetailPage = ({ props }) => {
   const location = useLocation();
@@ -34,7 +41,7 @@ const InventoryDetailPage = ({ props }) => {
   });
   const [permissionValues, setPermissionValues] = useState({});
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
 
@@ -44,9 +51,9 @@ const InventoryDetailPage = ({ props }) => {
     fetchObjectPermissions();
   }, []);
 
-  const fetchObjectPermissions = () => {
+  const fetchObjectPermissions = async () => {
     if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
+      await apiCheckPermission(userRoleDpt)
         .then((res) => {
           console.log(res, " deals apiCheckPermission promise res");
           setPermissionValues(res);
@@ -104,7 +111,7 @@ const InventoryDetailPage = ({ props }) => {
     console.log(values, "values after changing");
 
     try {
-      const response = await RequestServer("post", upsertInventoryURL, values);
+      const response = await RequestServer("post", CONSTANTS.upsert, values);
       console.log(response, "response");
       if (response.success) {
         setNotify({
@@ -113,7 +120,7 @@ const InventoryDetailPage = ({ props }) => {
           type: "success",
         });
         setTimeout(() => {
-          navigate("/list/Inventory");
+          navigate(CONSTANTS.list);
         }, 1500);
       } else {
         setNotify({

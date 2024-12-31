@@ -16,11 +16,15 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SendIcon from "@mui/icons-material/Send";
 import WhatAppModalNew from "../../recordDetailPage/WhatsAppModalNew";
 import EmailModalPage from "../../recordDetailPage/EmailModalPage";
-import { is } from "date-fns/locale";
+import { appConfig } from "../../config";
 
-const OBJECT_API = "Contact";
-const upsertContactURL = `/UpsertContact`;
-const whatsAppTemplate = "whatsapp/template";
+
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.contact.apiName,
+  upsert: appConfig.objects.contact.upsert,
+  list: appConfig.objects.contact.list,
+  whatsAppTemplate: appConfig.api.whatsapp.template
+}
 
 const ContactDetailPage = ({ props }) => {
   const location = useLocation();
@@ -40,7 +44,7 @@ const ContactDetailPage = ({ props }) => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [whatsAppModalOpen, setWhatsAppModalOpen] = useState(false);
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
@@ -91,7 +95,7 @@ const ContactDetailPage = ({ props }) => {
     console.log(values, "values after modifying");
 
     try {
-      const response = await RequestServer("post", upsertContactURL, values);
+      const response = await RequestServer("post", CONSTANTS.upsert, values);
       console.log(response, "response");
       if (response.success) {
         setNotify({
@@ -100,7 +104,7 @@ const ContactDetailPage = ({ props }) => {
           type: "success",
         });
         setTimeout(() => {
-          navigate("/list/contact");
+          navigate(CONSTANTS.list);
         }, 1500);
       } else {
         setNotify({
@@ -122,7 +126,7 @@ const ContactDetailPage = ({ props }) => {
   const handleSendWhatsAppTemplate = async () => {
     if (existingContact?.phone) {
       try {
-        const res = await RequestServer("post", whatsAppTemplate, {
+        const res = await RequestServer("post", CONSTANTS.whatsAppTemplate, {
           to: `91${existingContact.phone}`,
         });
         console.log(res, "res");

@@ -18,16 +18,24 @@ import "../indexCSS/muiBoxStyles.css";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import CircularProgress from '@mui/material/CircularProgress';
-import { OBJECT_API_FILE,GET_FILE,DELETE_FILE } from "../api/endUrls";
+import { OBJECT_API_FILE, GET_FILE, DELETE_FILE } from "../api/endUrls";
 import ModalFileUpload from "./ModalNewFile";
 import '../Files/FileModal.css'
 import '../recordDetailPage/Form.css'
+import { appConfig } from "../config";
 
 const Files = () => {
 
   const OBJECT_API = 'File'
-  const URL_getRecords= '/files'
-  const URL_deleteRecords= `/deletefiles/`
+  const URL_getRecords = '/files'
+  const URL_deleteRecords = `/deletefiles/`
+
+  const CONSTANTS = {
+    OBJECT_API: appConfig.api.files.apiName,
+    get: appConfig.api.files.base,
+    delete: appConfig.api.files.delete
+  }
+
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -40,14 +48,14 @@ const Files = () => {
   const [selectedRecordDatas, setSelectedRecordDatas] = useState();
   const [selectedRecordIds, setSelectedRecordIds] = useState();
 
-  
-  const [showEmail,setShowEmail]=useState()
-  const [notify, setNotify] = useState({ isOpen: false, message: "",type: "",});
-  const [confirmDialog, setConfirmDialog] = useState({isOpen: false,title: "",subTitle: "",});
 
-   const [permissionValues,setPermissionValues] =useState({})
-  const [modalFileUpload,setModalFileUpload]=useState(false)
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API)
+  const [showEmail, setShowEmail] = useState()
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "", });
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: "", subTitle: "", });
+
+  const [permissionValues, setPermissionValues] = useState({})
+  const [modalFileUpload, setModalFileUpload] = useState(false)
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API)
   console.log(userRoleDpt, "userRoleDpt")
 
   useEffect(() => {
@@ -55,9 +63,9 @@ const Files = () => {
     fetchObjectPermissions()
   }, []);
 
-  const fetchRecords = () => {    
+  const fetchRecords = async () => {
     setFetchRecordsLoading(true)
-    RequestServer(URL_getRecords)
+    await RequestServer("get", CONSTANTS.get, {})
       .then((res) => {
         console.log(res, "index page res");
         if (res.success) {
@@ -71,24 +79,24 @@ const Files = () => {
       .catch((err) => {
         setFetchError(err.message);
       })
-      .finally(()=>{
+      .finally(() => {
         setFetchRecordsLoading(false)
       })
   };
 
-  const fetchObjectPermissions=()=>{
-    if(userRoleDpt){
+  const fetchObjectPermissions = () => {
+    if (userRoleDpt) {
       apiCheckPermission(userRoleDpt)
-      .then(res=>{
-        console.log(res,"res apiCheckPermission")
-        setPermissionValues(res)
-      })
-      .catch(err=>{
-        console.log(err,"error apiCheckObjectPermission")
-      })
-      .finally(()=>{
-        setFetchPermissionLoading(false)
-      })
+        .then(res => {
+          console.log(res, "res apiCheckPermission")
+          setPermissionValues(res)
+        })
+        .catch(err => {
+          console.log(err, "error apiCheckObjectPermission")
+        })
+        .finally(() => {
+          setFetchPermissionLoading(false)
+        })
     }
   }
 
@@ -96,10 +104,10 @@ const Files = () => {
     setModalFileUpload(true)
   };
 
-  
+
   const handleRowClick = (e) => {
-    console.log(e.row.fileUrl,"handleRowClick")
-     window.open(e.row.fileUrl, "_blank");
+    console.log(e.row.fileUrl, "handleRowClick")
+    window.open(e.row.fileUrl, "_blank");
   };
 
   const onHandleDelete = (e, row) => {
@@ -129,9 +137,9 @@ const Files = () => {
   const onebyoneDelete = (row) => {
     console.log("one by on delete", row);
 
-    RequestServer(URL_deleteRecords + row)
+    RequestServer("delete", `${CONSTANTS.delete}/${row}`, {})
       .then((res) => {
-        console.log(res,"delete")
+        console.log(res, "delete")
         if (res.success) {
           fetchRecords();
           setNotify({
@@ -164,7 +172,7 @@ const Files = () => {
       });
   };
 
-  const handleFileModalClose=()=>{
+  const handleFileModalClose = () => {
     setModalFileUpload(false)
     fetchRecords()
   }
@@ -200,37 +208,37 @@ const Files = () => {
       align: "center",
       flex: 1,
     }
-]
-    if(permissionValues.delete){
-      columns.push(
-        {
-          field: "actions",
-          headerName: "Actions",
-          headerAlign: "center",
-          align: "center",
-          flex: 1,
-          width: 400,
-          renderCell: (params) => {
-            return (
-              <>
-                {!showEmail ? (
-                  <>
-                    <IconButton
-                      onClick={(e) => onHandleDelete(e, params.row)}
-                      style={{ padding: "20px", color: "#FF3333" }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </>
-                ) : (
-                  ""
-                )}
-              </>
-            );
-          },
+  ]
+  if (permissionValues.delete) {
+    columns.push(
+      {
+        field: "actions",
+        headerName: "Actions",
+        headerAlign: "center",
+        align: "center",
+        flex: 1,
+        width: 400,
+        renderCell: (params) => {
+          return (
+            <>
+              {!showEmail ? (
+                <>
+                  <IconButton
+                    onClick={(e) => onHandleDelete(e, params.row)}
+                    style={{ padding: "20px", color: "#FF3333" }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              ) : (
+                ""
+              )}
+            </>
+          );
         },
-      )
-    }
+      },
+    )
+  }
 
   return (
     <>
@@ -251,42 +259,42 @@ const Files = () => {
             <CircularProgress />
           </Box>
         ) : (
-          permissionValues.read &&(
-          <>
-         
-        <Typography
-          variant="h2"
-          color={colors.grey[100]}
-          fontWeight="bold"
-          sx={{ m: "0 0 5px 0" }}
-        >
-          {OBJECT_API}
-        </Typography>
-        <Box display="flex" justifyContent="space-between">
-          <Typography variant="h5" color={colors.greenAccent[400]}>
-            List Of {OBJECT_API}
-          </Typography>
+          permissionValues.read && (
+            <>
 
-          <div
-            style={{
-              display: "flex",
-              width: "200px",
-              justifyContent: "space-evenly",
-              height: "30px",
-            }}
-          >
-            {showEmail ? (
-              <>
+              <Typography
+                variant="h2"
+                color={colors.grey[100]}
+                fontWeight="bold"
+                sx={{ m: "0 0 5px 0" }}
+              >
+                {CONSTANTS.OBJECT_API}
+              </Typography>
+              <Box display="flex" justifyContent="space-between">
+                <Typography variant="h5" color={colors.greenAccent[400]}>
+                  List Of {CONSTANTS.OBJECT_API}
+                </Typography>
+
                 <div
                   style={{
-                    width: "180px",
                     display: "flex",
-                    justifyContent: "flex-end",
-                    gap: "15px",
+                    width: "200px",
+                    justifyContent: "space-evenly",
+                    height: "30px",
                   }}
                 >
-                  {
-                    permissionValues.delete &&                 
+                  {showEmail ? (
+                    <>
+                      <div
+                        style={{
+                          width: "180px",
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          gap: "15px",
+                        }}
+                      >
+                        {
+                          permissionValues.delete &&
                           <Tooltip title="Delete Selected">
                             <IconButton>
                               <DeleteIcon
@@ -295,80 +303,80 @@ const Files = () => {
                               />
                             </IconButton>
                           </Tooltip>
-                   }
+                        }
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {
+                        permissionValues.create &&
+                        <>
+                          <Button
+                            variant="contained" color="info"
+                            onClick={handleAddRecord}
+                          >
+                            Upload File
+                          </Button>
+                        </>
+                      }
+                    </>
+                  )}
                 </div>
-              </>
-            ) : (
-              <>
-              {
-                permissionValues.create &&
-              <>
-                <Button
-                  variant="contained"color="info"
-                  onClick={handleAddRecord}
-                >
-                  Upload File
-                </Button>
-              </>
-              }
-                </>
-            )}
-          </div>
-        </Box>
-        <Box m="15px 0 0 0" height="380px" className="my-mui-styles">
-          <DataGrid
-            sx={{
-              boxShadow:
-                "rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px",
-            }}
-            rows={records}
-            columns={columns}
-            getRowId={(row) => row._id}
-            pageSize={7}
-            rowsPerPageOptions={[7]}
-            components={{
-              // Toolbar: GridToolbar,
-              Pagination: CustomPagination,
-            }}
-            loading={fetchRecordsLoading}
-            getRowClassName={(params) =>
-              params.indexRelativeToCurrentPage % 2 === 0
-                ? "C-MuiDataGrid-row-even"
-                : "C-MuiDataGrid-row-odd"
-            }
-            checkboxSelection
-            disableSelectionOnClick
-            onSelectionModelChange={(ids) => {
-              var size = Object.keys(ids).length;
-              size > 0 ? setShowEmail(true) : setShowEmail(false);
-              console.log("checkbox selection ids", ids);
-              setSelectedRecordIds(ids);
-              const selectedIDs = new Set(ids);
-              const selectedRowRecords = records.filter((row) =>
-                selectedIDs.has(row._id.toString())
-              );
-              setSelectedRecordDatas(selectedRowRecords);
-              console.log("selectedRowRecords", selectedRowRecords);
-            }}
-            onRowClick={(e) => handleRowClick(e)}
-          />
-        </Box>
-        <Modal
-        open={modalFileUpload}
-        onClose={handleFileModalClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        sx={{ backdropFilter: "blur(1px)" }}
-      >
-        <div className="related-modal-box">
-          <ModalFileUpload handleModal={handleFileModalClose} />
-        </div>
-      </Modal>
+              </Box>
+              <Box m="15px 0 0 0" height="380px" className="my-mui-styles">
+                <DataGrid
+                  sx={{
+                    boxShadow:
+                      "rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px",
+                  }}
+                  rows={records}
+                  columns={columns}
+                  getRowId={(row) => row._id}
+                  pageSize={7}
+                  rowsPerPageOptions={[7]}
+                  components={{
+                    // Toolbar: GridToolbar,
+                    Pagination: CustomPagination,
+                  }}
+                  loading={fetchRecordsLoading}
+                  getRowClassName={(params) =>
+                    params.indexRelativeToCurrentPage % 2 === 0
+                      ? "C-MuiDataGrid-row-even"
+                      : "C-MuiDataGrid-row-odd"
+                  }
+                  checkboxSelection
+                  disableSelectionOnClick
+                  onSelectionModelChange={(ids) => {
+                    var size = Object.keys(ids).length;
+                    size > 0 ? setShowEmail(true) : setShowEmail(false);
+                    console.log("checkbox selection ids", ids);
+                    setSelectedRecordIds(ids);
+                    const selectedIDs = new Set(ids);
+                    const selectedRowRecords = records.filter((row) =>
+                      selectedIDs.has(row._id.toString())
+                    );
+                    setSelectedRecordDatas(selectedRowRecords);
+                    console.log("selectedRowRecords", selectedRowRecords);
+                  }}
+                  onRowClick={(e) => handleRowClick(e)}
+                />
+              </Box>
+              <Modal
+                open={modalFileUpload}
+                onClose={handleFileModalClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{ backdropFilter: "blur(1px)" }}
+              >
+                <div className="related-modal-box">
+                  <ModalFileUpload handleModal={handleFileModalClose} />
+                </div>
+              </Modal>
 
-        </>
+            </>
           ))}
       </Box>
-      
+
     </>
   );
 };

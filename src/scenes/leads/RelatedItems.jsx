@@ -2,6 +2,7 @@ import React from "react";
 import ModalLeadTask from "../tasks/ModalLeadTask";
 import ModalLeadOpportunity from "../opportunities/ModalLeadOpp";
 import RelatedItems from "../../components/common/RelatedItems";
+import { appConfig } from "../config";
 
 const LeadRelatedItems = ({ props }) => {
 const existingLead = props
@@ -12,12 +13,12 @@ const existingLead = props
  
   const sections = [
     {
-      key: 'event',
-      title: 'Event',
-      objectApi: 'Event',
-      fetchUrl: urlTaskbyLeadId,
-      deleteUrl: taskDeleteURL,
-      detailUrl:'/taskDetailPage',
+      key: appConfig.objects.task.key,
+      title: appConfig.objects.task.name.singular ||'Event',
+      objectApi: appConfig.objects.task.name.singular ||'Event',
+      fetchUrl: appConfig.objects.lead.r_task,
+      deleteUrl: appConfig.objects.task.delete,
+      detailUrl:appConfig.objects.task.detail,
       icon: 'event',
       displayFields: [
         { key: 'subject', label: 'Subject' },
@@ -26,12 +27,12 @@ const existingLead = props
       ]
     },
     {
-      key: 'deal',
-      title: 'Deals',
-      objectApi: 'Deals',
-      fetchUrl: urlOppbyLeadId,
-      deleteUrl: opportunityDeleteURL,
-      detailUrl:'/opportunityDetailPage',
+      key: appConfig.objects.opportunity.key,
+      title:appConfig.objects.opportunity.name.plural || 'Deals',
+      objectApi: appConfig.objects.opportunity.apiName ||'Deals',
+      fetchUrl: appConfig.objects.lead.r_opportunity,
+      deleteUrl: appConfig.objects.opportunity.delete,
+      detailUrl:appConfig.objects.opportunity.delete,
       icon: 'deal',
       displayFields: [
         { key: 'opportunityname', label: 'Deal Name' },

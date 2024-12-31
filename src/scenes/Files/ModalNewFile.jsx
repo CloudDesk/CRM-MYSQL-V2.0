@@ -9,9 +9,14 @@ import ClearAllIcon from "@mui/icons-material/ClearAll";
 import { POST_FILE } from "../api/endUrls";
 import { RequestServerFiles } from "../api/HttpReqFiles";
 import { apiMethods } from "../api/methods";
+import { appConfig } from "../config";
 
 
 const URL_postRecords = `/upsertfiles`
+
+const CONSTANTS = {
+    upsert: appConfig.api.files.upsert
+}
 
 const ModalFileUpload = ({ handleModal }) => {
 
@@ -52,7 +57,7 @@ const ModalFileUpload = ({ handleModal }) => {
     };
 
     const uploadSingleFile = (formData) => {
-        RequestServerFiles(apiMethods.post, URL_postRecords, formData)
+        RequestServerFiles("post", CONSTANTS.upsert, formData)
             .then(res => {
                 console.log("RequestServerFiles response", res)
                 if (res.success) {
@@ -125,31 +130,31 @@ const ModalFileUpload = ({ handleModal }) => {
                     }}
                 >
                     {selectedFiles.length > 0 &&
-                    <>
-                    <Button
-                        sx={{ marginTop: "10px" }}
-                        type="success"
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleUploadButtonClick}
-                        startIcon={<FileUploadIcon />}
-                    >
-                        Upload
-                    </Button>
-                    <Button
-                        type="reset"
-                        variant="outlined"
-                        sx={{
-                            marginTop: "10px",
-                            color: "black",
-                            backgroundColor: "whitesmoke",
-                        }}
-                        onClick={() => handleClearInput()}
-                        startIcon={<ClearAllIcon />}
-                    >
-                        Clear
-                    </Button>
-                    </>
+                        <>
+                            <Button
+                                sx={{ marginTop: "10px" }}
+                                type="success"
+                                variant="contained"
+                                color="secondary"
+                                onClick={handleUploadButtonClick}
+                                startIcon={<FileUploadIcon />}
+                            >
+                                Upload
+                            </Button>
+                            <Button
+                                type="reset"
+                                variant="outlined"
+                                sx={{
+                                    marginTop: "10px",
+                                    color: "black",
+                                    backgroundColor: "whitesmoke",
+                                }}
+                                onClick={() => handleClearInput()}
+                                startIcon={<ClearAllIcon />}
+                            >
+                                Clear
+                            </Button>
+                        </>
                     }
                 </Box>
 

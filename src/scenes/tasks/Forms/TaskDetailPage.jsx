@@ -10,9 +10,22 @@ import {
   metaDataFields,
   TaskFormFields,
 } from "../../formik/InitialValues/initialValues";
+import { appConfig } from "../../config";
 
 const OBJECT_API = "Event";
 const TaskUpsertURL = `/UpsertTask`;
+const fetchAccountUrl = `/accountsname`;
+const fetchLeadUrl = `/LeadsbyName`;
+const fetchOpportunityUrl = `/opportunitiesbyName`;
+
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.task.apiName,
+  upsert: appConfig.objects.task.upsert,
+  list: appConfig.objects.task.list,
+  getAccount: appConfig.objects.account.fetchAllAccounts,
+  getLead: appConfig.objects.lead.fetchAllLeads,
+  getOpportunity: appConfig.objects.opportunity.fetchAllOpportunity,
+}
 
 const TaskDetailPage = ({ props }) => {
   const location = useLocation();
@@ -32,7 +45,7 @@ const TaskDetailPage = ({ props }) => {
   const [permissionValues, setPermissionValues] = useState({});
   const [relatedToOptions, setRelatedToOptions] = useState([]);
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
@@ -58,9 +71,9 @@ const TaskDetailPage = ({ props }) => {
 
   const fetchRelatedToOptions = async (object) => {
     const urlMap = {
-      Account: fetchAccountUrl,
-      Enquiry: fetchLeadUrl,
-      Deals: fetchOpportunityUrl,
+      Account: CONSTANTS.getAccount,
+      Enquiry: CONSTANTS.getLead,
+      Deals: CONSTANTS.getOpportunity,
     };
 
     const fetchUrl = urlMap[object];
@@ -93,9 +106,7 @@ const TaskDetailPage = ({ props }) => {
     ...(existingTask ? metaDataFields : []),
   ];
 
-  const fetchAccountUrl = `/accountsname`;
-  const fetchLeadUrl = `/LeadsbyName`;
-  const fetchOpportunityUrl = `/opportunitiesbyName`;
+
 
   const handleSubmit = async (values) => {
     console.log(values, "handleSubmit values from TaskDetailPage");
@@ -124,7 +135,7 @@ const TaskDetailPage = ({ props }) => {
     }
     console.log(values, "values after modification");
     try {
-      const response = await RequestServer("post", TaskUpsertURL, values);
+      const response = await RequestServer("post", CONSTANTS.upsert, values);
       console.log(response, "response from TaskDetailPage");
       if (response.success) {
         setNotify({
@@ -133,7 +144,7 @@ const TaskDetailPage = ({ props }) => {
           type: "success",
         });
         setTimeout(() => {
-          navigate("/list/event");
+          navigate(CONSTANTS.list);
         }, 1500);
       } else {
         setNotify({

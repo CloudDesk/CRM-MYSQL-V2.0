@@ -9,6 +9,9 @@ import { appConfig } from '../config';
 
 
 const upsertUrl = `${appConfig.server}/dataloader`;
+const CONSTANTS = {
+  upsert: appConfig.api.dataLoader.upsert
+}
 
 function PreviewUpsert({ object, data, file, ModalClose, callBack }) {
 
@@ -27,7 +30,7 @@ function PreviewUpsert({ object, data, file, ModalClose, callBack }) {
     formData.append('createdBy', (sessionStorage.getItem("loggedInUser")))
     formData.append('modifiedBy', (sessionStorage.getItem("loggedInUser")))
 
-    axios.post(`${upsertUrl}/${object}`, formData)
+    axios.post(`${CONSTANTS.upsert}/${object}`, formData)
 
       .then((res) => {
         console.log('data import res', res);

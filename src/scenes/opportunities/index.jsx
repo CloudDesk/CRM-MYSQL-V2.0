@@ -7,20 +7,21 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
+import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Deals',
+  OBJECT_NAME: appConfig.objects.opportunity.apiName,
   ROUTES: {
-    OPPORTUNITIES: '/opportunities',
-    DELETE_OPPORTUNITY: '/deleteOpportunity',
-    NEW_OPPORTUNITY: '/new-opportunities',
-    OPPORTUNITY_DETAIL: '/opportunityDetailPage',
+    OPPORTUNITIES: appConfig.objects.opportunity.base || '/opportunities',
+    DELETE_OPPORTUNITY: appConfig.objects.opportunity.delete || '/deleteOpportunity',
+    NEW_OPPORTUNITY: appConfig.objects.opportunity.new || '/new-opportunities',
+    OPPORTUNITY_DETAIL: appConfig.objects.opportunity.detail || '/opportunityDetailPage',
   },
   TITLES: {
-    MAIN: 'Deals',
-    WEB_SUBTITLE: 'List Of Deals ',
-    MOBILE_SUBTITLE: 'List of Deals ',
+    MAIN: appConfig.objects.opportunity.apiName,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.opportunity.name.plural} `,
+    MOBILE_SUBTITLE: `List Of ${appConfig.objects.opportunity.name.plural} `,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some dealRecords failed to delete',

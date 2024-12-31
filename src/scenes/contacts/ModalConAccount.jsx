@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import * as Yup from "yup";
 import { Grid } from "@mui/material";
 import ToastNotification from "../toast/ToastNotification";
@@ -7,14 +7,14 @@ import { LeadSourcePickList, NameSalutionPickList } from '../../data/pickLists';
 import { RequestServer } from "../api/HttpReq";
 import { ContactInitialValues } from "../formik/InitialValues/formValues";
 import { DynamicForm } from "../../components/Form/DynamicForm";
+import { appConfig } from "../config";
 
-const UpsertUrl = `/UpsertContact`;
+const UpsertUrl = appConfig.objects.contact.upsert;
 
 const ModalConAccount = ({ handleModal, parentId, onSuccess }) => {
     const [accountParentRecord, setAccountParentRecord] = useState();
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' });
 
-    const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {

@@ -7,20 +7,21 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
+import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: "Event",
+  OBJECT_NAME: appConfig.objects.task.apiName,
   ROUTES: {
-    TASK: "/Task",
-    DELETE_TASK: "/deleteTask",
-    NEW_TASK: "/new-task",
-    TASK_DETAIL: "/taskDetailPage",
+    TASK: appConfig.objects.task.base || "/Task",
+    DELETE_TASK: appConfig.objects.task.delete || "/deleteTask",
+    NEW_TASK: appConfig.objects.task.new || "/new-task",
+    TASK_DETAIL: appConfig.objects.task.detail || "/taskDetailPage",
   },
   TITLES: {
-    MAIN: "Tasks",
-    WEB_SUBTITLE: "List Of Tasks",
-    MOBILE_SUBTITLE: "List of Tasks",
+    MAIN: appConfig.objects.task.name.plural,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.task.name.plural}`,
+    MOBILE_SUBTITLE: `List Of ${appConfig.objects.task.name.plural}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: "Some tasks failed to delete",
@@ -32,7 +33,7 @@ const CONSTANTS = {
     DELETE_SINGLE: "Task deleted successfully",
   },
   IMPORT_CONFIG: {
-    objectName: "Event",
+    objectName: appConfig.objects.task.apiName,
     isImport: false,
     callBack: null,
   },

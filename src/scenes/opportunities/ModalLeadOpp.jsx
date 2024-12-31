@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import * as Yup from "yup";
 import { Grid } from "@mui/material";
 import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from "../api/HttpReq";
 import { opportunityFormFields, generateOpportunityInitialValues } from '../formik/InitialValues/initialValues';
 import { DynamicForm } from "../../components/Form/DynamicForm";
+import { appConfig } from '../config';
 
 const url = `/UpsertOpportunity`;
 const fetchInventoriesbyName = `/InventoryName`;
+
+const CONSTANTS = {
+    upsert: appConfig.objects.opportunity.upsert,
+    getAllInventory: appConfig.objects.inventory.fetchAllInventories,
+    getInventoryByProperty: appConfig.objects.inventory.fetchInventoryByPropertyName
+
+}
 
 const ModalLeadOpportunity = ({ item, handleModal }) => {
     const [leadParentRecord, setLeadParentRecord] = useState();
@@ -25,8 +32,8 @@ const ModalLeadOpportunity = ({ item, handleModal }) => {
 
     const FetchInventoriesbyName = (isNameSearch, newInputValue) => {
         let url = isNameSearch
-            ? `${fetchInventoriesbyName}?opportunityname=${newInputValue}`
-            : fetchInventoriesbyName;
+            ? `${CONSTANTS.getInventoryByProperty}${newInputValue}`
+            : CONSTANTS.getAllInventory;
 
         RequestServer("get", url, {})
             .then((res) => {
@@ -103,7 +110,7 @@ const ModalLeadOpportunity = ({ item, handleModal }) => {
 
         console.log('after change form submission value', values);
 
-        await RequestServer("post", url, values)
+        await RequestServer("post", CONSTANTS.upsert, values)
             .then((res) => {
                 console.log('post response', res);
                 setNotify({

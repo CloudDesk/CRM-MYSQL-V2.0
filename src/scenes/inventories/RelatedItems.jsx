@@ -2,6 +2,7 @@ import React from "react";
 import ModalInventoryOpportunity from "../opportunities/ModalInventoryOpp";
 import ModalInventoryAccount from "../accounts/ModalAccountInventory";
 import RelatedItems from "../../components/common/RelatedItems";
+import { appConfig } from "../config";
 
 
 const InventoryRelatedItems = ({ props }) => {
@@ -10,12 +11,12 @@ const InventoryRelatedItems = ({ props }) => {
   
   const sections = [
     {
-      key: 'deal',
-      title: 'Deal',
-      objectApi: 'Deals',
-      fetchUrl: '/getOpportunitiesbyInvid?inventoryid=',
-      deleteUrl: '/deleteOpportunity',
-      detailUrl: '/opportunityDetailPage',
+      key: appConfig.objects.opportunity.key,
+      title: appConfig.objects.opportunity.name.singular,
+      objectApi: appConfig.objects.opportunity.apiName ||'Deals',
+      fetchUrl:appConfig.objects.inventory.r_opportunity || '/getOpportunitiesbyInvid?inventoryid=',
+      deleteUrl: appConfig.objects.opportunity.delete||'/deleteOpportunity',
+      detailUrl: appConfig.objects.opportunity.detail,
       icon: 'deal',
       displayFields: [
         { key: 'opportunityname', label: 'Name' },
@@ -28,12 +29,12 @@ const InventoryRelatedItems = ({ props }) => {
       ],
     },
     {
-      key: 'account',
-      title: 'Accounts',
-      objectApi: 'Account',
-      fetchUrl: '/getAccountbyInventory?inventoryid=',
-      deleteUrl: '/deleteAccount',
-      detailUrl: '/accountDetailPage',
+      key: appConfig.objects.account.key,
+      title: appConfig.objects.account.name.plural,
+      objectApi:  appConfig.objects.account.apiName||'Account',
+      fetchUrl:  appConfig.objects.inventory.r_account||'/getAccountbyInventory?inventoryid=',
+      deleteUrl:appConfig.objects.account.delete|| '/deleteAccount',
+      detailUrl: appConfig.objects.account.detail||'/accountDetailPage',
       icon: 'account',
       displayFields: [
         { key: 'accountname', label: 'Name' },

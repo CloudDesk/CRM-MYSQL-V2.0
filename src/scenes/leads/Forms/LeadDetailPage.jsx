@@ -10,7 +10,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getLoginUserRoleDept } from "../../Auth/userRoleDept";
 import { RequestServer } from "../../api/HttpReq";
 import ToastNotification from "../../toast/ToastNotification";
+import { appConfig } from "../../config";
 
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.lead.apiName,
+  upsert: appConfig.objects.lead.upsert,
+  list: appConfig.objects.lead.list
+}
 const LeadDetailPage = ({ props }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,7 +29,6 @@ const LeadDetailPage = ({ props }) => {
 
   const OBJECT_API = "Enquiry";
   const upsertURL = `/UpsertLead`;
-  const fetchUsersbyName = `/usersbyName`;
 
   //   const [singleLead, setsingleLead] = useState();
 
@@ -36,7 +41,7 @@ const LeadDetailPage = ({ props }) => {
   });
   const [permissionValues, setPermissionValues] = useState({});
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
@@ -112,7 +117,7 @@ const LeadDetailPage = ({ props }) => {
     // };
 
     console.log("Lead Submission:", values);
-    RequestServer("post", upsertURL, values)
+    RequestServer("post", CONSTANTS.upsert, values)
       .then((res) => {
         console.log("upsert record  response", res);
         if (res.success) {
@@ -122,7 +127,7 @@ const LeadDetailPage = ({ props }) => {
             type: "success",
           });
           setTimeout(() => {
-            navigate(-1);
+            navigate(CONSTANTS.list);
           }, 2000);
         } else {
           setNotify({
@@ -131,7 +136,7 @@ const LeadDetailPage = ({ props }) => {
             type: "error",
           });
           setTimeout(() => {
-            navigate(-1);
+            navigate(CONSTANTS.list);
           }, 1000);
         }
       })
@@ -143,7 +148,7 @@ const LeadDetailPage = ({ props }) => {
           type: "error",
         });
         setTimeout(() => {
-          navigate(-1);
+          navigate(CONSTANTS.list);
         }, 1000);
       });
     setSubmitting(false);

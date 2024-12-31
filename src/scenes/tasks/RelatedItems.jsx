@@ -4,6 +4,7 @@ import {
 } from "../api/endUrls";
 import ModalTaskFileUpload from "../Files/ModalTaskRelatedFile";
 import RelatedItems from "../../components/common/RelatedItems";
+import { appConfig } from "../config";
 
 const TaskRelatedItems = ({ props }) => {
   const existingTask = props;
@@ -15,9 +16,9 @@ const TaskRelatedItems = ({ props }) => {
     {
       key: 'file',
       title: 'Notes and Attachments',
-      objectApi: OBJECT_API,
-      fetchUrl: URL_getRelatedFiles,
-      deleteUrl: urlDelete,
+      objectApi: appConfig.api.files.apiName || appConfig.objects.task.apiName,
+      fetchUrl: appConfig.objects.task.r_file,
+      deleteUrl: appConfig.api.files.delete,
       icon: 'file',
       displayFields: [
         { key: 'filename', label: 'File Name' },

@@ -8,9 +8,13 @@ import "../formik/FormStyles.css"
 import ToastNotification from '../toast/ToastNotification';
 import { RequestServerFiles } from "../api/HttpReqFiles";
 import { RequestServer } from "../api/HttpReq";
+import { appConfig } from "../config";
 
 const urlSendWhatsAppbulk = `/whatsapp/personal`
 
+const CONSTANTS = {
+    send: appConfig.api.whatsapp.message
+}
 export default function WhatAppModalNew({ data, handleModal, bulkMail }) {
 
     const [parentRecord, setParentRecord] = useState([]);
@@ -70,7 +74,7 @@ export default function WhatAppModalNew({ data, handleModal, bulkMail }) {
 
 
 
-        RequestServer("post", urlSendWhatsAppbulk, obj)
+        RequestServer("post", CONSTANTS.send, obj)
             .then((res) => {
                 console.log('email send res', res)
                 if (res.success) {

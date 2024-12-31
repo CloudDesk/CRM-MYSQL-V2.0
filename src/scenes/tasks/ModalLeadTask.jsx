@@ -7,9 +7,17 @@ import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from '../api/HttpReq';
 import { TaskInitialValues } from "../formik/InitialValues/formValues";
 import { DynamicForm } from "../../components/Form/DynamicForm";
+import { appConfig } from "../config";
 
 const UpsertUrl = `/UpsertTask`;
 const fetchUsersbyName = `/usersByName`;
+
+const CONSTANTS = {
+    upsert: appConfig.objects.task.upsert,
+    getUsersByName: appConfig.objects.user.fetchUsersByFirstName,
+    getAllUsers: appConfig.objects.user.fetchAllUsers
+}
+
 
 const ModalTask = ({ item, handleModal }) => {
     const [taskParentRecord, setTaskParentRecord] = useState();
@@ -25,7 +33,7 @@ const ModalTask = ({ item, handleModal }) => {
     }, []);
 
     const FetchUsersbyName = (isNameSearch, newInputValue) => {
-        let url = isNameSearch ? `${fetchUsersbyName}` + `?firstname=${newInputValue}` : fetchUsersbyName;
+        let url = isNameSearch ? `${CONSTANTS.getUsersByName}${newInputValue}` : CONSTANTS.getAllUsers;
         RequestServer('get', url, {})
             .then((res) => {
                 console.log('res fetchUsersbyName', res.data);
@@ -59,7 +67,7 @@ const ModalTask = ({ item, handleModal }) => {
             label: "Assigned To",
             type: "autocomplete",
             options: usersRecord,
-            fetchurl: fetchUsersbyName,
+            fetchurl: CONSTANTS.getAllUsers,
             searchfor: 'firstname'
         },
         {
@@ -123,7 +131,7 @@ const ModalTask = ({ item, handleModal }) => {
 
         console.log(values, "values after modification");
 
-        await RequestServer("post", UpsertUrl, values)
+        await RequestServer("post", CONSTANTS.upsert, values)
             .then((res) => {
                 console.log('task form Submission response', res);
                 if (res.success) {

@@ -16,6 +16,13 @@ const OBJECT_API = "Users";
 const urlUpsertUser = `/UpsertUser`;
 const urlSendEmail = `/singlemail`;
 
+const CONSTANTS = {
+  OBJECT_API: appConfig.objects.user.apiName,
+  upsert: appConfig.objects.user.upsert,
+  list: appConfig.objects.user.list,
+  sendEmail: appConfig.api.email.single
+}
+
 const UserDetailPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,7 +39,7 @@ const UserDetailPage = () => {
   });
   const [permissionValues, setPermissionValues] = useState({});
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API);
+  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
@@ -77,7 +84,7 @@ const UserDetailPage = () => {
     };
     console.log(greetingEmail, "sendInviteEmail");
 
-    RequestServer("post", urlSendEmail, greetingEmail)
+    RequestServer("post", CONSTANTS.sendEmail, greetingEmail)
       .then((res) => {
         console.log("eamil res", res.data);
         if (res.success) {
@@ -129,7 +136,7 @@ const UserDetailPage = () => {
     console.log("values after modification", values);
 
     try {
-      const response = await RequestServer("post", urlUpsertUser, values);
+      const response = await RequestServer("post", CONSTANTS.upsert, values);
       console.log("response from UserDetailPage", response);
       if (response.success) {
         setNotify({
@@ -141,7 +148,7 @@ const UserDetailPage = () => {
           sendInviteEmail(values);
         }
         setTimeout(() => {
-          navigate("/list/user");
+          navigate(CONSTANTS.list);
         }, 1500);
       } else {
         setNotify({

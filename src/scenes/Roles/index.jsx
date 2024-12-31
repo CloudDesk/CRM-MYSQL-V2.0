@@ -18,6 +18,17 @@ import { apiCheckPermission } from '../Auth/apiCheckPermission';
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';
 import NoAccess from '../NoAccess/NoAccess';
 import SharedDataGrid from '../../components/SharedDataGrid';
+import { appConfig } from '../config';
+
+const CONSTANTS = {
+  OBJECT_NAME: appConfig.objects.role.apiName,
+  ROUTES: {
+    get: appConfig.objects.role.base || '/roles',
+    delete: appConfig.objects.role.delete || '/roles',
+    new: appConfig.objects.role.new || '/new-role',
+    detail: appConfig.objects.role.detail || '/roleDetailPage',
+  },
+}
 
 const RoleIndex = () => {
 
@@ -51,7 +62,7 @@ const RoleIndex = () => {
   );
 
   const fetchRecords = () => {
-    RequestServer("get", urlRoles)
+    RequestServer("get", CONSTANTS.ROUTES.get, {})
       .then((res) => {
         console.log(res, "index page res")
         if (res.success) {
@@ -85,13 +96,13 @@ const RoleIndex = () => {
     }
   }
   const handleAddRecord = () => {
-    navigate("/new-role", { state: { record: {} } })
+    navigate(`${CONSTANTS.ROUTES.new}`, { state: { record: {} } })
   };
 
   const handleOnCellClick = (e, row) => {
     console.log(' selected  rec', row);
     const item = e?.row;
-    navigate(`/roleDetailPage/${item._id}`, { state: { record: { item } } })
+    navigate(`${CONSTANTS.ROUTES.detail}/${item._id}`, { state: { record: { item } } })
   };
 
 
@@ -121,7 +132,7 @@ const RoleIndex = () => {
   const onebyoneDelete = (row) => {
     console.log('onebyoneDelete rec id', row)
 
-    RequestServer("delete", urlDelete + row)
+    RequestServer("delete", `${CONSTANTS.ROUTES.delete}/${row}`)
       .then((res) => {
         if (res.success) {
           fetchRecords()

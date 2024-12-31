@@ -7,20 +7,21 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
+import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Enquiry',
+  OBJECT_NAME: appConfig.objects.lead.apiName,
   ROUTES: {
-    LEADS: '/leads',
-    DELETE_LEAD: '/deleteLead',
-    NEW_LEAD: '/new-leads',
-    LEAD_DETAIL: '/leadDetailPage',
+    LEADS: appConfig.objects.lead.base,
+    DELETE_LEAD: appConfig.objects.lead.delete,
+    NEW_LEAD: appConfig.objects.lead.new,
+    LEAD_DETAIL: appConfig.objects.lead.detail,
   },
   TITLES: {
-    MAIN: 'Enquiries',
-    WEB_SUBTITLE: 'List Of Enquiries',
-    MOBILE_SUBTITLE: 'List of Enquiries',
+    MAIN: appConfig.objects.lead.name.plural,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.lead.name.plural}`,
+    MOBILE_SUBTITLE: `List of ${appConfig.objects.lead.name.plural}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some records failed to delete',

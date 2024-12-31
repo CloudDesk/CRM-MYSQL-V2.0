@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import * as Yup from "yup";
 import { Grid } from "@mui/material";
 import { TaskSubjectPicklist } from "../../data/pickLists";
@@ -7,15 +7,22 @@ import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from '../api/HttpReq';
 import { TaskInitialValues } from "../formik/InitialValues/formValues";
 import { DynamicForm } from "../../components/Form/DynamicForm";
+import { appConfig } from "../config";
 
 const UpsertUrl = `/UpsertTask`;
 const fetchUsersbyName = `/usersByName`;
+
+const CONSTANTS = {
+    upsert: appConfig.objects.task.upsert,
+    getUsersByName: appConfig.objects.user.fetchUsersByFirstName,
+    getAllUsers: appConfig.objects.user.fetchAllUsers
+}
+
 
 const ModalAccTask = ({ handleModal, parentId, onSuccess }) => {
     const [taskParentRecord, setTaskParentRecord] = useState();
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' });
     const [usersRecord, setUsersRecord] = useState([]);
-    const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
@@ -25,7 +32,7 @@ const ModalAccTask = ({ handleModal, parentId, onSuccess }) => {
     }, []);
 
     const FetchUsersbyName = (isNameSearch, newInputValue) => {
-        let url = isNameSearch ? `${fetchUsersbyName}` + `?firstname=${newInputValue}` : fetchUsersbyName;
+        let url = isNameSearch ? `${CONSTANTS.getUsersByName}${newInputValue}` : CONSTANTS.getAllUsers;
         RequestServer("get", url, {})
             .then((res) => {
                 console.log('res fetchUsersbyName', res.data);
@@ -63,7 +70,7 @@ const ModalAccTask = ({ handleModal, parentId, onSuccess }) => {
             xs: 12,
             md: 6,
             options: usersRecord,
-            fetchurl: fetchUsersbyName,
+            fetchurl: CONSTANTS.getAllUsers,
             searchfor: 'firstname'
         },
         {
@@ -130,7 +137,7 @@ const ModalAccTask = ({ handleModal, parentId, onSuccess }) => {
             values.EndDate = EndDateSec;
         }
 
-        await RequestServer("post", UpsertUrl, values)
+        await RequestServer("post", CONSTANTS.upsert, values)
             .then((res) => {
                 console.log('task form Submission response', res);
                 setNotify({

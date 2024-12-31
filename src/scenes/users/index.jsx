@@ -7,20 +7,21 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
+import { appConfig } from "../config";
 
 // Constants
 const CONSTANTS = {
-  OBJECT_NAME: 'Users',
+  OBJECT_NAME: appConfig.objects.user.apiName,
   ROUTES: {
-    USERS: '/Users',
-    DELETE_USER: '/delete',
-    NEW_USER: '/new-users',
-    USER_DETAIL: '/userDetailPage',
+    USERS: appConfig.objects.user.base || '/Users',
+    DELETE_USER: appConfig.objects.user.delete || '/delete',
+    NEW_USER: appConfig.objects.user.new || '/new-users',
+    USER_DETAIL: appConfig.objects.user.detail || '/userDetailPage',
   },
   TITLES: {
-    MAIN: 'Users',
-    WEB_SUBTITLE: 'List Of Users',
-    MOBILE_SUBTITLE: 'List of Users',
+    MAIN: appConfig.objects.user.apiName,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.user.name.plural}`,
+    MOBILE_SUBTITLE: `List Of ${appConfig.objects.user.name.plural}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some users failed to delete',
@@ -32,7 +33,7 @@ const CONSTANTS = {
     DELETE_SINGLE: 'User deleted successfully',
   },
   IMPORT_CONFIG: {
-    objectName: 'Users',
+    objectName: appConfig.objects.user.apiName,
     isImport: false,
     callBack: null,
   },

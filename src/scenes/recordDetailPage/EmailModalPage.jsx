@@ -11,8 +11,13 @@ import CustomizedRichTextField from "../formik/CustomizedRichTextField";
 import {EmailInitialValues} from '../formik/InitialValues/formValues';
 import { RequestServer } from "../api/HttpReq";
 import { RequestServerFiles } from "../api/HttpReqFiles";
+import { appConfig } from "../config";
 
 const urlSendEmailbulk = `/bulkemail`
+
+const CONSTANTS={
+    bulkEmail:appConfig.api.email.bulk
+}
 
 const EmailModalPage = ({ data, handleModal, bulkMail }) => {
 
@@ -61,7 +66,7 @@ const EmailModalPage = ({ data, handleModal, bulkMail }) => {
         // formData.append('recordsData', JSON.stringify(element));
         formData.append('file', values.attachments);
 
-        RequestServerFiles("post",urlSendEmailbulk, formData)
+        RequestServerFiles("post",CONSTANTS.bulkEmail, formData)
             .then((res) => {
                 console.log('email send res', res)
                 if(res.success){
