@@ -627,6 +627,7 @@ export const DynamicForm = ({
   renderActionButtons,
   onFieldChange, // Add this new prop
   formref,
+  handleCancel
 }) => {
   console.log(formref, "formref in DynamicForm");
   console.log(fields, "fields in DynamicForm");
@@ -813,7 +814,13 @@ export const DynamicForm = ({
                     {submitButtonText}
                   </Button>
                   <Button
-                    onClick={() => navigate(-1)}
+                    onClick={() => {
+                      if (handleCancel) {
+                        handleCancel()
+                      } else
+                        navigate(-1)
+                    }
+                    }
                     variant="outlined"
                     color="primary"
                   >

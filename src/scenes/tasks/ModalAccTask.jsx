@@ -175,6 +175,7 @@ const ModalAccTask = ({ handleModal, parentId, onSuccess }) => {
                 validationSchema={validationSchema}
                 onSubmit={formSubmission}
                 permissionValues={permissionValues}
+                handleCancel={handleModal}
             />
         </Grid>
     );

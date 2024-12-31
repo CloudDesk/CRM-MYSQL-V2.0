@@ -181,6 +181,7 @@ const ModalConAccount = ({ handleModal, parentId, onSuccess }) => {
                 initialValues={ContactInitialValues}
                 onSubmit={formSubmission}
                 permissionValues={permissionValues}
+                handleCancel={handleModal}
             />
         </Grid>
     );

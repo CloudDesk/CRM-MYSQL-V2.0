@@ -140,13 +140,14 @@ const ModalLeadOpportunity = ({ item, handleModal }) => {
                 initialValues={generateOpportunityInitialValues()}
                 onSubmit={formSubmission}
                 permissionValues={permissionValues}
+                handleCancel={handleModal}
                 onFieldChange={(name, value, setFieldValue) => {
                     // Custom field change logic if needed
                     if (name === 'inventoryid') {
-                        // Example of additional handling
                         console.log('Inventory selected:', value);
                     }
                 }}
+
             />
         </Grid>
     );

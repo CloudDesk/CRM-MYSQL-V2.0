@@ -157,6 +157,7 @@ const ModalInventoryOpportunity = ({ item, handleModal }) => {
                         console.log('Lead selected:', value);
                     }
                 }}
+                handleCancel={handleModal}
             />
         </Grid>
     );

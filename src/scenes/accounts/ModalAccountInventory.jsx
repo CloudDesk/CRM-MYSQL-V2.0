@@ -96,6 +96,7 @@ const ModalInventoryAccount = ({ item, handleModal }) => {
                         setFieldValue('billingCity', '');
                     }
                 }}
+                handleCancel={handleModal}
             />
         </Grid>
     );

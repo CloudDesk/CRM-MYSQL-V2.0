@@ -175,6 +175,7 @@ const ModalTask = ({ item, handleModal }) => {
                 validationSchema={validationSchema}
                 onSubmit={formSubmission}
                 permissionValues={permissionValues}
+                handleCancel={handleModal}
 
             />
         </Grid>
