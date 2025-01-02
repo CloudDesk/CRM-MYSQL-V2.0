@@ -166,7 +166,7 @@ export const appConfig = {
       name: { singular: "User", plural: "Users" },
       apiName: "Users",
       base: "/Users",
-      delete: "/deleteUser",
+      delete: "/delete",
       new: "/new-users",
       detail: "/userDetailPage",
       upsert: "/UpsertUser",

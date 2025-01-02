@@ -4,6 +4,7 @@ import ModalConAccount from "../contacts/ModalConAccount";
 import RelatedItems from "../../components/common/RelatedItems";
 import { appConfig } from "../config";
 
+
 const AccountRelatedItems = ({ props }) => {
   console.log("AccountRelatedItems", props)
   const exisitingAccount = props;

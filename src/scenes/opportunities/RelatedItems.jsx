@@ -17,6 +17,7 @@ const OpportunityRelatedItems = ({ props }) => {
       objectApi:  appConfig.objects.task.apiName,
       fetchUrl: appConfig.objects.opportunity.r_task,
       deleteUrl: appConfig.objects.task.delete,
+      detailUrl: appConfig.objects.task.detail,
       icon: 'event',
       displayFields: [
         { key: 'subject', label: 'Subject' },

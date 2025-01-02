@@ -6,7 +6,7 @@ import {
 } from "../../formik/InitialValues/initialValues";
 import { DynamicForm } from "../../../components/Form/DynamicForm";
 import { apiCheckPermission } from "../../Auth/apiCheckPermission";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getLoginUserRoleDept } from "../../Auth/userRoleDept";
 import { RequestServer } from "../../api/HttpReq";
 import ToastNotification from "../../toast/ToastNotification";
@@ -18,7 +18,6 @@ const CONSTANTS = {
   list: appConfig.objects.lead.list
 }
 const LeadDetailPage = ({ props }) => {
-  const location = useLocation();
   const navigate = useNavigate();
 
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
@@ -45,7 +44,7 @@ const LeadDetailPage = ({ props }) => {
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
-    console.log("passed record", location.state.record.item);
+
     //   setsingleLead(location.state.record.item || location.state.record);
     //   setshowNew(!location.state.record.item);
     // getTasks(location.state.record.item._id)
@@ -88,8 +87,8 @@ const LeadDetailPage = ({ props }) => {
       values.modifiedby = currentUser;
     } else if (!existingLead) {
       console.log("inisde new lead");
-      values.leadid = values.leadname.id;
-      values.inventoryid = values.inventoryname.id;
+      // values.leadid = values.leadname.id;
+      // values.inventoryid = values.inventoryname.id;
       values.createddate = new Date().getTime();
       values.modifieddate = new Date().getTime();
       values.createdby = currentUser;

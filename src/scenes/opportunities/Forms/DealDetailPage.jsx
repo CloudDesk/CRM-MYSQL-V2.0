@@ -69,7 +69,7 @@ const DealDetailPage = ({ props }) => {
   };
 
   const handleSubmit = async (values, { isSubmitting }) => {
-    console.log(values, "values");
+    console.log(values, "Opportunity submit values");
     let dateSeconds = new Date().getTime();
     let closeDateSec = new Date(values.closedate).getTime();
 
@@ -81,6 +81,13 @@ const DealDetailPage = ({ props }) => {
       values.createddate = existingOpportunity.createddate;
       values.createdby = existingOpportunity.createdby;
     } else if (!existingOpportunity) {
+      if (typeof (values.leadname) === "object") {
+        values.leadid = values.leadname.id;
+      }
+      if (typeof (values.inventoryname) === 'object') {
+        values.inventoryid = values.inventoryname.id;
+      }
+
       values.createddate = dateSeconds;
       values.modifieddate = dateSeconds;
       values.createdby = currentUser;

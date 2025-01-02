@@ -14,7 +14,7 @@ const CONSTANTS = {
 }
 
 function PreviewUpsert({ object, data, file, ModalClose, callBack }) {
-
+  console.log("PreviewUpsert", object, data, file,)
   const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
   const [isLoading, setIsLoading] = useState(false)
 
