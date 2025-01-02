@@ -175,8 +175,8 @@ const TaskDetailPage = ({ props }) => {
         })}
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        formTitle={existingTask ? "Edit Task" : "New Task"}
-        submitButtonText={existingTask ? "Update Task" : "Create Task"}
+        formTitle={existingTask ? "Edit Event" : "New Event"}
+        submitButtonText={existingTask ? "Update Event" : "Create Event"}
         permissionValues={permissionValues}
       />
     </div>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import {
@@ -316,6 +316,10 @@ const DynamicFormField = ({
       onFieldChange(name, value, setFieldValue);
     }
   };
+
+  useEffect(() => {
+    fetchAutocompleteOptions()
+  }, [field.fetchurl])
 
   const fetchAutocompleteOptions = async (searchTerm) => {
     if (!field.fetchurl) return;
