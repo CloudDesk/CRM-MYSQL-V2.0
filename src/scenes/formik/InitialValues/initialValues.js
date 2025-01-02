@@ -1254,6 +1254,7 @@ export const TaskFormFields = (isExistingTask = false) => {
       xs: 12,
       md: 6,
       options: TaskSubjectPicklist,
+      required: true,
       props: {
         placeholder: "Select Subject",
       },
@@ -1264,6 +1265,7 @@ export const TaskFormFields = (isExistingTask = false) => {
       type: "select",
       xs: 12,
       md: 6,
+      required: true,
       options: TaskObjectPicklist,
       onChange: async (value, formik) => {
         console.log(value, "value from object onchange");
@@ -1310,6 +1312,7 @@ export const TaskFormFields = (isExistingTask = false) => {
       type: "select",
       xs: 12,
       md: 6,
+      required: true,
       dependsOn: {
         field: "object"
       },
@@ -1325,6 +1328,7 @@ export const TaskFormFields = (isExistingTask = false) => {
       type: "autocomplete",
       xs: 12,
       md: 6,
+      required: true,
       fetchurl: fetchUsersbyName,
       searchfor: "fullname",
       options: [],
@@ -1338,6 +1342,7 @@ export const TaskFormFields = (isExistingTask = false) => {
       type: "date",
       xs: 12,
       md: 6,
+      required: true,
       validator: Yup.date().nullable(),
       props: {
         InputLabelProps: { shrink: true }
@@ -1349,6 +1354,7 @@ export const TaskFormFields = (isExistingTask = false) => {
       type: "date",
       xs: 12,
       md: 6,
+      required: true,
       validator: Yup.date().nullable(),
       props: {
         InputLabelProps: { shrink: true }
@@ -1401,8 +1407,11 @@ export const generateTaskInitialValues = (existingTask = {}) => {
   if (Object.keys(existingTask).length > 0) {
     // defaultValues.relatedToOptions = relatedToOptions;
     defaultValues.relatedto = existingTask.relatedto;
-    defaultValues.startdate = format(existingTask.startdate, "yyyy-MM-dd") ?? Date.now();
-    defaultValues.enddate = format(existingTask.enddate, "yyyy-MM-dd") ?? Date.now();
+    if ((existingTask.startdate && existingTask.enddate) !== null) {
+      defaultValues.startdate = format(existingTask?.startdate, "yyyy-MM-dd") ?? Date.now();
+      defaultValues.enddate = format(existingTask?.enddate, "yyyy-MM-dd") ?? Date.now();
+    }
+
     defaultValues.createddate = format(existingTask.createddate, "MM/dd/yyyy") || Date.now();
     defaultValues.modifieddate = format(existingTask.modifieddate, "MM/dd/yyyy") || Date.now();
 
