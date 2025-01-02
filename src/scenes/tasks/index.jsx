@@ -7,98 +7,16 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-import { appConfig } from "../config";
+import { TASK_TABLE_CONFIG } from "../config/tableConfigs";
+import { TASK_CONSTANTS } from "../config/constantConfigs";
 
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.task.apiName,
-  ROUTES: {
-    TASK: appConfig.objects.task.base || "/Task",
-    DELETE_TASK: appConfig.objects.task.delete || "/deleteTask",
-    NEW_TASK: appConfig.objects.task.new || "/new-task",
-    TASK_DETAIL: appConfig.objects.task.detail || "/taskDetailPage",
-  },
-  TITLES: {
-    MAIN: appConfig.objects.task.name.singular,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.task.name.plural}`,
-    MOBILE_SUBTITLE: `List Of ${appConfig.objects.task.name.plural}`,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: "Some tasks failed to delete",
-    DELETE_SINGLE: "Failed to delete task",
-    DEFAULT: "An error occurred",
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: "All tasks deleted successfully",
-    DELETE_SINGLE: "Task deleted successfully",
-  },
-  IMPORT_CONFIG: {
-    objectName: appConfig.objects.task.apiName,
-    isImport: false,
-    callBack: null,
-  },
-};
 
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    { label: "Subject", key: "subject" },
-    {
-      label: "Related To",
-      key: "realatedto",
-      render: (value, row) => {
-        if (row?.object === "Account") return row?.accountname;
-        if (row?.object === "Enquiry") return row?.leadname;
-        if (row?.object === "Deals") return row?.opportunityname;
-        return "---";
-      },
-    },
-    { label: "Object", key: "object" },
-  ],
-  columns: [
-    {
-      field: "subject",
-      headerName: "Subject",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "realatedto",
-      headerName: "Related To",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      renderCell: (params) => {
-        console.log(params, "params from related to bind");
-        if (params.row?.object === "Account") {
-          // return <div className="rowitem">{params.row?.accountname}</div>;
-          return <div className="rowitem">{params.row?.relatedto}</div>;
-        } else if (params.row?.object === "Enquiry") {
-          // return <div className="rowitem">{params.row?.leadname}</div>;
-          return <div className="rowitem">{params.row?.relatedto}</div>;
-        } else if (params.row.object === "Deals") {
-          // return <div className="rowitem">{params.row?.opportunityname}</div>;
-          return <div className="rowitem">{params.row?.relatedto}</div>;
-        }
-        return <div className="rowitem">---</div>;
-      },
-    },
-    {
-      field: "object",
-      headerName: "Object",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-  ],
-};
 
 const Tasks = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(TASK_CONSTANTS.OBJECT_NAME);
 
   const [records, setRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
@@ -117,7 +35,7 @@ const Tasks = () => {
 
   const fetchRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.TASK, {});
+      const response = await RequestServer("get", TASK_CONSTANTS.ROUTES.TASK, {});
       if (response.success) {
         setRecords(response.data);
         setFetchError(null);
@@ -144,12 +62,12 @@ const Tasks = () => {
   };
 
   const handleCreateRecord = () => {
-    navigate(CONSTANTS.ROUTES.NEW_TASK, { state: { record: {} } });
+    navigate(TASK_CONSTANTS.ROUTES.NEW_TASK, { state: { record: {} } });
   };
 
   const handleEditRecord = (event) => {
     const item = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.TASK_DETAIL}/${item._id}`, {
+    navigate(`${TASK_CONSTANTS.ROUTES.TASK_DETAIL}/${item._id}`, {
       state: { record: { item } },
     });
   };
@@ -167,7 +85,7 @@ const Tasks = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_TASK}/${recordId}`,
+        `${TASK_CONSTANTS.ROUTES.DELETE_TASK}/${recordId}`,
         {}
       );
 
@@ -175,18 +93,18 @@ const Tasks = () => {
         await fetchRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: TASK_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: TASK_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || TASK_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -201,16 +119,16 @@ const Tasks = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? TASK_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : TASK_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return TASK_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...TASK_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -235,11 +153,11 @@ const Tasks = () => {
     <Box>
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
+        title={TASK_CONSTANTS.TITLES.MAIN}
         subtitle={
           isMobile
-            ? CONSTANTS.TITLES.MOBILE_SUBTITLE
-            : CONSTANTS.TITLES.WEB_SUBTITLE
+            ? TASK_CONSTANTS.TITLES.MOBILE_SUBTITLE
+            : TASK_CONSTANTS.TITLES.WEB_SUBTITLE
         }
         records={records}
         onCreateRecord={handleCreateRecord}
@@ -248,14 +166,14 @@ const Tasks = () => {
           isMobile ? (permissions.delete ? handleDelete : null) : handleDelete
         }
         permissions={permissions}
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? TASK_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
-        importConfig={CONSTANTS.IMPORT_CONFIG}
+        importConfig={TASK_CONSTANTS.IMPORT_CONFIG}
       />
     </Box>
   );

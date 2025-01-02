@@ -8,110 +8,8 @@ import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
 import { appConfig } from "../config";
-
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.opportunity.apiName,
-  ROUTES: {
-    OPPORTUNITIES: appConfig.objects.opportunity.base || '/opportunities',
-    DELETE_OPPORTUNITY: appConfig.objects.opportunity.delete || '/deleteOpportunity',
-    NEW_OPPORTUNITY: appConfig.objects.opportunity.new || '/new-opportunities',
-    OPPORTUNITY_DETAIL: appConfig.objects.opportunity.detail || '/opportunityDetailPage',
-  },
-  TITLES: {
-    MAIN: appConfig.objects.opportunity.name.singular,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.opportunity.name.plural} `,
-    MOBILE_SUBTITLE: `List Of ${appConfig.objects.opportunity.name.plural} `,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some dealRecords failed to delete',
-    DELETE_SINGLE: 'Failed to delete record',
-    DEFAULT: 'An error occurred',
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All dealRecords deleted successfully',
-    DELETE_SINGLE: 'Record deleted successfully',
-  },
-};
-
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    {
-      key: "opportunityname",
-      label: "Deal Name"
-    },
-    {
-      key: "propertyname",
-      label: "Inventory Name"
-    },
-    {
-      key: "type",
-      label: "Type"
-    },
-    {
-      key: "stage",
-      label: "Stage"
-    }
-  ],
-  columns: [
-    {
-      field: "opportunityname",
-      headerName: "Deal Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "propertyname",
-      headerName: "Inventory Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.inventoryname) {
-          return (
-            <div className="rowitem">
-              {params.row.inventoryname.startsWith("{")
-                ? JSON.parse(params.row.inventoryname).label
-                : params.row.inventoryname || ""}
-            </div>
-          );
-        } else {
-          return <div className="rowitem">{null}</div>;
-        }
-      },
-    },
-    {
-      field: "type",
-      headerName: "Type",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "amount",
-      headerName: "Opportunity Amount",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      renderCell: (params) => {
-        const formatCurrency = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "INR",
-        });
-        return formatCurrency.format(params.row.amount);
-      },
-    },
-    {
-      field: "stage",
-      headerName: "Stage",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-  ],
-};
+import { OPPORTUNITY_TABLE_CONFIG } from "../config/tableConfigs";
+import { OPPORTUNITY_CONSTANTS } from "../config/constantConfigs";
 
 /**
  * Opportunities Component
@@ -122,7 +20,7 @@ const Opportunities = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(OPPORTUNITY_CONSTANTS.OBJECT_NAME);
 
   // State management
   const [dealRecords, setDealRecords] = useState([]);
@@ -148,7 +46,7 @@ const Opportunities = () => {
   // Fetches the list of opportunities
   const fetchDealRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.OPPORTUNITIES, {});
+      const response = await RequestServer("get", OPPORTUNITY_CONSTANTS.ROUTES.OPPORTUNITIES, {});
       if (response.success) {
         setDealRecords(response.data);
         setFetchError(null);
@@ -176,12 +74,12 @@ const Opportunities = () => {
 
   // Navigation handlers
   const handleCreateOpportunity = () => {
-    navigate(CONSTANTS.ROUTES.NEW_OPPORTUNITY, { state: { record: {} } });
+    navigate(OPPORTUNITY_CONSTANTS.ROUTES.NEW_OPPORTUNITY, { state: { record: {} } });
   };
 
   const handleOpportunityDetail = (event) => {
     const opportunity = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.OPPORTUNITY_DETAIL}/${opportunity._id}`, {
+    navigate(`${OPPORTUNITY_CONSTANTS.ROUTES.OPPORTUNITY_DETAIL}/${opportunity._id}`, {
       state: { record: { item: opportunity } }
     });
   };
@@ -200,7 +98,7 @@ const Opportunities = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_OPPORTUNITY}/${recordId}`,
+        `${OPPORTUNITY_CONSTANTS.ROUTES.DELETE_OPPORTUNITY}/${recordId}`,
         {}
       );
 
@@ -208,18 +106,18 @@ const Opportunities = () => {
         await fetchDealRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: OPPORTUNITY_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: OPPORTUNITY_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || OPPORTUNITY_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -234,17 +132,17 @@ const Opportunities = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? OPPORTUNITY_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : OPPORTUNITY_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
   // Column configuration with conditional delete action
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return OPPORTUNITY_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...OPPORTUNITY_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -270,15 +168,15 @@ const Opportunities = () => {
     <Box>
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        title={OPPORTUNITY_CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? OPPORTUNITY_CONSTANTS.TITLES.MOBILE_SUBTITLE : OPPORTUNITY_CONSTANTS.TITLES.WEB_SUBTITLE}
         records={dealRecords}
         onCreateRecord={handleCreateOpportunity}
         onEditRecord={handleOpportunityDetail}
         onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
         permissions={permissions}
 
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? OPPORTUNITY_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}
@@ -286,7 +184,7 @@ const Opportunities = () => {
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
         importConfig={{
-          objectName: CONSTANTS.OBJECT_NAME,
+          objectName: OPPORTUNITY_CONSTANTS.OBJECT_NAME,
           isImport: true,
           callBack: fetchDealRecords,
         }}

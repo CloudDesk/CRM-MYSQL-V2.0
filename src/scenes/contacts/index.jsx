@@ -7,108 +7,9 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-import { appConfig } from "../config";
+import { CONTACT_TABLE_CONFIG } from "../config/tableConfigs";
+import { CONTACT_CONSTANTS } from "../config/constantConfigs";
 
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.contact.apiName,
-  ROUTES: {
-    CONTACTS: appConfig.objects.contact.base,
-    DELETE_CONTACT: appConfig.objects.contact.delete,
-    NEW_CONTACT: appConfig.objects.contact.new,
-    CONTACT_DETAIL: appConfig.objects.contact.detail,
-  },
-  TITLES: {
-    MAIN: appConfig.objects.contact.apiName,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.contact.name.plural}`,
-    MOBILE_SUBTITLE: `List of  ${appConfig.objects.contact.name.plural}`,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: "Some contacts failed to delete",
-    DELETE_SINGLE: "Failed to delete contact",
-    DEFAULT: "An error occurred",
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: "All contacts deleted successfully",
-    DELETE_SINGLE: "Contact deleted successfully",
-  },
-  IMPORT_CONFIG: {
-    objectName: "Contact",
-    isImport: false,
-    callBack: null,
-  },
-};
-
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    {
-      key: "lastname",
-      label: "Last Name",
-    },
-    {
-      key: "accountname",
-      label: "Account Name",
-    },
-    {
-      key: "phone",
-      label: "Phone",
-    },
-    {
-      key: "email",
-      label: "Email",
-    },
-  ],
-  columns: [
-    {
-      field: "lastname",
-      headerName: "Last Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "accountname",
-      headerName: "Account Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      renderCell: (params) => {
-        if (params.row.accountname) {
-          return (
-            <div className="rowitem">
-              {params.row.accountname.startsWith("{")
-                ? JSON.parse(params.row.accountname).label
-                : params.row.accountname || ""}
-            </div>
-          );
-        }
-        return <div className="rowitem">{null}</div>;
-      },
-    },
-    {
-      field: "phone",
-      headerName: "Phone",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "leadsource",
-      headerName: "Lead Source",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-  ],
-};
 
 /**
  * Contacts Component
@@ -119,7 +20,7 @@ const Contacts = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(CONTACT_CONSTANTS.OBJECT_NAME);
 
   // State management
   const [contactRecords, setContactRecords] = useState([]);
@@ -144,7 +45,7 @@ const Contacts = () => {
     try {
       const response = await RequestServer(
         "get",
-        CONSTANTS.ROUTES.CONTACTS,
+        CONTACT_CONSTANTS.ROUTES.CONTACTS,
         {}
       );
       if (response.success) {
@@ -174,12 +75,12 @@ const Contacts = () => {
 
   // Navigation handlers
   const handleCreateContact = () => {
-    navigate(CONSTANTS.ROUTES.NEW_CONTACT, { state: { record: {} } });
+    navigate(CONTACT_CONSTANTS.ROUTES.NEW_CONTACT, { state: { record: {} } });
   };
 
   const handleContactDetail = (event) => {
     const contact = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.CONTACT_DETAIL}/${contact._id}`, {
+    navigate(`${CONTACT_CONSTANTS.ROUTES.CONTACT_DETAIL}/${contact._id}`, {
       state: { record: { item: contact } },
     });
   };
@@ -198,7 +99,7 @@ const Contacts = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_CONTACT}/${recordId}`,
+        `${CONTACT_CONSTANTS.ROUTES.DELETE_CONTACT}/${recordId}`,
         {}
       );
 
@@ -206,18 +107,18 @@ const Contacts = () => {
         await fetchContactRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: CONTACT_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: CONTACT_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || CONTACT_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -232,17 +133,17 @@ const Contacts = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? CONTACT_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : CONTACT_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
   // Column configuration with conditional delete action
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return CONTACT_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...CONTACT_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -267,11 +168,11 @@ const Contacts = () => {
     <Box>
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
+        title={CONTACT_CONSTANTS.TITLES.MAIN}
         subtitle={
           isMobile
-            ? CONSTANTS.TITLES.MOBILE_SUBTITLE
-            : CONSTANTS.TITLES.WEB_SUBTITLE
+            ? CONTACT_CONSTANTS.TITLES.MOBILE_SUBTITLE
+            : CONTACT_CONSTANTS.TITLES.WEB_SUBTITLE
         }
         records={contactRecords}
         onCreateRecord={handleCreateContact}
@@ -280,14 +181,14 @@ const Contacts = () => {
           isMobile ? (permissions.delete ? handleDelete : null) : handleDelete
         }
         permissions={permissions}
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? CONTACT_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
-        importConfig={CONSTANTS.IMPORT_CONFIG}
+        importConfig={CONTACT_CONSTANTS.IMPORT_CONFIG}
       />
     </Box>
   );

@@ -7,20 +7,19 @@ import {
 } from "@mui/material";
 import axios from 'axios'
 import "../formik/FormStyles.css"
-import { appConfig } from "../config";
+import { DATALOADER_CONSTANTS } from "../config/constantConfigs";
 
+// const UpsertLeadUrl = `${appConfig.server}/dataloaderlead`;
+// const UpsertAccountUrl=`${appConfig.server}dataloaderAccount`;
+// const UpsertOppUrl=`${appConfig.server}/dataloaderOpportunity`;
+// const generatePreview =`${appConfig.server}/generatePreview`;
 
-const UpsertLeadUrl = `${appConfig.server}/dataloaderlead`;
-const UpsertAccountUrl=`${appConfig.server}dataloaderAccount`;
-const UpsertOppUrl=`${appConfig.server}/dataloaderOpportunity`;
-const generatePreview =`${appConfig.server}/generatePreview`;
-
-const CONSTANTS ={
-    preview:appConfig.api.dataLoader.preview,
-    upsertLead:appConfig.api.dataLoader.upsertLead,
-    upsertAccount:appConfig.api.dataLoader.upsertAccount,
-    upsertOpportunity:appConfig.api.dataLoader.upsertOpportunity
-}
+// const CONSTANTS ={
+//     preview:appConfig.api.dataLoader.preview,
+//     upsertLead:appConfig.api.dataLoader.upsertLead,
+//     upsertAccount:appConfig.api.dataLoader.upsertAccount,
+//     upsertOpportunity:appConfig.api.dataLoader.upsertOpportunity
+// }
 
 
 const DataLoadPage = () => {
@@ -47,7 +46,7 @@ const DataLoadPage = () => {
         formData.append('file',files)
         formData.append('object',obj);
         console.log('modified formData',formData);
-       await  axios.post(CONSTANTS.preview, formData)
+       await  axios.post(DATALOADER_CONSTANTS.ROUTES.preview, formData)
     
             .then((res) => {
                 console.log('task form Submission  response', res);             
@@ -64,9 +63,9 @@ const DataLoadPage = () => {
         formData.append('file',values.attachments);
         formData.append('object',values.object);
         
-        let url = (values.object==='Account')? CONSTANTS.upsertAccount 
-        : (values.object==='Lead')?CONSTANTS.upsertLead 
-        : (values.object==='Opportunity')?CONSTANTS.upsertOpportunity
+        let url = (values.object==='Account')? DATALOADER_CONSTANTS.ROUTES.upsertAccount 
+        : (values.object==='Lead')?DATALOADER_CONSTANTS.ROUTES.upsertLead 
+        : (values.object==='Opportunity')?DATALOADER_CONSTANTS.ROUTES.upsertOpportunity
         :''; 
 
         console.log('url',url);

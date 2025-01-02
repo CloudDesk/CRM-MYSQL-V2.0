@@ -5,13 +5,13 @@ import {
   CircularProgress,
 } from "@mui/material";
 import ToastNotification from '../toast/ToastNotification';
-import { appConfig } from '../config';
+import { DATALOADER_CONSTANTS } from '../config/constantConfigs';
 
 
-const upsertUrl = `${appConfig.server}/dataloader`;
-const CONSTANTS = {
-  upsert: appConfig.api.dataLoader.upsert
-}
+// const upsertUrl = `${appConfig.server}/dataloader`;
+// const CONSTANTS = {
+//   upsert: appConfig.api.dataLoader.upsert
+// }
 
 function PreviewUpsert({ object, data, file, ModalClose, callBack }) {
   console.log("PreviewUpsert", object, data, file,)
@@ -30,7 +30,7 @@ function PreviewUpsert({ object, data, file, ModalClose, callBack }) {
     formData.append('createdBy', (sessionStorage.getItem("loggedInUser")))
     formData.append('modifiedBy', (sessionStorage.getItem("loggedInUser")))
 
-    axios.post(`${CONSTANTS.upsert}/${object}`, formData)
+    axios.post(`${DATALOADER_CONSTANTS.ROUTES.upsert}/${object}`, formData)
 
       .then((res) => {
         console.log('data import res', res);

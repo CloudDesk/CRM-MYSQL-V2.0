@@ -7,33 +7,8 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-import { appConfig } from "../config";
-import { ACCOUNT_TABLE_CONFIG } from "../config/tableConfigs/accounts";
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.account.apiName,
-  ROUTES: {
-    ACCOUNTS: appConfig.objects.account.base,
-    DELETE_ACCOUNT: appConfig.objects.account.delete,
-    NEW_ACCOUNT: appConfig.objects.account.new,
-    ACCOUNT_DETAIL: appConfig.objects.account.detail,
-  },
-  TITLES: {
-    MAIN: appConfig.objects.account.apiName,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.account.name.plural}`,
-    MOBILE_SUBTITLE: `List of ${appConfig.objects.account.name.plural}`,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some accounts failed to delete',
-    DELETE_SINGLE: 'Failed to delete account',
-    DEFAULT: 'An error occurred',
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All accounts deleted successfully',
-    DELETE_SINGLE: 'Account deleted successfully',
-  },
-};
-
+import { ACCOUNT_TABLE_CONFIG } from "../config/tableConfigs";
+import { ACCOUNT_CONSTANTS } from "../config/constantConfigs";
 
 
 /**
@@ -45,7 +20,7 @@ const Accounts = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(ACCOUNT_CONSTANTS.OBJECT_NAME);
 
   // State management
   const [accountRecords, setAccountRecords] = useState([]);
@@ -71,7 +46,7 @@ const Accounts = () => {
   // Fetches the list of accounts
   const fetchAccountRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.ACCOUNTS, {});
+      const response = await RequestServer("get", ACCOUNT_CONSTANTS.ROUTES.ACCOUNTS, {});
       if (response.success) {
         setAccountRecords(response.data);
         setFetchError(null);
@@ -99,12 +74,12 @@ const Accounts = () => {
 
   // Navigation handlers
   const handleCreateAccount = () => {
-    navigate(CONSTANTS.ROUTES.NEW_ACCOUNT, { state: { record: {} } });
+    navigate(ACCOUNT_CONSTANTS.ROUTES.NEW_ACCOUNT, { state: { record: {} } });
   };
 
   const handleAccountDetail = (event) => {
     const account = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.ACCOUNT_DETAIL}/${account._id}`, {
+    navigate(`${ACCOUNT_CONSTANTS.ROUTES.ACCOUNT_DETAIL}/${account._id}`, {
       state: { record: { item: account } }
     });
   };
@@ -123,7 +98,7 @@ const Accounts = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_ACCOUNT}/${recordId}`,
+        `${ACCOUNT_CONSTANTS.ROUTES.DELETE_ACCOUNT}/${recordId}`,
         {}
       );
 
@@ -131,18 +106,18 @@ const Accounts = () => {
         await fetchAccountRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: ACCOUNT_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: ACCOUNT_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || ACCOUNT_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -157,8 +132,8 @@ const Accounts = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? ACCOUNT_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : ACCOUNT_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
@@ -193,8 +168,8 @@ const Accounts = () => {
     <Box>
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        title={ACCOUNT_CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? ACCOUNT_CONSTANTS.TITLES.MOBILE_SUBTITLE : ACCOUNT_CONSTANTS.TITLES.WEB_SUBTITLE}
         records={accountRecords}
         onCreateRecord={handleCreateAccount}
         onEditRecord={handleAccountDetail}
@@ -208,7 +183,7 @@ const Accounts = () => {
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
         importConfig={{
-          objectName: CONSTANTS.OBJECT_NAME,
+          objectName: ACCOUNT_CONSTANTS.OBJECT_NAME,
           isImport: true,
           callBack: fetchAccountRecords,
         }}

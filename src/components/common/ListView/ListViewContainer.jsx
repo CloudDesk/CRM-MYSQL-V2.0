@@ -5,7 +5,6 @@ import SharedDataGridSkeleton from '../../Skeletons/SharedDataGridSkeleton';
 import NoAccessPage from '../../NoAccessPage';
 
 const ListViewContainer = ({
-
     isMobile,
     title,
     subtitle,
@@ -14,8 +13,6 @@ const ListViewContainer = ({
     onEditRecord,
     onDeleteRecord,
     permissions,
-
-
     columnConfig,
     isLoading,
     isDeleteMode,
@@ -24,9 +21,6 @@ const ListViewContainer = ({
     onSelectRecords,
     ExcelDownload,
     importConfig,
-
-
-
 }) => {
     // Common props for both views
     const commonProps = {
@@ -43,7 +37,7 @@ const ListViewContainer = ({
 
 
     console.log(columnConfig, "columnConfig")
-
+    console.log(isLoading, !permissions.read, "isLoading,!permissions.read")
 
     if (isLoading) {
         return <SharedDataGridSkeleton />;

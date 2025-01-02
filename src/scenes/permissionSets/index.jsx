@@ -8,91 +8,14 @@ import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
 import { appConfig } from "../config";
-
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.permission.apiName,
-  ROUTES: {
-    PERMISSIONS: appConfig.objects.permission.base || '/getPermissions',
-    DELETE_PERMISSION: appConfig.objects.permission.delete || '/deletePermission',
-    NEW_PERMISSION: appConfig.objects.permission.new || '/new-permission',
-    PERMISSION_DETAIL: appConfig.objects.permission.detail || '/permissionDetailPage',
-  },
-  TITLES: {
-    MAIN: appConfig.objects.permission.name.singular,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.permission.name.plural}`,
-    MOBILE_SUBTITLE: `List Of ${appConfig.objects.permission.name.plural}`,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some permissions failed to delete',
-    DELETE_SINGLE: 'Failed to delete permission',
-    DEFAULT: 'An error occurred',
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All permissions deleted successfully',
-    DELETE_SINGLE: 'Permission deleted successfully',
-  },
-  IMPORT_CONFIG: {
-    objectName: appConfig.objects.permission.apiName,
-    isImport: false,
-    callBack: null,
-  },
-};
-
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    { label: "Permission Name", key: "permissionname" },
-    { label: "Department Name", key: "department" },
-    {
-      label: "Role",
-      key: "roledetails",
-      render: (value) => {
-        try {
-          return value || "---";
-        } catch (error) {
-          return "Invalid Format";
-        }
-      }
-    }
-  ],
-  columns: [
-    {
-      field: "permissionname",
-      headerName: "Permission Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "department",
-      headerName: "Department Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "roledetails",
-      headerName: "Role",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      renderCell: (params) => {
-        try {
-          return <div className="rowitem">{params.value || "---"}</div>;
-        } catch (error) {
-          return <div className="rowitem">Invalid Format</div>;
-        }
-      },
-    },
-  ],
-};
+import { PERMISSION_TABLE_CONFIG } from "../config/tableConfigs";
+import { PERMISSION_CONSTANTS } from "../config/constantConfigs";
 
 const PermissionSets = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(PERMISSION_CONSTANTS.OBJECT_NAME);
 
   const [records, setRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
@@ -114,7 +37,7 @@ const PermissionSets = () => {
 
   const fetchRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.PERMISSIONS);
+      const response = await RequestServer("get", PERMISSION_CONSTANTS.ROUTES.PERMISSIONS);
       if (response.success) {
         setRecords(response.data);
         setFetchError(null);
@@ -141,12 +64,12 @@ const PermissionSets = () => {
   };
 
   const handleCreateRecord = () => {
-    navigate(CONSTANTS.ROUTES.NEW_PERMISSION, { state: { record: {} } });
+    navigate(PERMISSION_CONSTANTS.ROUTES.NEW_PERMISSION, { state: { record: {} } });
   };
 
   const handleEditRecord = (event) => {
     const item = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.PERMISSION_DETAIL}/${item._id}`, {
+    navigate(`${PERMISSION_CONSTANTS.ROUTES.PERMISSION_DETAIL}/${item._id}`, {
       state: { record: { item } }
     });
   };
@@ -164,25 +87,25 @@ const PermissionSets = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_PERMISSION}/${recordId}`
+        `${PERMISSION_CONSTANTS.ROUTES.DELETE_PERMISSION}/${recordId}`
       );
 
       if (response.data) {
         await fetchRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: PERMISSION_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: PERMISSION_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || PERMISSION_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -197,16 +120,16 @@ const PermissionSets = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? PERMISSION_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : PERMISSION_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return PERMISSION_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...PERMISSION_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -232,21 +155,21 @@ const PermissionSets = () => {
     <Box>
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        title={PERMISSION_CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? PERMISSION_CONSTANTS.TITLES.MOBILE_SUBTITLE : PERMISSION_CONSTANTS.TITLES.WEB_SUBTITLE}
         records={records}
         onCreateRecord={handleCreateRecord}
         onEditRecord={handleEditRecord}
         onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
         permissions={permissions}
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? PERMISSION_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
-        importConfig={CONSTANTS.IMPORT_CONFIG}
+        importConfig={PERMISSION_CONSTANTS.IMPORT_CONFIG}
       />
     </Box>
   );

@@ -7,99 +7,16 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-import { appConfig } from "../config";
+import { INVENTORY_TABLE_CONFIG } from "../config/tableConfigs";
+import { INVENTORY_CONSTANTS } from "../config/constantConfigs";
 
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.inventory.apiName,
-  ROUTES: {
-    INVENTORY: appConfig.objects.inventory.base,
-    DELETE_INVENTORY: appConfig.objects.inventory.delete || '/deleteInventory',
-    NEW_INVENTORY: appConfig.objects.inventory.new || '/new-inventories',
-    INVENTORY_DETAIL: appConfig.objects.inventory.detail || '/inventoryDetailPage',
-  },
-  TITLES: {
-    MAIN: appConfig.objects.inventory.apiName,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.inventory.name.plural}`,
-    MOBILE_SUBTITLE: `List Of ${appConfig.objects.inventory.name.plural}`,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some records failed to delete',
-    DELETE_SINGLE: 'Failed to delete record',
-    DEFAULT: 'An error occurred',
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All records deleted successfully',
-    DELETE_SINGLE: 'Record deleted successfully',
-  },
-  IMPORT_CONFIG: {
-    objectName: appConfig.objects.account.name,
-    isImport: false,
-    callBack: null,
-  },
-};
 
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    { label: "Project Name", key: "projectname" },
-    { label: "Property Name", key: "propertyname" },
-    { label: "Type", key: "type" },
-    { label: "Status", key: "status" },
-  ],
-  columns: [
-    {
-      field: "projectname",
-      headerName: "Project Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "propertyname",
-      headerName: "Property Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "type",
-      headerName: "Type",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "country",
-      headerName: "Country",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      cellClassName: (params) => {
-        const statusMap = {
-          "Available": "inventory-status-avail-green",
-          "Booked": "inventory-status-booked-pink",
-          "Sold": "inventory-status-sold-red",
-          "Processed": "inventory-status-process-yellow"
-        };
-        return statusMap[params.row.status] || "";
-      },
-    },
-  ],
-};
 
 const Inventories = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(INVENTORY_CONSTANTS.OBJECT_NAME);
 
   const [records, setRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
@@ -121,7 +38,7 @@ const Inventories = () => {
 
   const fetchRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.INVENTORY, {});
+      const response = await RequestServer("get", INVENTORY_CONSTANTS.ROUTES.INVENTORY, {});
       if (response.success) {
         setRecords(response.data);
         setFetchError(null);
@@ -148,12 +65,12 @@ const Inventories = () => {
   };
 
   const handleCreateRecord = () => {
-    navigate(CONSTANTS.ROUTES.NEW_INVENTORY, { state: { record: {} } });
+    navigate(INVENTORY_CONSTANTS.ROUTES.NEW_INVENTORY, { state: { record: {} } });
   };
 
   const handleEditRecord = (event) => {
     const item = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.INVENTORY_DETAIL}/${item._id}`, {
+    navigate(`${INVENTORY_CONSTANTS.ROUTES.INVENTORY_DETAIL}/${item._id}`, {
       state: { record: { item } }
     });
   };
@@ -171,7 +88,7 @@ const Inventories = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_INVENTORY}/${recordId}`,
+        `${INVENTORY_CONSTANTS.ROUTES.DELETE_INVENTORY}/${recordId}`,
         {}
       );
 
@@ -179,18 +96,18 @@ const Inventories = () => {
         await fetchRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: INVENTORY_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: INVENTORY_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || INVENTORY_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -205,16 +122,16 @@ const Inventories = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? INVENTORY_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : INVENTORY_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return INVENTORY_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...INVENTORY_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -240,21 +157,21 @@ const Inventories = () => {
     <Box>
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        title={INVENTORY_CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? INVENTORY_CONSTANTS.TITLES.MOBILE_SUBTITLE : INVENTORY_CONSTANTS.TITLES.WEB_SUBTITLE}
         records={records}
         onCreateRecord={handleCreateRecord}
         onEditRecord={handleEditRecord}
         onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
         permissions={permissions}
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? INVENTORY_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
-        importConfig={CONSTANTS.IMPORT_CONFIG}
+        importConfig={INVENTORY_CONSTANTS.IMPORT_CONFIG}
       />
     </Box>
   );

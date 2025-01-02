@@ -8,78 +8,8 @@ import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
 import { appConfig } from "../config";
-
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.lead.apiName,
-  ROUTES: {
-    LEADS: appConfig.objects.lead.base,
-    DELETE_LEAD: appConfig.objects.lead.delete,
-    NEW_LEAD: appConfig.objects.lead.new,
-    LEAD_DETAIL: appConfig.objects.lead.detail,
-  },
-  TITLES: {
-    MAIN: appConfig.objects.lead.apiName,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.lead.name.plural}`,
-    MOBILE_SUBTITLE: `List of ${appConfig.objects.lead.name.plural}`,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some records failed to delete',
-    DELETE_SINGLE: 'Failed to delete record',
-    DEFAULT: 'An error occurred',
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All records deleted successfully',
-    DELETE_SINGLE: 'Record deleted successfully',
-  },
-};
-
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    { label: "Enquiry Name", key: "fullname" },
-    { label: "Lead Source", key: "leadsource" },
-    { label: "Lead Status", key: "leadstatus" },
-    { label: "Email", key: "email" },
-  ],
-  columns: [
-    {
-      field: "fullname",
-      headerName: "Full Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "leadsource",
-      headerName: "Enquiry Source",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "industry",
-      headerName: "Industry",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "leadstatus",
-      headerName: "Enquiry Status",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-  ],
-};
+import { LEAD_TABLE_CONFIG } from "../config/tableConfigs";
+import { LEAD_CONSTANTS } from "../config/constantConfigs";
 
 /**
  * Leads Component
@@ -91,7 +21,7 @@ const Leads = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(LEAD_CONSTANTS.OBJECT_NAME);
 
   // State management
   const [enquiryRecords, setEnquiryRecords] = useState([]);
@@ -117,7 +47,7 @@ const Leads = () => {
   // Fetches the list of enquiries
   const fetchEnquiryRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.LEADS, {});
+      const response = await RequestServer("get", LEAD_CONSTANTS.ROUTES.LEADS, {});
       if (response.success) {
         setEnquiryRecords(response.data);
         setFetchError(null);
@@ -145,12 +75,12 @@ const Leads = () => {
 
   // Navigation handlers
   const handleCreateEnquiry = () => {
-    navigate(CONSTANTS.ROUTES.NEW_LEAD, { state: { record: {} } });
+    navigate(LEAD_CONSTANTS.ROUTES.NEW_LEAD, { state: { record: {} } });
   };
 
   const handleEnquiryDetail = (event) => {
     const enquiry = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.LEAD_DETAIL}/${enquiry._id}`, {
+    navigate(`${LEAD_CONSTANTS.ROUTES.LEAD_DETAIL}/${enquiry._id}`, {
       state: { record: { item: enquiry } }
     });
   };
@@ -169,7 +99,7 @@ const Leads = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_LEAD}/${recordId}`,
+        `${LEAD_CONSTANTS.ROUTES.DELETE_LEAD}/${recordId}`,
         {}
       );
 
@@ -177,18 +107,18 @@ const Leads = () => {
         await fetchEnquiryRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: LEAD_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: LEAD_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || LEAD_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -203,18 +133,18 @@ const Leads = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? LEAD_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : LEAD_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
 
   // Column configuration with conditional delete action
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return LEAD_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...LEAD_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -241,15 +171,15 @@ const Leads = () => {
       {/* {renderContent()} */}
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        title={LEAD_CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? LEAD_CONSTANTS.TITLES.MOBILE_SUBTITLE : LEAD_CONSTANTS.TITLES.WEB_SUBTITLE}
         records={enquiryRecords}
         onCreateRecord={handleCreateEnquiry}
         onEditRecord={handleEnquiryDetail}
         onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
         permissions={permissions}
 
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? LEAD_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}
@@ -257,7 +187,7 @@ const Leads = () => {
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
         importConfig={{
-          objectName: CONSTANTS.OBJECT_NAME,
+          objectName: LEAD_CONSTANTS.OBJECT_NAME,
           isImport: true,
           callBack: fetchEnquiryRecords,
         }}
@@ -283,8 +213,8 @@ export default Leads;
 
   const renderMobileView = () => (
     <MobileListView
-      title={CONSTANTS.TITLES.MAIN}
-      subtitle={CONSTANTS.TITLES.MOBILE_SUBTITLE}
+      title={LEAD_CONSTANTS.TITLES.MAIN}
+      subtitle={LEAD_CONSTANTS.TITLES.MOBILE_SUBTITLE}
       records={enquiryRecords}
       columnConfig={TABLE_CONFIG.mobileFields}
       onCreateRecord={handleCreateEnquiry}
@@ -296,8 +226,8 @@ export default Leads;
 
   const renderWebView = () => (
     <WebListView
-      title={CONSTANTS.TITLES.MAIN}
-      subtitle={CONSTANTS.TITLES.WEB_SUBTITLE}
+      title={LEAD_CONSTANTS.TITLES.MAIN}
+      subtitle={LEAD_CONSTANTS.TITLES.WEB_SUBTITLE}
       records={enquiryRecords}
       columnConfig={getTableColumns()}
       isLoading={isLoading}
@@ -311,7 +241,7 @@ export default Leads;
       onEditRecord={handleEnquiryDetail}
       ExcelDownload={ExcelDownload}
       importConfig={{
-        objectName: CONSTANTS.OBJECT_NAME,
+        objectName: LEAD_CONSTANTS.OBJECT_NAME,
         isImport: true,
         callBack: fetchEnquiryRecords,
       }}

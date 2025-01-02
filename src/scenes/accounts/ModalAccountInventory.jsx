@@ -6,7 +6,7 @@ import { RequestServer } from '../api/HttpReq';
 import { accountformfields, generateAccountInitialValues } from '../formik/InitialValues/initialValues';
 import { DynamicForm } from "../../components/Form/DynamicForm";
 import { appConfig } from '../config';
-
+import { ACCOUNT_CONSTANTS } from '../config/constantConfigs';
 const url = appConfig.objects.account.upsert;
 
 const ModalInventoryAccount = ({ item, handleModal }) => {

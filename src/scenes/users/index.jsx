@@ -7,90 +7,14 @@ import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-import { appConfig } from "../config";
-
-// Constants
-const CONSTANTS = {
-  OBJECT_NAME: appConfig.objects.user.apiName,
-  ROUTES: {
-    USERS: appConfig.objects.user.base || '/Users',
-    DELETE_USER: appConfig.objects.user.delete || '/delete',
-    NEW_USER: appConfig.objects.user.new || '/new-users',
-    USER_DETAIL: appConfig.objects.user.detail || '/userDetailPage',
-  },
-  TITLES: {
-    MAIN: appConfig.objects.user.name.singular,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.user.name.plural}`,
-    MOBILE_SUBTITLE: `List Of ${appConfig.objects.user.name.plural}`,
-  },
-  ERROR_MESSAGES: {
-    DELETE_MULTIPLE: 'Some users failed to delete',
-    DELETE_SINGLE: 'Failed to delete user',
-    DEFAULT: 'An error occurred',
-  },
-  SUCCESS_MESSAGES: {
-    DELETE_MULTIPLE: 'All users deleted successfully',
-    DELETE_SINGLE: 'User deleted successfully',
-  },
-  IMPORT_CONFIG: {
-    objectName: appConfig.objects.user.apiName,
-    isImport: false,
-    callBack: null,
-  },
-};
-
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    { label: "First Name", key: "firstname" },
-    { label: "Last Name", key: "lastname" },
-    { label: "Email", key: "email" },
-    { label: "Role", key: "roledetails" },
-  ],
-  columns: [
-    {
-      field: "firstname",
-      headerName: "First Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "lastname",
-      headerName: "Last Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "roledetails",
-      headerName: "Role",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "departmentname",
-      headerName: "Department",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-  ],
-};
+import { USER_TABLE_CONFIG } from "../config/tableConfigs";
+import { USER_CONSTANTS } from "../config/constantConfigs";
 
 const Users = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getLoginUserRoleDept(USER_CONSTANTS.OBJECT_NAME);
 
   const [records, setRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
@@ -112,7 +36,7 @@ const Users = () => {
 
   const fetchRecords = async () => {
     try {
-      const response = await RequestServer("get", CONSTANTS.ROUTES.USERS, {});
+      const response = await RequestServer("get", USER_CONSTANTS.ROUTES.USERS, {});
       if (response.success) {
         setRecords(response.data);
         setFetchError(null);
@@ -139,12 +63,12 @@ const Users = () => {
   };
 
   const handleCreateRecord = () => {
-    navigate(CONSTANTS.ROUTES.NEW_USER, { state: { record: {} } });
+    navigate(USER_CONSTANTS.ROUTES.NEW_USER, { state: { record: {} } });
   };
 
   const handleEditRecord = (event) => {
     const item = event.row || event;
-    navigate(`${CONSTANTS.ROUTES.USER_DETAIL}/${item._id}`, {
+    navigate(`${USER_CONSTANTS.ROUTES.USER_DETAIL}/${item._id}`, {
       state: { record: { item } }
     });
   };
@@ -162,7 +86,7 @@ const Users = () => {
     try {
       const response = await RequestServer(
         "delete",
-        `${CONSTANTS.ROUTES.DELETE_USER}/${recordId}`,
+        `${USER_CONSTANTS.ROUTES.DELETE_USER}/${recordId}`,
         {}
       );
 
@@ -170,18 +94,18 @@ const Users = () => {
         await fetchRecords();
         return {
           success: true,
-          message: CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
+          message: USER_CONSTANTS.SUCCESS_MESSAGES.DELETE_SINGLE,
         };
       }
 
       return {
         success: false,
-        message: CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
+        message: USER_CONSTANTS.ERROR_MESSAGES.DELETE_SINGLE,
       };
     } catch (error) {
       return {
         success: false,
-        message: error.message || CONSTANTS.ERROR_MESSAGES.DEFAULT,
+        message: error.message || USER_CONSTANTS.ERROR_MESSAGES.DEFAULT,
       };
     }
   };
@@ -196,16 +120,16 @@ const Users = () => {
     return {
       success: !hasFailures,
       message: hasFailures
-        ? CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
-        : CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
+        ? USER_CONSTANTS.ERROR_MESSAGES.DELETE_MULTIPLE
+        : USER_CONSTANTS.SUCCESS_MESSAGES.DELETE_MULTIPLE,
     };
   };
 
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return USER_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...USER_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -231,21 +155,21 @@ const Users = () => {
     <Box>
       <ListViewContainer
         isMobile={isMobile}
-        title={CONSTANTS.TITLES.MAIN}
-        subtitle={isMobile ? CONSTANTS.TITLES.MOBILE_SUBTITLE : CONSTANTS.TITLES.WEB_SUBTITLE}
+        title={USER_CONSTANTS.TITLES.MAIN}
+        subtitle={isMobile ? USER_CONSTANTS.TITLES.MOBILE_SUBTITLE : USER_CONSTANTS.TITLES.WEB_SUBTITLE}
         records={records}
         onCreateRecord={handleCreateRecord}
         onEditRecord={handleEditRecord}
         onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
         permissions={permissions}
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? USER_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
         ExcelDownload={ExcelDownload}
-        importConfig={CONSTANTS.IMPORT_CONFIG}
+        importConfig={USER_CONSTANTS.IMPORT_CONFIG}
       />
     </Box>
   );
