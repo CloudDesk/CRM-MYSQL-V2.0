@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import { format } from 'date-fns';
-import { AccRatingPickList, AccTypePickList, IndustryPickList, InvCitiesPickList, InvCountryPickList, InvStatusPicklist, InvTypePicklist, LeadMonthPicklist, LeadsDemoPicklist, LeadSourcePickList, LeadStatusPicklist, NameSalutionPickList, OppStagePicklist, OppTypePicklist, RolesCategories, RolesDepartment, TaskObjectPicklist, TaskSubjectPicklist, UserRolePicklist } from '../../../data/pickLists';
+import { AccCitiesPickList, AccCountryPickList, AccRatingPickList, AccTypePickList, IndustryPickList, InvCitiesPickList, InvCountryPickList, InvStatusPicklist, InvTypePicklist, LeadMonthPicklist, LeadsDemoPicklist, LeadSourcePickList, LeadStatusPicklist, NameSalutionPickList, OppStagePicklist, OppTypePicklist, RolesCategories, RolesDepartment, TaskObjectPicklist, TaskSubjectPicklist, UserRolePicklist } from '../../../data/pickLists';
 import { Grid, Typography } from '@mui/material';
 import { FetchInventoryData } from '../../../utility/FetchData/FetchInventoryData';
 import { RequestServer } from '../../api/HttpReq';
@@ -549,6 +549,7 @@ export const accountformfields = [
     type: "text",
     xs: 12,
     md: 6,
+    required: true,
     validator: Yup.string().max(20, "Account Number must be less than 20 characters"),
     props: {
       placeholder: "Enter Account Number",
@@ -574,6 +575,7 @@ export const accountformfields = [
     type: "number",
     xs: 12,
     md: 6,
+    required: true,
     validator: Yup.number()
       .positive("Annual Revenue must be a positive number")
       .nullable(),
@@ -587,6 +589,7 @@ export const accountformfields = [
     type: "text",
     xs: 12,
     md: 6,
+    required: true,
     validator: Yup.string().matches(
       /^[+]?[0-9]*$/,
       "Phone must contain only numbers and optional '+'"
@@ -632,22 +635,33 @@ export const accountformfields = [
   {
     name: "billingcountry",
     label: "Billing Country",
-    type: "text",
+    type: "select",
     xs: 12,
     md: 6,
+    options: AccCountryPickList,
     props: {
       placeholder: "Enter Billing Country",
     },
+    onChange: async (value, formik) => {
+      // Clear the billing city when country changes
+      formik.setFieldValue('billingcity', '');
+      // Set the city options based on selected country
+      const cityOptions = AccCitiesPickList[value] || [];
+      formik.setFieldValue('billingcityOptions', cityOptions);
+    }
   },
   {
     name: "billingcity",
     label: "Billing City",
-    type: "text",
+    type: "select",
     xs: 12,
     md: 6,
     props: {
       placeholder: "Enter Billing City",
     },
+    dependsOn: {
+      field: "billingcountry"
+    }
   },
   {
     name: "billingaddress",
@@ -681,6 +695,11 @@ export const generateAccountInitialValues = (existingAccount = {}) => {
     return acc;
   }, {});
 
+  // Set initial city options if country is selected
+  if (defaultValues.billingcountry) {
+    defaultValues.billingcityOptions = AccCitiesPickList[defaultValues.billingcountry] || [];
+  }
+
   if (Object.keys(existingAccount).length > 0) {
     defaultValues.inventoryname = existingAccount.inventoryname.startsWith("{") ? JSON.parse(existingAccount.inventoryname).label || existingAccount.inventoryname : existingAccount.inventoryname;
     defaultValues.createddate = format(existingAccount.createddate, "MM/dd/yyyy") ?? Date.now();
@@ -693,7 +712,6 @@ export const generateAccountInitialValues = (existingAccount = {}) => {
     // Modified By
     defaultValues.modifiedby = existingAccount.modifiedby
       ? existingAccount.modifiedby.userFullName + " - " + format(existingAccount.modifieddate, "MMMM dd, yyyy hh:mm a")
-
       : null;
   }
 

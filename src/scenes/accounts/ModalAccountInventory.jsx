@@ -21,7 +21,9 @@ const ModalInventoryAccount = ({ item, handleModal }) => {
 
     const formSubmission = async (values) => {
         console.log('form submission value', values);
-
+        if (values.billingcityOptions) {
+            delete values.billingcityOptions
+        }
         let dateSeconds = new Date().getTime();
         values.accountnumber = Number(values.accountnumber)
         values.annualrevenue = Number(values.annualrevenue)

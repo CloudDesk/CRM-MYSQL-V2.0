@@ -66,7 +66,9 @@ const AccountDetailPage = ({ props }) => {
   ];
   const handleSubmit = async (values, { isSubmitting }) => {
     console.log("Account Form -> values", values);
-
+    if (values.billingcityOptions) {
+      delete values.billingcityOptions
+    }
     let dateSeconds = new Date().getTime();
     if (exisitingAccount) {
       values._id = exisitingAccount._id;
@@ -74,6 +76,9 @@ const AccountDetailPage = ({ props }) => {
       //     typeof values.inventoryname === "string"
       //       ? exisitingAccount.inventoryid
       //       : values.inventoryname.id;
+      values.accountnumber = Number(values.accountnumber)
+      values.annualrevenue = Number(values.annualrevenue)
+      values.phone = Number(values.phone)
       values.createddate = exisitingAccount.createddate;
       values.createdby = exisitingAccount.createdby;
       values.modifieddate = dateSeconds;

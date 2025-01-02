@@ -415,44 +415,33 @@ const DynamicFormField = ({
     case "select":
       const handleSelectChange = async (e) => {
         const value = e.target.value;
-        handleFieldChange(e); // Use the new wrapper
+        handleFieldChange(e);
 
+        // Handle field-specific onChange
         if (field.onChange && typeof field.onChange === "function") {
           await field.onChange(value, formik);
         }
-
-        // Handle dependent fields
-        if (field.onChange) {
-          const dependentField = fields.find((f) => f.name === field.onChange);
-          if (dependentField && dependentField.dependsOn) {
-            const options = dependentField.dependsOn.options[value] || [];
-            // First set field value to empty
-            setFieldValue(`${dependentField.name}`, "");
-            // Then set the options in a separate field
-            setFieldValue(`${dependentField.name}Options`, options);
-          }
-        }
       };
 
-      // Get options - either static or dynamic
       // Get options - either from dynamic options or static options
-      const selectOptions =
-        values[`${field.name}Options`] || field.options || [];
+      let selectOptions = values[`${field.name}Options`] || field.options || [];
+
+      // If this is a dependent field, get options from the parent field
+      if (field.dependsOn) {
+        const parentValue = values[field.dependsOn.field];
+        if (parentValue && field.dependsOn.options) {
+          selectOptions = field.dependsOn.options[parentValue] || [];
+        }
+      }
+
       return (
         <FormControl
           fullWidth
           error={touched[field.name] && Boolean(errors[field.name])}
-          disabled={
-            !permissionValues.edit ||
-            (field.dependsOn && !values[field.dependsOn.field])
-          }
+          disabled={!permissionValues.edit || (field.dependsOn && !values[field.dependsOn.field])}
         >
           <InputLabel>{field.label}</InputLabel>
           <Select
-            disabled={
-              !permissionValues.edit ||
-              (field.dependsOn && !values[field.dependsOn.field])
-            }
             name={field.name}
             label={field.label}
             value={values[field.name] || ""}
