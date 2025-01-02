@@ -938,6 +938,7 @@ export const contactformfields = (isExistingContact = false) => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       validator: Yup.string().matches(
         /^[+]?[0-9]*$/,
         "Phone must contain only numbers and optional '+'"
@@ -973,6 +974,7 @@ export const contactformfields = (isExistingContact = false) => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       validator: Yup.string()
         .email("Enter a valid email")
         .nullable(),
@@ -1484,6 +1486,7 @@ export const UserFormFields = (isExistingUser = false) => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       props: {
         placeholder: "Enter First Name",
       },
@@ -1494,6 +1497,7 @@ export const UserFormFields = (isExistingUser = false) => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       props: {
         placeholder: "Enter Last Name",
       },
@@ -1504,6 +1508,7 @@ export const UserFormFields = (isExistingUser = false) => {
       type: "email",
       xs: 12,
       md: 6,
+      required: true,
       props: {
         placeholder: "Enter Email Address",
       },
@@ -1527,6 +1532,7 @@ export const UserFormFields = (isExistingUser = false) => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       props: {
         placeholder: "Enter Phone Number",
       },
@@ -1537,6 +1543,7 @@ export const UserFormFields = (isExistingUser = false) => {
       type: "select",
       xs: 12,
       md: 6,
+      required: true,
       options: RolesDepartment, // Define or import rolesdepartmentpicklist
       props: {
         placeholder: "Enter Department Name",
@@ -1548,6 +1555,7 @@ export const UserFormFields = (isExistingUser = false) => {
       type: "select",
       xs: 12,
       md: 6,
+      required: true,
       options: UserRolePicklist, // Define or import userrolepicklist
       props: {
         placeholder: "Enter Role Details",
@@ -1620,6 +1628,7 @@ export const PermissionSetFormFields = () => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       props: {
         placeholder: "Enter Permission Name",
       },
@@ -1642,6 +1651,7 @@ export const PermissionSetFormFields = () => {
       type: "select",
       xs: 12,
       md: 6,
+      required: true,
       options: RolesDepartment, // Define or import rolesdepartment
       props: {
         placeholder: "Enter Department Name",
@@ -1654,6 +1664,7 @@ export const PermissionSetFormFields = () => {
       type: "select",
       xs: 12,
       md: 6,
+      required: true,
       options: RolesCategories, // Define or import userrolepicklist
       props: {
         placeholder: "Enter Role Details",
@@ -1665,6 +1676,7 @@ export const PermissionSetFormFields = () => {
       type: "section", // Indicates this is a separate section
       xs: 12,
       md: 12,
+
       sections: [
         {
           object: "Account",
