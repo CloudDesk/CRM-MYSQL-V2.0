@@ -880,25 +880,13 @@ export const contactformfields = (isExistingContact = false) => {
     //     placeholder: "Enter Account ID",
     //   },
     // },
-    {
-      name: "accountname",
-      label: "Account Name",
-      type: "autocomplete",
-      xs: 12,
-      md: 6,
-      fetchurl: `/accountsname`,
-      searchfor: "accountname",
-      options: [],
-      props: {
-        placeholder: "Enter Account Name",
-      },
-    },
+
     {
       name: "salutation",
       label: "Salutation",
       type: "select",
       xs: 12,
-      md: 2.5,
+      md: isExistingContact ? 3 : 3,
       options: NameSalutionPickList, // Define or import salutationpicklist
       props: {
         displayEmpty: true,
@@ -909,7 +897,7 @@ export const contactformfields = (isExistingContact = false) => {
       label: "First Name",
       type: "text",
       xs: 12,
-      md: 3.5,
+      md: isExistingContact ? 4.5 : 4.5,
       validator: Yup.string()
         .max(50, "First name must be less than 50 characters")
         .nullable(),
@@ -923,13 +911,26 @@ export const contactformfields = (isExistingContact = false) => {
       type: "text",
       required: true,
       xs: 12,
-      md: 6,
+      md: isExistingContact ? 4.5 : 4.5,
       validator: Yup.string()
         .min(2, "Last name must be at least 2 characters")
         .max(50, "Last name must be less than 50 characters")
         .required("Last Name is required"),
       props: {
         placeholder: "Enter Last Name",
+      },
+    },
+    {
+      name: "accountname",
+      label: "Account Name",
+      type: "autocomplete",
+      xs: 12,
+      md: 6,
+      fetchurl: `/accountsname`,
+      searchfor: "accountname",
+      options: [],
+      props: {
+        placeholder: "Enter Account Name",
       },
     },
     {
@@ -1015,7 +1016,7 @@ export const contactformfields = (isExistingContact = false) => {
       label: "Full Name",
       type: "text",
       xs: 12,
-      md: 6,
+      md: 12,
       props: {
         disabled: true,
       },
