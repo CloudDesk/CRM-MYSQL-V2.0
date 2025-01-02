@@ -19,7 +19,7 @@ const CONSTANTS = {
     OPPORTUNITY_DETAIL: appConfig.objects.opportunity.detail || '/opportunityDetailPage',
   },
   TITLES: {
-    MAIN: appConfig.objects.opportunity.apiName,
+    MAIN: appConfig.objects.opportunity.name.singular,
     WEB_SUBTITLE: `List Of ${appConfig.objects.opportunity.name.plural} `,
     MOBILE_SUBTITLE: `List Of ${appConfig.objects.opportunity.name.plural} `,
   },

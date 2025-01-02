@@ -4,18 +4,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import ContactsIcon from '@mui/icons-material/Contacts';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import EventIcon from '@mui/icons-material/Event';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { useState } from "react";
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import BusinessIcon from '@mui/icons-material/Business';
+import PersonIcon from '@mui/icons-material/Person';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+
 
 // Icon mapping
 const ICON_MAP = {
-    'event': EventIcon,
-    'contact': ContactsIcon,
-    'account': AccountBoxIcon,
-    'deal': LocalOfferIcon,
+    'event': EventNoteIcon,
+    'contact': PersonIcon,
+    'account': BusinessIcon,
+    'deal': MonetizationOnIcon,
+    'attachment': AttachFileIcon,
 };
 
 // Common ItemCard component for rendering individual items

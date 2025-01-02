@@ -19,7 +19,7 @@ const CONSTANTS = {
     USER_DETAIL: appConfig.objects.user.detail || '/userDetailPage',
   },
   TITLES: {
-    MAIN: appConfig.objects.user.apiName,
+    MAIN: appConfig.objects.user.name.singular,
     WEB_SUBTITLE: `List Of ${appConfig.objects.user.name.plural}`,
     MOBILE_SUBTITLE: `List Of ${appConfig.objects.user.name.plural}`,
   },

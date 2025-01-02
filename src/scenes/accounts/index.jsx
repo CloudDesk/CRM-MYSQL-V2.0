@@ -8,19 +8,20 @@ import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import ListViewContainer from "../../components/common/ListView/ListViewContainer";
 import { appConfig } from "../config";
+import { ACCOUNT_TABLE_CONFIG } from "../config/tableConfigs/accounts";
 // Constants
 const CONSTANTS = {
   OBJECT_NAME: appConfig.objects.account.apiName,
   ROUTES: {
-    ACCOUNTS: appConfig.objects.account.base || '/accounts',
-    DELETE_ACCOUNT: appConfig.objects.account.delete || '/deleteAccount',
-    NEW_ACCOUNT: appConfig.objects.account.new || '/new-accounts',
-    ACCOUNT_DETAIL: appConfig.objects.account.detail || '/accountDetailPage',
+    ACCOUNTS: appConfig.objects.account.base,
+    DELETE_ACCOUNT: appConfig.objects.account.delete,
+    NEW_ACCOUNT: appConfig.objects.account.new,
+    ACCOUNT_DETAIL: appConfig.objects.account.detail,
   },
   TITLES: {
     MAIN: appConfig.objects.account.apiName,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.account.apiName}`,
-    MOBILE_SUBTITLE: `List of ${appConfig.objects.account.apiName}`,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.account.name.plural}`,
+    MOBILE_SUBTITLE: `List of ${appConfig.objects.account.name.plural}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some accounts failed to delete',
@@ -33,71 +34,7 @@ const CONSTANTS = {
   },
 };
 
-// Table configuration
-const TABLE_CONFIG = {
-  mobileFields: [
-    {
-      key: "accountname",
-      label: "Name"
-    },
-    {
-      key: "phone",
-      label: "Phone"
-    },
-    {
-      key: "billingcity",
-      label: "City"
-    },
-    {
-      key: "industry",
-      label: "Industry"
-    }
-  ],
-  columns: [
-    {
-      field: "accountname",
-      headerName: "Name",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "phone",
-      headerName: "Phone",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "billingcity",
-      headerName: "City",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-    {
-      field: "annualrevenue",
-      headerName: "Annual Revenue",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-      renderCell: (params) => {
-        const formatCurrency = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        });
-        return params.row.annualrevenue ? formatCurrency.format(params.row.annualrevenue) : null;
-      },
-    },
-    {
-      field: "industry",
-      headerName: "Industry",
-      headerAlign: "center",
-      align: "center",
-      flex: 1,
-    },
-  ],
-};
+
 
 /**
  * Accounts Component
@@ -227,10 +164,10 @@ const Accounts = () => {
 
   // Column configuration with conditional delete action
   const getTableColumns = () => {
-    if (!permissions.delete) return TABLE_CONFIG.columns;
+    if (!permissions.delete) return ACCOUNT_TABLE_CONFIG.columns;
 
     return [
-      ...TABLE_CONFIG.columns,
+      ...ACCOUNT_TABLE_CONFIG.columns,
       {
         field: "actions",
         headerName: "Actions",
@@ -263,7 +200,7 @@ const Accounts = () => {
         onEditRecord={handleAccountDetail}
         onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
         permissions={permissions}
-        columnConfig={isMobile ? TABLE_CONFIG.mobileFields : getTableColumns()}
+        columnConfig={isMobile ? ACCOUNT_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}
         isDeleteMode={isDeleteMode}
         selectedRecordIds={selectedIds}

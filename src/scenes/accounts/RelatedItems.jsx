@@ -10,13 +10,13 @@ const AccountRelatedItems = ({ props }) => {
   const exisitingAccount = props;
   const sections = [
     {
-      key: appConfig.objects.task.key || 'event',
+      key: appConfig.objects.task.key,
       title: appConfig.objects.task.name.plural,
       objectApi: appConfig.objects.task.apiName,
       fetchUrl: appConfig.objects.account.r_task,
       deleteUrl: appConfig.objects.task.delete,
       detailUrl: appConfig.objects.task.detail,
-      icon: 'task',
+      icon: 'event',
       displayFields: [
         { key: 'subject', label: 'Subject' },
         {

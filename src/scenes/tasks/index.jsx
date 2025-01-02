@@ -19,7 +19,7 @@ const CONSTANTS = {
     TASK_DETAIL: appConfig.objects.task.detail || "/taskDetailPage",
   },
   TITLES: {
-    MAIN: appConfig.objects.task.name.plural,
+    MAIN: appConfig.objects.task.name.singular,
     WEB_SUBTITLE: `List Of ${appConfig.objects.task.name.plural}`,
     MOBILE_SUBTITLE: `List Of ${appConfig.objects.task.name.plural}`,
   },

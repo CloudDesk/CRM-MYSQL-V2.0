@@ -19,7 +19,7 @@ const CONSTANTS = {
     LEAD_DETAIL: appConfig.objects.lead.detail,
   },
   TITLES: {
-    MAIN: appConfig.objects.lead.name.plural,
+    MAIN: appConfig.objects.lead.apiName,
     WEB_SUBTITLE: `List Of ${appConfig.objects.lead.name.plural}`,
     MOBILE_SUBTITLE: `List of ${appConfig.objects.lead.name.plural}`,
   },

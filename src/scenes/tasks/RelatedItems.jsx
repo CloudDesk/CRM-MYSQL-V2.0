@@ -19,7 +19,7 @@ const TaskRelatedItems = ({ props }) => {
       objectApi: appConfig.api.files.apiName || appConfig.objects.task.apiName,
       fetchUrl: appConfig.objects.task.r_file,
       deleteUrl: appConfig.api.files.delete,
-      icon: 'file',
+      icon: 'attachment',
       displayFields: [
         { key: 'filename', label: 'File Name' },
         { key: 'size', label: 'Size', format: (size) => (size / 1024).toFixed(2) + ' KB' },

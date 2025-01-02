@@ -20,8 +20,8 @@ const CONSTANTS = {
   },
   TITLES: {
     MAIN: appConfig.objects.inventory.apiName,
-    WEB_SUBTITLE: `List Of ${appConfig.objects.inventory.apiName}`,
-    MOBILE_SUBTITLE: `List Of ${appConfig.objects.inventory.apiName}`,
+    WEB_SUBTITLE: `List Of ${appConfig.objects.inventory.name.plural}`,
+    MOBILE_SUBTITLE: `List Of ${appConfig.objects.inventory.name.plural}`,
   },
   ERROR_MESSAGES: {
     DELETE_MULTIPLE: 'Some records failed to delete',
