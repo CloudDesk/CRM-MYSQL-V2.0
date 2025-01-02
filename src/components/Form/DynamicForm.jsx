@@ -828,7 +828,7 @@ export const DynamicForm = ({
                   }}
                 >
                   <Button
-                    disabled={!permissionValues.edit}
+                    disabled={!permissionValues.edit || !formik.dirty}
                     type="submit"
                     variant="contained"
                     color="primary"
