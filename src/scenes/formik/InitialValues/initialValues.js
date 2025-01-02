@@ -938,6 +938,7 @@ export const contactformfields = (isExistingContact = false) => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       validator: Yup.string().matches(
         /^[+]?[0-9]*$/,
         "Phone must contain only numbers and optional '+'"
@@ -973,6 +974,7 @@ export const contactformfields = (isExistingContact = false) => {
       type: "text",
       xs: 12,
       md: 6,
+      required: true,
       validator: Yup.string()
         .email("Enter a valid email")
         .nullable(),
