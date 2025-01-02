@@ -1266,32 +1266,32 @@ export const TaskFormFields = (isExistingTask = false) => {
       md: 6,
       options: TaskObjectPicklist,
       onChange: async (value, formik) => {
-        console.log(value,"value from object onchange");
+        console.log(value, "value from object onchange");
         // Reset the relatedto field when object changes
         formik.setFieldValue('relatedto', '');
-        
+
         if (!value) return;
-        
+
         // Determine the URL based on selected object
         const urlMap = {
           Account: fetchAccountUrl,
           Enquiry: fetchLeadUrl,
           Deals: fetchOpportunityUrl
         };
-        
+
         const fetchUrl = urlMap[value];
-        console.log(fetchUrl,"fetchUrl");
+        console.log(fetchUrl, "fetchUrl");
         if (!fetchUrl) return;
-    
+
         try {
           const response = await RequestServer('get', fetchUrl);
-          console.log(response.data,"response.data");
+          console.log(response.data, "response.data");
           // Transform the response data into options format
           const options = response.data.map(item => ({
-            value:  item.fullname || item.opportunityname || item.accountname,
+            value: item.fullname || item.opportunityname || item.accountname,
             label: item.fullname || item.opportunityname || item.accountname // adjust this based on your data structure
           }));
-          console.log(options,"options"); 
+          console.log(options, "options");
           // Set the options for the relatedto field
           formik.setFieldValue('relatedtoOptions', options);
         } catch (error) {
@@ -1303,7 +1303,7 @@ export const TaskFormFields = (isExistingTask = false) => {
         placeholder: "Select Object"
       }
     },
-   
+
     {
       name: "relatedto",
       label: "Related To",
@@ -1368,9 +1368,9 @@ export const TaskFormFields = (isExistingTask = false) => {
     },
   ];
 
-  if(isExistingTask){
+  if (isExistingTask) {
     fields.map(field => {
-      if(field.name === "relatedto"){
+      if (field.name === "relatedto") {
         field.options = [];
       }
 
@@ -1378,7 +1378,7 @@ export const TaskFormFields = (isExistingTask = false) => {
     }
     )
   }
-     
+
 
   return fields;
 };
@@ -1392,32 +1392,32 @@ export const generateTaskInitialValues = (existingTask = {}) => {
     return acc;
   }, {});
 
-if(existingTask.object){
-  fetchRelatedToOptions(existingTask.object).then((options) => {
-    defaultValues.relatedtoOptions = options;
-  });
-}
+  if (existingTask.object) {
+    fetchRelatedToOptions(existingTask.object).then((options) => {
+      defaultValues.relatedtoOptions = options;
+    });
+  }
 
   if (Object.keys(existingTask).length > 0) {
     // defaultValues.relatedToOptions = relatedToOptions;
     defaultValues.relatedto = existingTask.relatedto;
     defaultValues.startdate = format(existingTask.startdate, "yyyy-MM-dd") ?? Date.now();
     defaultValues.enddate = format(existingTask.enddate, "yyyy-MM-dd") ?? Date.now();
-    defaultValues.createddate = format(existingTask.createddate,"MM/dd/yyyy") || Date.now();
-    defaultValues.modifieddate = format(existingTask.modifieddate,"MM/dd/yyyy") || Date.now();
+    defaultValues.createddate = format(existingTask.createddate, "MM/dd/yyyy") || Date.now();
+    defaultValues.modifieddate = format(existingTask.modifieddate, "MM/dd/yyyy") || Date.now();
 
     // Created By
     defaultValues.createdby = existingTask.createdby
       ? existingTask.createdby.userFullName +
-        " - " +
-        format(existingTask.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingTask.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingTask.modifiedby
       ? existingTask.modifiedby.userFullName +
-        " - " +
-        format(existingTask.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingTask.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -1436,7 +1436,7 @@ const fetchRelatedToOptions = async (object) => {
 
   try {
     const response = await RequestServer('get', fetchUrl);
-    console.log(response,'response');
+    console.log(response, 'response');
     return response.data.map(item => ({
       value: item._id,
       label: item.fullname || item.opportunityname || item.accountname
@@ -1490,10 +1490,10 @@ export const UserFormFields = (isExistingUser = false) => {
       disabled: true,
       props: {
         placeholder: "Enter User Name",
-        disabled:true
+        disabled: true
       },
     },
-    
+
     {
       name: "phone", // Lowercase key
       label: "Phone",
@@ -1526,10 +1526,10 @@ export const UserFormFields = (isExistingUser = false) => {
         placeholder: "Enter Role Details",
       },
     },
-    
+
   ];
 
-  if(isExistingUser) {
+  if (isExistingUser) {
     fields.unshift({
       name: "fullname", // Lowercase key
       label: "Full Name",
@@ -1555,8 +1555,8 @@ export const generateUserInitialValues = (existingUser = {}) => {
   }, {});
 
   if (Object.keys(existingUser).length > 0) {
-    defaultValues.createddate = format(Number(existingUser.createddate),"MM/dd/yyyy") || Date.now();
-    defaultValues.modifieddate = format(Number(existingUser.modifieddate),"MM/dd/yyyy") || Date.now();
+    defaultValues.createddate = format(Number(existingUser.createddate), "MM/dd/yyyy") || Date.now();
+    defaultValues.modifieddate = format(Number(existingUser.modifieddate), "MM/dd/yyyy") || Date.now();
 
     // Automatically generate full name if first and last names exist
     defaultValues.fullname =
@@ -1567,15 +1567,15 @@ export const generateUserInitialValues = (existingUser = {}) => {
     // Created By
     defaultValues.createdby = existingUser.createdby
       ? existingUser.createdby.userFullName +
-        " - " +
-        format(Number(existingUser.createddate), "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(Number(existingUser.createddate), "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingUser.modifiedby
       ? existingUser.modifiedby.userFullName +
-        " - " +
-        format(Number(existingUser.modifieddate), "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(Number(existingUser.modifieddate), "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -1620,7 +1620,7 @@ export const PermissionSetFormFields = () => {
         placeholder: "Enter Department Name",
       },
     },
-   
+
     {
       name: "roledetails", // Lowercase key
       label: "Role Details",
@@ -1730,23 +1730,90 @@ export const generatePermissionSetInitialValues = (existingPermissionSet = {}) =
   }, {});
 
   if (Object.keys(existingPermissionSet).length > 0) {
-    defaultValues.createddate = format(existingPermissionSet.createddate,"MM/dd/yyyy") || Date.now();
-    defaultValues.modifieddate = format(existingPermissionSet.modifieddate,"MM/dd/yyyy") || Date.now();
+    defaultValues.createddate = format(existingPermissionSet.createddate, "MM/dd/yyyy") || Date.now();
+    defaultValues.modifieddate = format(existingPermissionSet.modifieddate, "MM/dd/yyyy") || Date.now();
 
     // Created By
     defaultValues.createdby = existingPermissionSet.createdby
       ? existingPermissionSet.createdby.userFullName +
-        " - " +
-        format(existingPermissionSet.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingPermissionSet.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingPermissionSet.modifiedby
       ? existingPermissionSet.modifiedby.userFullName +
-        " - " +
-        format(existingPermissionSet.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingPermissionSet.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
   return defaultValues;
 };
+
+export const dashboardFormFields = (isEditing = false) => [
+  {
+    name: "_id",
+    type: "hidden", // This field won't be visible in the form
+  },
+  {
+    name: "dashboardName",
+    label: "Dashboard Name",
+    type: "text",
+    required: true,
+    xs: 12,
+    validator: Yup.string()
+      .required("Dashboard Name is Required")
+      .max(50, "Dashboard Name must be less than 50 characters"),
+  },
+  {
+    name: "objectName",
+    label: "Select Object",
+    type: "select",
+    required: true,
+    xs: 12,
+    validator: Yup.string().required("Object Name is Required"),
+    options: [] // Will be populated dynamically
+  },
+  {
+    name: "selectedFields",
+    label: "Select Fields",
+    type: "multiselect",
+    required: true,
+    xs: 12,
+    validator: Yup.array()
+      .min(1, "At least one field must be selected")
+      .max(2, "Maximum 2 fields can be selected"),
+    options: [], // Will be populated dynamically
+    dependsOn: {
+      field: "objectName",
+      optionsKey: "selectedFieldsOptions"
+    },
+    props: {
+      limitTags: 2,
+      SelectProps: {
+        MenuProps: {
+          PaperProps: {
+            style: {
+              maxHeight: 48 * 4.5,
+              width: 250,
+            },
+          },
+        },
+      },
+    }
+  },
+  {
+    name: "chartType",
+    label: "Chart Type",
+    type: "select",
+    required: true,
+    xs: 12,
+    validator: Yup.string().required("Chart Type is Required"),
+    options: [
+      { value: "bar", label: "Bar Chart" },
+      { value: "line", label: "Line Chart" },
+      { value: "pie", label: "Pie Chart" }
+    ]
+  }
+];

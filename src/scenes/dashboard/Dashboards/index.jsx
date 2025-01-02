@@ -6,17 +6,26 @@ import {
   CardContent,
   Typography,
   IconButton,
+  Grid,
+  Paper,
+  Chip,
+  Drawer,
+  CircularProgress,
+  useTheme,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PieChartIcon from "@mui/icons-material/PieChart";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import DashboardForm from "./DashboardForm";
 import DynamicChart from "./DynamicChart";
 import { DashboardDetailPage } from "../../recordDetailPage/DashboardDetailPage";
 import { RequestServer } from "../../api/HttpReq";
 import { getLoginUserRoleDept } from "../../Auth/userRoleDept";
 import { apiCheckPermission } from "../../Auth/apiCheckPermission";
-import Loader from "../../../components/Loader";
+import { alpha } from '@mui/material/styles';
+import DashboardList from "./DashboardList";
 
 const OBJECT_API = "Dashboard";
 const getDashboardURL = "/dashboard";
@@ -24,6 +33,7 @@ const upsertDashboardURL = `/upsertDashboard`;
 const dashboardGroupURL = `/dashboardGroup`;
 const deleteDashboard = `/deleteDashboard`;
 export const DashboardIndex = () => {
+  const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [dashboards, setDashboards] = useState([]);
   const [editingDashboard, setEditingDashboard] = useState(null);
@@ -83,6 +93,7 @@ export const DashboardIndex = () => {
     console.log(values, "values from dashboard index handlesubmit");
     values.fields = values.selectedFields;
     delete values.selectedFields;
+    delete values.selectedFieldsOptions;
     try {
       await RequestServer("post", upsertDashboardURL, values);
       handleClose();
@@ -94,6 +105,7 @@ export const DashboardIndex = () => {
   };
 
   const handleEdit = (dashboard) => {
+    console.log(dashboard);
     setEditingDashboard(dashboard);
     setOpen(true);
   };
@@ -104,8 +116,7 @@ export const DashboardIndex = () => {
     try {
       const response = await RequestServer(
         "get",
-        `${dashboardGroupURL}?object=${item.objectname.toLowerCase()}&field=${
-          item.fields
+        `${dashboardGroupURL}?object=${item.objectname.toLowerCase()}&field=${item.fields
         }`
       );
       setSelectedDashboard({
@@ -113,16 +124,16 @@ export const DashboardIndex = () => {
         fields: Array.isArray(item.fields)
           ? item.fields
           : typeof item.fields === "string"
-          ? item.fields.split(",")
-          : [],
+            ? item.fields.split(",")
+            : [],
       });
 
       // Handle fields being an array or a string
       const fields = Array.isArray(item.fields)
         ? item.fields
         : typeof item.fields === "string"
-        ? item.fields.split(",")
-        : [];
+          ? item.fields.split(",")
+          : [];
       const [groupByField1, groupByField2] = fields;
 
       const uniqueValues1 = [
@@ -200,7 +211,7 @@ export const DashboardIndex = () => {
         `${deleteDashboard}/${dashboard._id}`
       );
       console.log(response, "response data ");
-      if (response.status === 200) {
+      if (response.success) {
         fetchDashboardData();
       }
     } catch (error) {
@@ -209,147 +220,266 @@ export const DashboardIndex = () => {
   };
 
   console.log(permissionValues, "permissionValues");
+  console.log(selectedDashboard, "selectedDashboard");
   return (
-    <div>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <Box>
-          {permissionValues.read ? (
-            <Box sx={{ p: 3 }}>
-              {permissionValues.create ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    mb: 3,
-                  }}
-                >
-                  <Typography variant="h4">Dashboards</Typography>
-                  <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={handleOpen}
-                  >
-                    New Dashboard
-                  </Button>
-                </Box>
-              ) : null}
-
-              <Box
-                sx={{
-                  display: "grid",
-                  gap: 2,
-                  gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-                }}
-              >
-                {dashboards.map((dashboard) => (
-                  <Card
-                    key={dashboard._id}
-                    onClick={() => handleDashboardClick(dashboard)}
-                    sx={{
-                      cursor: "pointer",
-                      backgroundColor:
-                        activeDashboardId === dashboard._id
-                          ? "#f0f8ff"
-                          : "white",
-                      boxShadow:
-                        activeDashboardId === dashboard._id
-                          ? "0 4px 10px rgba(0, 0, 0, 0.2)"
-                          : "0 2px 4px rgba(0, 0, 0, 0.1)",
-                      borderRadius: "8px",
-                      transition: "background-color 0.3s, box-shadow 0.3s",
-                      "&:hover": {
-                        boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
-                      },
-                    }}
-                  >
-                    <CardContent>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          mb: 1,
-                        }}
-                      >
-                        <Typography variant="h6">
-                          {dashboard.dashboardname}
-                        </Typography>
-                        {permissionValues.edit ? (
-                          <IconButton
-                            size="small"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEdit(dashboard);
-                            }}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        ) : null}
-                      </Box>
-                      <Typography color="textSecondary" variant="body2">
-                        Chart Type: {dashboard.charttype}
-                      </Typography>
-                      <Typography color="textSecondary" variant="body2">
-                        Object: {dashboard.objectname}
-                      </Typography>
-                    </CardContent>
-                    <Box
-                      sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}
-                    >
-                      {permissionValues.delete ? (
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteDashboard(dashboard);
-                            fetchDashboardData();
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      ) : null}
-                    </Box>
-                  </Card>
-                ))}
-              </Box>
-
-              {chartData && selectedDashboard && (
-                <DynamicChart
-                  data={chartData}
-                  chartType={selectedDashboard.charttype}
-                  title={selectedDashboard.dashboardname}
-                  groupByField1={
-                    Array.isArray(selectedDashboard?.fields)
-                      ? selectedDashboard.fields[0]
-                      : typeof selectedDashboard?.fields === "string"
-                      ? selectedDashboard.fields.split(",")[0]
-                      : null
-                  }
-                  groupByField2={
-                    Array.isArray(selectedDashboard?.fields)
-                      ? selectedDashboard.fields[1]
-                      : typeof selectedDashboard?.fields === "string"
-                      ? selectedDashboard.fields.split(",")[1]
-                      : null
-                  }
-                />
-              )}
-
-              <DashboardDetailPage
-                open={open}
-                handleClose={handleClose}
-                initialValues={editingDashboard}
-                onSubmit={handleSubmit}
-                isEditing={!!editingDashboard}
-                // onObjectChange={handleObjectChange}
-                permissionValues={permissionValues}
-              />
-            </Box>
-          ) : null}
+    <Box sx={{
+      minHeight: '100vh',
+      bgcolor: theme.palette.background.default,
+      p: 3,
+      position: 'relative'
+    }}>
+      {/* New Dashboard Button - Top Right */}
+      {permissionValues.read && permissionValues.create && (
+        <Box sx={{
+          padding: "10px",
+          display: "flex",
+          justifyContent: "end"
+        }} >
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleOpen}
+            sx={{
+              borderRadius: '8px',
+              textTransform: 'none',
+              boxShadow: theme.shadows[4],
+              '&:hover': {
+                boxShadow: theme.shadows[6]
+              },
+              fontWeight: "bold",
+              fontSize: "15px"
+            }}
+          >
+            New Dashboard
+          </Button>
         </Box>
       )}
-    </div>
+
+      {isLoading ? (
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh'
+        }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box>
+          {permissionValues.read && (
+            <Grid container spacing={3}>
+              {/* Dashboard List Column */}
+              {/* <Grid item xs={12} md={4} lg={3}>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    height: '85vh',
+                    overflowY: 'auto',
+                    p: 2,
+                    position: 'sticky',
+                    top: 0,
+                    '&::-webkit-scrollbar': {
+                      width: '0.4em'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      boxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)',
+                      webkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.00)'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: 'rgba(0,0,0,.1)',
+                      borderRadius: '4px'
+                    }
+                  }}
+                >
+                  <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 3
+                  }}>
+                    <Typography variant="h5" fontWeight="bold">
+                      Dashboards
+                    </Typography>
+                  </Box>
+
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {dashboards.map((dashboard) => (
+                      <Card
+                        key={dashboard._id}
+                        onClick={() => handleDashboardClick(dashboard)}
+                        sx={{
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          bgcolor: activeDashboardId === dashboard._id
+                            ? alpha(theme.palette.primary.main, 0.12) // Softer highlight using primary color
+                            : theme.palette.background.paper,
+                          '&:hover': {
+                            boxShadow: theme.shadows[4],
+                            transform: 'translateY(-2px)',
+                            bgcolor: activeDashboardId === dashboard._id
+                              ? alpha(theme.palette.primary.main, 0.15) // Slightly darker on hover
+                              : alpha(theme.palette.primary.main, 0.08)
+                          },
+                          borderLeft: activeDashboardId === dashboard._id
+                            ? `4px solid ${theme.palette.primary.main}` // Add left border for selected item
+                            : '4px solid transparent',
+                          borderRadius: '8px'
+                        }}
+                      >
+                        <CardContent>
+                          <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start'
+                          }}>
+                            <Box>
+                              <Typography
+                                variant="h6"
+                                sx={{
+                                  fontWeight: 'bold',
+                                  mb: 1,
+                                  color: theme.palette.text.primary
+                                }}
+                              >
+                                {dashboard.dashboardname}
+                              </Typography>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Chip
+                                  label={dashboard.objectname}
+                                  size="small"
+                                  color="primary"
+                                  variant="outlined"
+                                />
+                                {dashboard.charttype.toLowerCase() === 'pie' ? (
+                                  <PieChartIcon color="action" fontSize="small" />
+                                ) : (
+                                  <BarChartIcon color="action" fontSize="small" />
+                                )}
+                              </Box>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', gap: 1 }}>
+                              {permissionValues.edit && (
+                                <IconButton
+                                  size="small"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleEdit(dashboard);
+                                  }}
+                                  sx={{
+                                    '&:hover': {
+                                      bgcolor: theme.palette.primary.light
+                                    }
+                                  }}
+                                >
+                                  <EditIcon fontSize="small" />
+                                </IconButton>
+                              )}
+                              {permissionValues.delete && (
+                                <IconButton
+                                  size="small"
+                                  color="error"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteDashboard(dashboard);
+                                  }}
+                                  sx={{
+                                    '&:hover': {
+                                      bgcolor: theme.palette.error.light
+                                    }
+                                  }}
+                                >
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
+                              )}
+                            </Box>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </Box>
+                </Paper>
+              </Grid> */}
+              <Grid item xs={12} md={4} lg={3}>
+                <DashboardList
+                  dashboards={dashboards}
+                  activeDashboardId={activeDashboardId}
+                  onDashboardClick={handleDashboardClick}
+                  onEdit={handleEdit}
+                  onDelete={handleDeleteDashboard}
+                  permissionValues={permissionValues}
+                />
+              </Grid>
+              {/* Chart Area Column */}
+              <Grid item xs={12} md={8} lg={9}>
+                <Paper
+                  elevation={3}
+                  sx={{
+                    height: '85vh',
+                    p: 3,
+                    borderRadius: '8px'
+                  }}
+                >
+                  {chartData && selectedDashboard ? (
+                    <Box sx={{ height: '100%' }}>
+                      <Box sx={{ mb: 3 }}>
+                        <Typography variant="h5" fontWeight="bold" gutterBottom>
+                          {selectedDashboard.dashboardname}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Analysis by {Array.isArray(selectedDashboard.fields)
+                            ? selectedDashboard.fields.join(' and ')
+                            : selectedDashboard.fields}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ height: 'calc(100% - 80px)' }}>
+                        <DynamicChart
+                          data={chartData}
+                          chartType={selectedDashboard.charttype}
+                          title={selectedDashboard.dashboardname}
+                          groupByField1={
+                            Array.isArray(selectedDashboard?.fields)
+                              ? selectedDashboard.fields[0]
+                              : selectedDashboard.fields?.split(',')[0]
+                          }
+                          groupByField2={
+                            Array.isArray(selectedDashboard?.fields)
+                              ? selectedDashboard.fields[1]
+                              : selectedDashboard.fields?.split(',')[1]
+                          }
+                        />
+                      </Box>
+                    </Box>
+                  ) : (
+                    <Box sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                      gap: 2
+                    }}>
+                      <BarChartIcon sx={{ fontSize: 60, color: 'text.secondary' }} />
+                      <Typography variant="h6" color="text.secondary">
+                        Select a dashboard to view its chart
+                      </Typography>
+                    </Box>
+                  )}
+                </Paper>
+              </Grid>
+            </Grid>
+          )}
+
+          <DashboardDetailPage
+            open={open}
+            handleClose={handleClose}
+            initialValues={editingDashboard}
+            onSubmit={handleSubmit}
+            isEditing={!!editingDashboard}
+            permissionValues={permissionValues}
+          />
+        </Box>
+      )}
+    </Box>
   );
 };

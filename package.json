@@ -25,6 +25,7 @@
     "formik": "^2.2.9",
     "html-to-text": "^9.0.4",
     "kill-port": "^2.0.1",
+    "lucide-react": "^0.469.0",
     "query-string": "^8.1.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.0",

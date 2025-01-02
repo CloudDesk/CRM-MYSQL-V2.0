@@ -276,7 +276,7 @@ const DynamicFormField = ({
   onFieldChange, // Add this new prop
 }) => {
   const { values, errors, touched, handleChange, setFieldValue } = formik;
-  // console.log(values, "values in DynamicFormField");
+  console.log(values, "values in DynamicFormField");
 
   const [dynamicOptions, setDynamicOptions] = useState([]);
 
@@ -294,9 +294,16 @@ const DynamicFormField = ({
 
   // Create a wrapper for handleChange that will call both Formik's handleChange and our custom onFieldChange
   const handleFieldChange = (e) => {
-    handleChange(e); // Original Formik handleChange
+    handleChange(e);
+
+    // Call custom onChange if provided
+    if (field.onChange) {
+      field.onChange(field.name, e.target.value, setFieldValue);
+    }
+
+    // Call global onFieldChange if provided
     if (onFieldChange) {
-      onFieldChange(field.name, e.target.value, setFieldValue); // Call the custom handler
+      onFieldChange(field.name, e.target.value, setFieldValue);
     }
   };
 
@@ -584,13 +591,25 @@ const DynamicFormField = ({
         <Autocomplete
           disabled={!permissionValues.edit}
           multiple
-          options={field.options}
+          options={field.options || []}
           getOptionLabel={(option) =>
-            typeof option === "string" ? option : option.label || option.value
+            typeof option === "string" ? option : option.label
+          }
+          isOptionEqualToValue={(option, value) =>
+            option.value === value || option.label === value
           }
           value={values[field.name] || []}
           onChange={(_, newValue) => {
-            setFieldValue(field.name, newValue);
+            // Convert to array of strings
+            const stringValues = newValue.map(val =>
+              typeof val === 'string' ? val : val.label
+            );
+
+            if (field.onChange) {
+              field.onChange(stringValues, formik);
+            } else {
+              setFieldValue(field.name, stringValues);
+            }
           }}
           renderInput={(params) => (
             <TextField
@@ -604,6 +623,15 @@ const DynamicFormField = ({
             />
           )}
           {...field.autocompleteProps}
+        />
+      );
+
+    case "hidden":
+      return (
+        <input
+          type="hidden"
+          name={field.name}
+          value={values[field.name] || ""}
         />
       );
 
@@ -696,6 +724,7 @@ export const DynamicForm = ({
                       return (
                         <Grid item xs={12} key={`accordion-${field.name}`}>
                           <Accordion
+                            sx={{ boxShadow: 'none' }}
                             expanded={expanded === field.name}
                             onChange={handleAccordionChange(field.name)}
                           >
