@@ -169,7 +169,7 @@ export const leadFormFields = [
   // Lead Information
   {
     name: 'leadsource',
-    label: 'Lead Source',
+    label: 'Enquiry Source',
     type: 'select',
     xs: 12,
     md: 6,
@@ -177,7 +177,7 @@ export const leadFormFields = [
   },
   {
     name: 'leadstatus',
-    label: 'Lead Status',
+    label: 'Enquiry Status',
     type: 'select',
     xs: 12,
     md: 6,
