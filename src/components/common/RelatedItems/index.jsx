@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Typography, Modal, Box } from "@mui/material";
 import { RequestServer } from '../../../scenes/api/HttpReq';
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
+import { useCheckPermission } from '../../../scenes/hooks/useCheckPermission';
 import { getUserRoleAndDepartment } from '../../../utils/sessionUtils';
 import ToastNotification from '../../../scenes/shared/toast/ToastNotification';
 import DeleteConfirmDialog from '../../../scenes/shared/toast/DeleteConfirmDialog';
@@ -76,6 +77,7 @@ const RelatedItems = ({
         const userRoleDept = getUserRoleAndDepartment(section.objectApi);
         if (userRoleDept) {
             try {
+
                 const response = await apiCheckPermission(userRoleDept);
                 setPermissions(prev => ({
                     ...prev,

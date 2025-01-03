@@ -54,6 +54,28 @@ export const appConfig = {
       single: "/singlemail",
       bulk: `/bulkemail`,
     },
+
+    // Role-based access
+    access: {
+      /**
+       * Generates URL for checking access for a specific object
+       * @param {string} role - User role
+       * @param {string} object - Object API name
+       * @param {string} departmentName - Department name
+       * @returns {string} URL
+       */
+      forObject: (role, departmentName, object) =>
+        `/checkAccess?roledetails=${role}&department=${departmentName}&object=${object}`,
+
+      /**
+       * Generates URL for checking access for all objects
+       * @param {string} role - User role
+       * @param {string} departmentName - Department name
+       * @returns {string} URL
+       */
+      forAllObjects: (role, departmentName) =>
+        `/checkAccess?roledetails=${role}&department=${departmentName}`,
+    },
   },
   // Object specific endpoints
   objects: {

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { RequestServer } from "../../api/HttpReq";
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
+import { useCheckPermission } from "../../hooks/useCheckPermission";
 import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import ListViewContainer from "../../../components/common/dataGrid/ListViewContainer";
 import { ACCOUNT_TABLE_CONFIG } from '../../../config/tableConfigs'
