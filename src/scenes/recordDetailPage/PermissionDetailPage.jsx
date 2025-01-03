@@ -26,7 +26,7 @@ import {
 } from "../formik/InitialValues/formValues";
 import { RolesCategories, RolesDepartment } from "../../data/pickLists";
 import { RequestServer } from "../api/HttpReq";
-import { apiCheckPermission } from "../Auth/apiCheckPermission";
+import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 
 const OBJECT_API = "Permissions";

@@ -34,7 +34,7 @@ import {
   UserSavedValues,
 } from "../formik/InitialValues/formValues";
 import { RequestServer } from "../api/HttpReq";
-import { apiCheckPermission } from "../Auth/apiCheckPermission";
+import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import { appConfig } from "../../config/appConfig";
 

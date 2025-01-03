@@ -13,8 +13,8 @@ import {
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import MobileHeader from './MobileHeader';
-import ToastNotification from '../../../scenes/toast/ToastNotification';
-import DeleteConfirmDialog from '../../../scenes/toast/DeleteConfirmDialog';
+import ToastNotification from '../../../scenes/shared/toast/ToastNotification';
+import DeleteConfirmDialog from '../../../scenes/shared/toast/DeleteConfirmDialog';
 
 // Constants
 const CONSTANTS = {

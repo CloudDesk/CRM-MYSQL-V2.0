@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Modal, Box } from "@mui/material";
 import { RequestServer } from '../../../scenes/api/HttpReq';
-import { apiCheckPermission } from '../../../scenes/Auth/apiCheckPermission';
-import { getLoginUserRoleDept } from '../../../scenes/Auth/userRoleDept';
-import ToastNotification from '../../../scenes/toast/ToastNotification';
-import DeleteConfirmDialog from '../../../scenes/toast/DeleteConfirmDialog';
+import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
+import { getLoginUserRoleDept } from '../../../scenes/shared/Auth/userRoleDept';
+import ToastNotification from '../../../scenes/shared/toast/ToastNotification';
+import DeleteConfirmDialog from '../../../scenes/shared/toast/DeleteConfirmDialog';
 import RelatedSection from './RelatedSection';
 
 const modalStyle = {

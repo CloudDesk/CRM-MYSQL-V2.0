@@ -15,7 +15,7 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 // import axios from 'axios'
 // import "../formik/FormStyles.css"
-import ToastNotification from "../toast/ToastNotification";
+import ToastNotification from "../shared/toast/ToastNotification";
 import CustomizedSelectForFormik from "../formik/CustomizedSelectForFormik";
 import {
   RolesCategories,
@@ -29,7 +29,7 @@ import {
   RoleSavedValues,
 } from "../formik/InitialValues/formValues";
 import { RequestServer } from "../api/HttpReq";
-import { apiCheckPermission } from "../Auth/apiCheckPermission";
+import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 
 const RoleDetailPage = ({ item }) => {

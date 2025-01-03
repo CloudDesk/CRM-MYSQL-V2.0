@@ -2,9 +2,9 @@ import { Box, Typography, Button, IconButton, Tooltip, Modal } from '@mui/materi
 import { DataGrid } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CustomPagination from './CustomPagination';
-import ToastNotification from '../../../scenes/toast/ToastNotification';
-import DeleteConfirmDialog from '../../../scenes/toast/DeleteConfirmDialog';
-import FileUploadComponent from '../../../scenes/dataLoader/ModalFileUpload';
+import ToastNotification from '../../../scenes/shared/toast/ToastNotification';
+import DeleteConfirmDialog from '../../../scenes/shared/toast/DeleteConfirmDialog';
+import FileUploadComponent from '../../../scenes/modules/dataLoader/ModalFileUpload';
 import { useState } from 'react';
 
 

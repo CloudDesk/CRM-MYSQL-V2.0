@@ -11,7 +11,7 @@ import CustomizedSelectForFormik from '../formik/CustomizedSelectForFormik';
 import { InventoryInitialValues, InventorySavedValues } from '../formik/InitialValues/formValues';
 import { getPermissions } from '../Auth/getPermission';
 import { RequestServer } from '../api/HttpReq';
-import { apiCheckPermission } from '../Auth/apiCheckPermission'
+import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';
 
 

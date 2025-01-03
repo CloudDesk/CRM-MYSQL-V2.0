@@ -19,7 +19,7 @@ import CustomizedSelectForFormik from '../formik/CustomizedSelectForFormik';
 import './Form.css'
 import { ContactInitialValues, ContactSavedValues } from '../formik/InitialValues/formValues';
 import { RequestServer } from '../api/HttpReq';
-import { apiCheckPermission } from '../Auth/apiCheckPermission'
+import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';
 import WhatAppModalNew from './WhatsAppModalNew';
 
