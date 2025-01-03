@@ -177,6 +177,20 @@ export const appConfig = {
       fetchAllUsers: "/usersByName",
       fetchUsersByFirstName: "/usersByName?firstname=",
     },
+    dashboard: {
+      key: "dashboard",
+      name: { singular: "Dashboard", plural: "Dashboards" },
+      apiName: "Dashboard",
+      base: "/dashboard",
+      delete: "/deleteDashboard",
+      // new: "/new-users",
+      // detail: "/userDetailPage",
+      dashboardGroup: "/dashboardGroup",
+      upsert: "/upsertDashboard",
+      list: "/list/user",
+      // fetchAllUsers: "/usersByName",
+      // fetchUsersByFirstName: "/usersByName?firstname=",
+    },
     // Common endpoints
     common: {
       search: "/search",
