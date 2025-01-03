@@ -7,7 +7,7 @@ import {
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
 import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useNavigate } from "react-router-dom";
-import { getLoginUserRoleDept } from "../../../shared/Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import { appConfig } from "../../../../config/appConfig";
@@ -40,7 +40,7 @@ const LeadDetailPage = ({ props }) => {
   });
   const [permissionValues, setPermissionValues] = useState({});
 
-  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
+  const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {

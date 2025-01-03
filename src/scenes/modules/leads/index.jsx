@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useTheme, Box, IconButton, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ExcelDownload from "../Excel";
 import { RequestServer } from "../../api/HttpReq";
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
-import { getLoginUserRoleDept } from "../../../scenes/shared/Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import ListViewContainer from "../../../components/common/dataGrid/ListViewContainer";
 import { LEAD_TABLE_CONFIG } from "../../../config/tableConfigs";
 import { LEAD_CONSTANTS } from "../../../config/constantConfigs";
-
 /**
  * Leads Component
  * Manages the display and interactions for enquiries/leads in both mobile and desktop views
@@ -20,8 +18,8 @@ const Leads = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(LEAD_CONSTANTS.OBJECT_NAME);
-
+  const userRoleDept = getUserRoleAndDepartment(LEAD_CONSTANTS.OBJECT_NAME);
+  console.log(userRoleDept, "userRoleDept")
   // State management
   const [enquiryRecords, setEnquiryRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
@@ -65,6 +63,7 @@ const Leads = () => {
     if (!userRoleDept) return;
     try {
       const permissions = await apiCheckPermission(userRoleDept);
+      console.log(permissions, "permissions")
       setPermissions(permissions);
     } catch (error) {
       console.error('Error fetching permissions:', error);
@@ -184,7 +183,6 @@ const Leads = () => {
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
-        ExcelDownload={ExcelDownload}
         importConfig={{
           objectName: LEAD_CONSTANTS.OBJECT_NAME,
           isImport: true,
@@ -238,7 +236,6 @@ export default Leads;
       onToggleDeleteMode={setIsDeleteMode}
       onSelectRecords={setSelectedIds}
       onEditRecord={handleEnquiryDetail}
-      ExcelDownload={ExcelDownload}
       importConfig={{
         objectName: LEAD_CONSTANTS.OBJECT_NAME,
         isImport: true,

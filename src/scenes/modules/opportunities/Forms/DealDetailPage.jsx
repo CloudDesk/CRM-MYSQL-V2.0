@@ -7,7 +7,7 @@ import {
 } from "../../../formik/initialValues";
 import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getLoginUserRoleDept } from "../../../shared/Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { appConfig } from "../../../../config/appConfig";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import { RequestServer } from "../../../api/HttpReq";
@@ -48,7 +48,7 @@ const DealDetailPage = ({ props }) => {
     ...(existingOpportunity ? metaDataFields : []),
   ];
 
-  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
+  const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {

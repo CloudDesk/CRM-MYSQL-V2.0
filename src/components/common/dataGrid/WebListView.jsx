@@ -6,7 +6,9 @@ import ToastNotification from '../../../scenes/shared/toast/ToastNotification';
 import DeleteConfirmDialog from '../../../scenes/shared/toast/DeleteConfirmDialog';
 import FileUploadComponent from '../../../scenes/modules/dataLoader/ModalFileUpload';
 import { useState } from 'react';
-
+import { generateExcelDownload } from '../../../utils/exportUtils';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import { formatDate } from '../../../utils/dateUtils';
 
 // Constants
 const STYLE_CONSTANTS = {
@@ -154,6 +156,15 @@ const styles = {
             p: 4,
         },
     },
+    exportButton: {
+        backgroundColor: 'transparent',
+        '&:hover': {
+            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+        },
+        '& .MuiSvgIcon-root': {
+            color: "black",
+        }
+    },
 };
 
 
@@ -176,7 +187,6 @@ const WebListView = ({
     onToggleDeleteMode,
     onSelectRecords,
     onEditRecord,
-    ExcelDownload,
     additionalToolbarActions,
     importConfig
 }) => {
@@ -320,6 +330,20 @@ const WebListView = ({
         </>
     );
 
+    const handleExcelDownload = () => {
+        if (records.length > 0) {
+            const exportData = records.map(record => {
+                const cleanRecord = { ...record };
+                delete cleanRecord._id;
+                // delete cleanRecord.__v;
+                return cleanRecord;
+            });
+
+            const formattedDate = formatDate(null, 'readable');
+            generateExcelDownload(exportData, `${title}_Records_${formattedDate}`);
+        }
+    };
+
     const renderDefaultActions = () => (
         permissions.create && (
             <>
@@ -339,10 +363,16 @@ const WebListView = ({
                 >
                     New
                 </Button>
-                <ExcelDownload
-                    data={records}
-                    filename={`${title}Records`}
-                />
+                {records.length > 0 && (
+                    <Tooltip title="Excel Download">
+                        <IconButton
+                            onClick={handleExcelDownload}
+                            sx={styles.exportButton}
+                        >
+                            <SaveAltIcon />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </>
         )
     );

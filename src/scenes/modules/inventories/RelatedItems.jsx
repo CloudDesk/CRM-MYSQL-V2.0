@@ -98,8 +98,8 @@ export default InventoryRelatedItems
   const [permissionValuesAccount,setPermissionValuesAccount]=useState({})
   const [permissionValuesOpportunity,setPermissionValuesOpportunity]=useState({})
 
-  const userRoleDptAccount= getLoginUserRoleDept(OBJECT_API_account)
-  const userRoleDptOpportunity= getLoginUserRoleDept(OBJECT_API_opportunity)
+  const userRoleDptAccount= getUserRoleAndDepartment(OBJECT_API_account)
+  const userRoleDptOpportunity= getUserRoleAndDepartment(OBJECT_API_opportunity)
   console.log(userRoleDptAccount,"userRoleDptAccount")
   console.log(userRoleDptOpportunity,"userRoleDptOpportunity")
   

@@ -1,4 +1,4 @@
-import { formatCurrency } from "../utility/formatCurrency";
+import { formatCurrency } from "../utils/formatCurrency";
 
 export const ACCOUNT_TABLE_CONFIG = {
   mobileFields: [

@@ -19,7 +19,6 @@ const ListViewContainer = ({
     selectedRecordIds,
     onToggleDeleteMode,
     onSelectRecords,
-    ExcelDownload,
     importConfig,
 }) => {
     // Common props for both views
@@ -59,7 +58,6 @@ const ListViewContainer = ({
             selectedRecordIds={selectedRecordIds}
             onToggleDeleteMode={onToggleDeleteMode}
             onSelectRecords={onSelectRecords}
-            ExcelDownload={ExcelDownload}
             importConfig={importConfig}
 
         />

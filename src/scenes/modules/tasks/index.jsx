@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ExcelDownload from "../Excel";
 import { RequestServer } from "../../api/HttpReq";
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
-import { getLoginUserRoleDept } from "../../../scenes/shared/Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import ListViewContainer from "../../../components/common/dataGrid/ListViewContainer";
 import { TASK_TABLE_CONFIG } from "../../../config/tableConfigs";
 import { TASK_CONSTANTS } from "../../../config/constantConfigs";
@@ -16,7 +15,7 @@ const Tasks = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(TASK_CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getUserRoleAndDepartment(TASK_CONSTANTS.OBJECT_NAME);
 
   const [records, setRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
@@ -172,7 +171,6 @@ const Tasks = () => {
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
-        ExcelDownload={ExcelDownload}
         importConfig={TASK_CONSTANTS.IMPORT_CONFIG}
       />
     </Box>

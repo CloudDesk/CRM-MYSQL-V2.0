@@ -13,7 +13,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import DynamicChart from "./DynamicChart";
 import { DashboardDetailPage } from "../dashboard/form/DashboardDetailPage";
 import { RequestServer } from "../../api/HttpReq";
-import { getLoginUserRoleDept } from "../../shared/Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import DashboardList from "./DashboardList";
 import { appConfig } from "../../../config/appConfig";
@@ -35,7 +35,7 @@ export const DashboardIndex = () => {
     const [permissionValues, setPermissionValues] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
-    const getUserRoleDept = getLoginUserRoleDept(OBJECT_API);
+    const getUserRoleDept = getUserRoleAndDepartment(OBJECT_API);
     console.log(getUserRoleDept, "getUserRoleDept");
 
     useEffect(() => {

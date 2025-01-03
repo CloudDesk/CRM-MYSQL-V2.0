@@ -1,14 +1,19 @@
-import React from "react";
 import * as ExcelJS from "exceljs";
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import { IconButton, Tooltip } from '@mui/material'
 
+export const generateExcelDownload = (data, filename) => {
+  if (!data || !data.length) {
+    console.warn("No data available for export");
+    return;
+  }
 
-function ExcelDownload({ data, filename }) {
-
-  const handleDownload = () => {
+  try {
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet("Sheet1");
+
+    // Add metadata
+    wb.creator = "Your App Name";
+    wb.created = new Date();
+    wb.modified = new Date();
 
     // Add headers to worksheet
     const headers = Object.keys(data[0]);
@@ -21,7 +26,7 @@ function ExcelDownload({ data, filename }) {
     });
 
     // Save workbook to file
-    wb.xlsx.writeBuffer().then((buffer) => {
+    return wb.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
@@ -32,17 +37,9 @@ function ExcelDownload({ data, filename }) {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     });
-  };
-
-  return (
-    <Tooltip title="Excel Download">
-      <IconButton>
-        <SaveAltIcon onClick={handleDownload} >Export</SaveAltIcon>
-      </IconButton>
-    </Tooltip>
-  )
-
-}
-
-export default ExcelDownload;
+  } catch (error) {
+    console.error("Error generating Excel file:", error);
+  }
+};

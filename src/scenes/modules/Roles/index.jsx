@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { RequestServer } from '../../api/HttpReq';
 import '../indexCSS/muiBoxStyles.css'
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
-import { getLoginUserRoleDept } from '../Auth/userRoleDept';
+import { getUserRoleAndDepartment } from '../../../utils/sessionUtils';
 import { appConfig } from '../../../config/appConfig';
 import ListViewContainer from '../../../components/common/dataGrid/ListViewContainer';
 
@@ -47,7 +47,7 @@ const RoleIndex = () => {
   const [selectedRecordDatas, setSelectedRecordDatas] = useState()
   const [permissionValues, setPermissionValues] = useState({})
 
-  const userRoleDpt = getLoginUserRoleDept(OBJECT_API)
+  const userRoleDpt = getUserRoleAndDepartment(OBJECT_API)
 
 
   useEffect(() => {
@@ -237,7 +237,6 @@ const RoleIndex = () => {
   //         setSelectedRecordDatas={setSelectedRecordDatas}
   //         handleOnCellClick={handleOnCellClick}
   //         CustomPagination={CustomPagination}
-  //         ExcelDownload={ExcelDownload}
   //       />
   //     ) : null}
   //   </>
