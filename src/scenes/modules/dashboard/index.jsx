@@ -16,12 +16,14 @@ import { RequestServer } from "../../api/HttpReq";
 import { getLoginUserRoleDept } from "../../shared/Auth/userRoleDept";
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import DashboardList from "./DashboardList";
+import { appConfig } from "../../../config/appConfig";
 
-const OBJECT_API = "Dashboard";
-const getDashboardURL = "/dashboard";
-const upsertDashboardURL = `/upsertDashboard`;
-const dashboardGroupURL = `/dashboardGroup`;
-const deleteDashboard = `/deleteDashboard`;
+const OBJECT_API = appConfig.objects.dashboard.apiName;
+const getDashboardURL = appConfig.objects.dashboard.base;
+const upsertDashboardURL = appConfig.objects.dashboard.upsert;
+const dashboardGroupURL = appConfig.objects.dashboard.dashboardGroup;
+const deleteDashboard = appConfig.objects.dashboard.delete;
+
 export const DashboardIndex = () => {
     const theme = useTheme();
     const [open, setOpen] = useState(false);
