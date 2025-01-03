@@ -10,8 +10,8 @@ import {
   inventoryformfields,
   metaDataFields,
 } from "../../formik/InitialValues/initialValues";
-import { InvCitiesPickList } from "../../../data/pickLists";
-import { appConfig } from "../../config";
+import { InvCitiesPickList } from "../../../assets/pickLists";
+import { appConfig } from "../../../config/appConfig";
 
 const OBJECT_API = "Inventory";
 const upsertInventoryURL = `/UpsertInventory`;

@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { Grid, Button, DialogActions, Box, TextField, Autocomplete, MenuItem, Select } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom"
 import "./Form.css";
-import { IndustryPickList, AccRatingPickList, AccTypePickList, AccCitiesPickList, AccCountryPickList } from '../../data/pickLists'
+import { IndustryPickList, AccRatingPickList, AccTypePickList, AccCitiesPickList, AccCountryPickList } from '../../assets/pickLists';
 import CustomizedSelectForFormik from '../formik/CustomizedSelectForFormik';
 import ToastNotification from '../toast/ToastNotification';
 import { AccountInitialValues, AccountSavedValues } from '../formik/InitialValues/formValues';

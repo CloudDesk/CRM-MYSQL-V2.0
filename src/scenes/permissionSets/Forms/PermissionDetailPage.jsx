@@ -10,7 +10,7 @@ import {
   metaDataFields,
   PermissionSetFormFields,
 } from "../../formik/InitialValues/initialValues";
-import { appConfig } from "../../config";
+import { appConfig } from "../../../config/appConfig";
 
 const OBJECT_API = "Permissions";
 const upsertPermissionURL = `/upsertPermission`;

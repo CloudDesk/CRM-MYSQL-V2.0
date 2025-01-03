@@ -6,10 +6,9 @@ import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-import { appConfig } from "../config";
-import { LEAD_TABLE_CONFIG } from "../config/tableConfigs";
-import { LEAD_CONSTANTS } from "../config/constantConfigs";
+import ListViewContainer from "../../components/common/dataGrid/ListViewContainer";
+import { LEAD_TABLE_CONFIG } from "../../config/tableConfigs";
+import { LEAD_CONSTANTS } from "../../config/constantConfigs";
 
 /**
  * Leads Component

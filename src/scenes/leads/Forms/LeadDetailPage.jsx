@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { getLoginUserRoleDept } from "../../Auth/userRoleDept";
 import { RequestServer } from "../../api/HttpReq";
 import ToastNotification from "../../toast/ToastNotification";
-import { appConfig } from "../../config";
+import { appConfig } from "../../../config/appConfig";
 
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.lead.apiName,

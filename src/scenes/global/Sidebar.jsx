@@ -32,7 +32,7 @@ import cdlogo from "../assets/cdlogo.jpg";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import HandshakeIcon from '@mui/icons-material/Handshake';
-import { appConfig } from '../config';
+import { appConfig } from '../../config/appConfig';
 
 const titleStyles = {
   display: 'flex',

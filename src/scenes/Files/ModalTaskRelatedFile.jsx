@@ -4,8 +4,8 @@ import ToastNotification from "../toast/ToastNotification";
 import { RequestServerFiles } from "../api/HttpReqFiles";
 import { apiMethods } from "../api/methods";
 import { useLocation } from "react-router-dom";
-import FileUpload from "../../components/File";
-import { appConfig } from "../config";
+import FileUpload from "../../components/common/File";
+import { appConfig } from "../../config/appConfig";
 
 const URL_postRecords = `/upsertfiles`
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as Yup from 'yup';
 import { RequestServerFiles } from '../../../scenes/api/HttpReqFiles';
-import { appConfig } from '../../../scenes/config';
+import { appConfig } from '../../../config/appConfig';
 import CommunicationModal from './CommunicationModal';
 import CommunicationForm from './CommunicationForm';
 import ToastNotification from '../../../scenes/toast/ToastNotification';

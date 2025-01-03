@@ -22,7 +22,7 @@ import {
   TaskObjectPicklist,
   TaskSubjectPicklist,
   UserRolePicklist,
-} from "../../../data/pickLists";
+} from "../../../assets/pickLists";
 import { RequestServer } from "../../api/HttpReq";
 
 const phoneRegExp = /^(\+\d{1,3}[- ]?)?\d{10}$/;

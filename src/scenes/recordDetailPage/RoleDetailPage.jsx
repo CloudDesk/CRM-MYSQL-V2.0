@@ -22,7 +22,7 @@ import {
   RolesDepartment,
   UserAccessPicklist,
   UserRolePicklist,
-} from "../../data/pickLists";
+} from "../../assets/pickLists";
 import "./Form.css";
 import {
   RoleInitialValues,

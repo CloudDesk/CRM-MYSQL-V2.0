@@ -42,7 +42,7 @@ import CustomizedSelectForFormik from "../formik/CustomizedSelectForFormik";
 import queryString from "query-string";
 import ToastNotification from "../toast/ToastNotification";
 import { Delete, ExpandMore } from "@mui/icons-material";
-import { appConfig } from "../../config";
+import { appConfig } from "../../../config/appConfig";
 
 function DashboardHarish() {
     const urlOpportunity = `${appConfig.server}/opportunities`;

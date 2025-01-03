@@ -1,7 +1,7 @@
 import React from "react";
 import ModalTaskFileUpload from "../Files/ModalTaskRelatedFile";
 import RelatedItems from "../../components/common/RelatedItems";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const TaskRelatedItems = ({ props }) => {
   const existingTask = props;

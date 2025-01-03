@@ -1,4 +1,4 @@
-import { appConfig } from ".";
+import { appConfig } from "./appConfig";
 
 export const ACCOUNT_CONSTANTS = {
   OBJECT_NAME: appConfig.objects.account.apiName,

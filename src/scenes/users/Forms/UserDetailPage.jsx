@@ -10,8 +10,7 @@ import {
   metaDataFields,
   UserFormFields,
 } from "../../formik/InitialValues/initialValues";
-import { appConfig } from "../../config";
-
+import { appConfig } from "../../../config/appConfig";
 const OBJECT_API = "Users";
 const urlUpsertUser = `/UpsertUser`;
 const urlSendEmail = `/singlemail`;

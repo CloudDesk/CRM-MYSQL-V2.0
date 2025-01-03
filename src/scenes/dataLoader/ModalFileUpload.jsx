@@ -16,8 +16,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import PreviewUpsert from "./PreviewUpsert";
-import { appConfig } from "../config";
-import { DATALOADER_CONSTANTS } from "../config/constantConfigs";
+import { DATALOADER_CONSTANTS } from "../../config/constantConfigs";
 
 
 const FileUploadComponent = ({ object, handleModal, callBack }) => {

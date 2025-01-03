@@ -11,7 +11,7 @@ import "../formik/FormStyles.css"
 import Iframe from 'react-iframe'
 
 import ToastNotification from "../toast/ToastNotification";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 // import download from 'downloadjs';
 // import { saveAs } from 'file-saver'
 // import fileDownload from "js-file-download";

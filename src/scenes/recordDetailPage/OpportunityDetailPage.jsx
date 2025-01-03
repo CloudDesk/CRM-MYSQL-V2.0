@@ -6,7 +6,7 @@ import { Grid, Button, Forminput, DialogActions, TextField, Autocomplete, MenuIt
 import { useParams, useNavigate } from "react-router-dom"
 import "../formik/FormStyles.css"
 import ToastNotification from '../toast/ToastNotification';
-import { LeadSourcePickList, OppStagePicklist, OppTypePicklist } from '../../data/pickLists';
+import { LeadSourcePickList, OppStagePicklist, OppTypePicklist } from '../../assets/pickLists';
 import CustomizedSelectForFormik from '../formik/CustomizedSelectForFormik';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';

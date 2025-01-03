@@ -2,7 +2,7 @@ import React from "react";
 import ModalAccTask from "../tasks/ModalAccTask";
 import ModalConAccount from "../contacts/ModalConAccount";
 import RelatedItems from "../../components/common/RelatedItems";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 
 const AccountRelatedItems = ({ props }) => {

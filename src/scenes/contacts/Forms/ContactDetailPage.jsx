@@ -14,9 +14,7 @@ import { Tooltip, IconButton } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SendIcon from "@mui/icons-material/Send";
-// import WhatAppModalNew from "../../recordDetailPage/WhatsAppModalNew";
-// import EmailModalPage from "../../recordDetailPage/EmailModalPage";
-import { appConfig } from "../../config";
+import { appConfig } from "../../../config/appConfig";
 import WhatsAppModalNew from "../../../components/common/communication/WhatsappModal";
 import EmailModalPage from "../../../components/common/communication/EmailModal";
 

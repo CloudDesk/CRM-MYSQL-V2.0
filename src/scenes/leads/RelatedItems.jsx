@@ -2,7 +2,7 @@ import React from "react";
 import ModalLeadTask from "../tasks/ModalLeadTask";
 import ModalLeadOpportunity from "../opportunities/ModalLeadOpp";
 import RelatedItems from "../../components/common/RelatedItems";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const LeadRelatedItems = ({ props }) => {
 const existingLead = props

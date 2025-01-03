@@ -5,7 +5,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import ToastNotification from '../toast/ToastNotification';
-import { DATALOADER_CONSTANTS } from '../config/constantConfigs';
+import { DATALOADER_CONSTANTS } from '../../config/constantConfigs';
 
 
 // const upsertUrl = `${appConfig.server}/dataloader`;

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import * as Yup from "yup";
 import { Grid } from "@mui/material";
-import { TaskSubjectPicklist } from "../../data/pickLists";
+import { TaskSubjectPicklist } from "../../assets/pickLists";
 import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from '../api/HttpReq';
 import { TaskInitialValues } from "../formik/InitialValues/formValues";
 import { DynamicForm } from "../../components/Form/DynamicForm";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const UpsertUrl = `/UpsertTask`;
 const fetchUsersbyName = `/usersByName`;

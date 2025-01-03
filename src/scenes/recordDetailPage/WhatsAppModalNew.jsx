@@ -8,7 +8,7 @@ import "../formik/FormStyles.css"
 import ToastNotification from '../toast/ToastNotification';
 import { RequestServerFiles } from "../api/HttpReqFiles";
 import { RequestServer } from "../api/HttpReq";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const urlSendWhatsAppbulk = `/whatsapp/personal`
 

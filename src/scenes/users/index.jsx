@@ -6,9 +6,9 @@ import ExcelDownload from "../Excel";
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import ListViewContainer from "../../components/common/ListView/ListViewContainer";
-import { USER_TABLE_CONFIG } from "../config/tableConfigs";
-import { USER_CONSTANTS } from "../config/constantConfigs";
+import ListViewContainer from "../../components/common/dataGrid/ListViewContainer";
+import { USER_TABLE_CONFIG } from "../../config/tableConfigs";
+import { USER_CONSTANTS } from "../../config/constantConfigs";
 
 const Users = () => {
   const theme = useTheme();

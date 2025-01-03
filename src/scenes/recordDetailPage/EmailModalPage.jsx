@@ -11,7 +11,7 @@ import CustomizedRichTextField from "../formik/CustomizedRichTextField";
 import {EmailInitialValues} from '../formik/InitialValues/formValues';
 import { RequestServer } from "../api/HttpReq";
 import { RequestServerFiles } from "../api/HttpReqFiles";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const urlSendEmailbulk = `/bulkemail`
 

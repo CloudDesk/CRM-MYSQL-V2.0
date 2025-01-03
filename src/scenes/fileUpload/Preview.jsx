@@ -2,7 +2,7 @@ import React from 'react'
 import { useEffect } from 'react';
 import { useState } from 'react'
 import axios from 'axios';
-import { appConfig } from '../config';
+import { appConfig } from '../../config/appConfig';
 
 
 function Preview() {

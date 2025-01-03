@@ -10,7 +10,7 @@ import {
   generateAccountInitialValues,
   metaDataFields,
 } from "../../formik/InitialValues/initialValues";
-import { appConfig } from "../../config";
+import { appConfig } from "../../../config/appConfig";
 
 
 const CONSTANTS = {

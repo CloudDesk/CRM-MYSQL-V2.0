@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import Loader from '../../Loader';
+import Loader from '../../UI/Loader';
 import { ContentBox } from './ContentBox';
 
 const FlexiblePageLayout = ({ DetailComponent, RelatedItemsComponent }) => {

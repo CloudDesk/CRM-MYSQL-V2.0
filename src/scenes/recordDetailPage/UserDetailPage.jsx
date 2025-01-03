@@ -27,7 +27,7 @@ import {
   UserAccessPicklist,
   UserRolePicklist,
   RolesCategories,
-} from "../../data/pickLists";
+} from "../../assets/pickLists";
 import "./Form.css";
 import {
   UserInitialValues,
@@ -36,7 +36,7 @@ import {
 import { RequestServer } from "../api/HttpReq";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const UserDetailPage = ({ item }) => {
   const OBJECT_API = "Users";

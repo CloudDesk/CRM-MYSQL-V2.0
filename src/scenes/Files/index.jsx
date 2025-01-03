@@ -20,7 +20,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ModalFileUpload from "./ModalNewFile";
 import '../Files/FileModal.css'
 import '../recordDetailPage/Form.css'
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const Files = () => {
 

@@ -3,11 +3,11 @@ import { useLocation } from 'react-router-dom';
 import * as Yup from "yup";
 import { Grid } from "@mui/material";
 import ToastNotification from "../toast/ToastNotification";
-import { LeadSourcePickList, NameSalutionPickList } from '../../data/pickLists';
+import { LeadSourcePickList, NameSalutionPickList } from '../../assets/pickLists';
 import { RequestServer } from "../api/HttpReq";
 import { ContactInitialValues } from "../formik/InitialValues/formValues";
 import { DynamicForm } from "../../components/Form/DynamicForm";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const UpsertUrl = appConfig.objects.contact.upsert;
 

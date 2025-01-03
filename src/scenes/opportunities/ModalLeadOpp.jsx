@@ -5,7 +5,7 @@ import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from "../api/HttpReq";
 import { opportunityFormFields, generateOpportunityInitialValues } from '../formik/InitialValues/initialValues';
 import { DynamicForm } from "../../components/Form/DynamicForm";
-import { appConfig } from '../config';
+import { appConfig } from '../../config/appConfig';
 
 const url = `/UpsertOpportunity`;
 const fetchInventoriesbyName = `/InventoryName`;

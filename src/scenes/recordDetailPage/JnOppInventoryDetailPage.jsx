@@ -7,7 +7,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import axios from 'axios'
 import "../formik/FormStyles.css"
 import ToastNotification from '../toast/ToastNotification';
-import { appConfig } from '../config';
+import { appConfig } from '../../config/appConfig';
 
 const url = `${appConfig.server}/UpsertJnOppInventory`;
 const fetchInventoriesbyName = `${appConfig.server}/InventoryName`;

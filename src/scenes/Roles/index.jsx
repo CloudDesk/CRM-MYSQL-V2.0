@@ -8,18 +8,12 @@ import {
 import { tokens } from "../../theme";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import ToastNotification from '../toast/ToastNotification';
-import DeleteConfirmDialog from '../toast/DeleteConfirmDialog';
-import ExcelDownload from '../Excel';
 import { RequestServer } from '../api/HttpReq';
 import '../indexCSS/muiBoxStyles.css'
 import { apiCheckPermission } from '../Auth/apiCheckPermission';
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';
-import NoAccess from '../NoAccess/NoAccess';
-import SharedDataGrid from '../../components/SharedDataGrid';
-import { appConfig } from '../config';
-import ListViewContainer from '../../components/common/ListView/ListViewContainer';
+import { appConfig } from '../../config/appConfig';
+import ListViewContainer from '../../components/common/dataGrid/ListViewContainer';
 
 const CONSTANTS = {
   OBJECT_NAME: appConfig.objects.role.apiName,

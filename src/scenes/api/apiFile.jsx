@@ -1,5 +1,5 @@
 import axios, { isCancel, AxiosError } from 'axios';
-import { appConfig } from '../config';
+import { appConfig } from '../../config/appConfig';
 
 const apiFile = axios.create({
   baseURL: appConfig.server,

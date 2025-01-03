@@ -14,15 +14,10 @@ import ToastNotification from '../toast/ToastNotification';
 import EmailIcon from '@mui/icons-material/Email';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import SendIcon from '@mui/icons-material/Send';
-import WhatAppModalPage from './WhatsAppModalPage';
-import { LeadSourcePickList, NameSalutionPickList } from '../../data/pickLists'
+import { LeadSourcePickList, NameSalutionPickList } from '../../assets/pickLists'
 import CustomizedSelectForFormik from '../formik/CustomizedSelectForFormik';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import './Form.css'
 import { ContactInitialValues, ContactSavedValues } from '../formik/InitialValues/formValues';
-import { getPermissions } from '../Auth/getPermission';
 import { RequestServer } from '../api/HttpReq';
 import { apiCheckPermission } from '../Auth/apiCheckPermission'
 import { getLoginUserRoleDept } from '../Auth/userRoleDept';

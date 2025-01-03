@@ -7,7 +7,7 @@ import '../recordDetailPage/Form.css'
 import ToastNotification from "../toast/ToastNotification";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const urlLogin = `${appConfig.server}/login`
 

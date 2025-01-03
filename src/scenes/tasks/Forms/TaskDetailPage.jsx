@@ -10,7 +10,7 @@ import {
   metaDataFields,
   TaskFormFields,
 } from "../../formik/InitialValues/initialValues";
-import { appConfig } from "../../config";
+import { appConfig } from "../../../config/appConfig";
 
 const OBJECT_API = "Event";
 const TaskUpsertURL = `/UpsertTask`;

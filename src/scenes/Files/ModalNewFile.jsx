@@ -7,7 +7,7 @@ import "../recordDetailPage/Form.css";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import { RequestServerFiles } from "../api/HttpReqFiles";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 
 const URL_postRecords = `/upsertfiles`

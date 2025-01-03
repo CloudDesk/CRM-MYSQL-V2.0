@@ -2,7 +2,7 @@ import React from "react";
 import ModalInventoryOpportunity from "../opportunities/ModalInventoryOpp";
 import ModalInventoryAccount from "../accounts/ModalAccountInventory";
 import RelatedItems from "../../components/common/RelatedItems";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 
 const InventoryRelatedItems = ({ props }) => {

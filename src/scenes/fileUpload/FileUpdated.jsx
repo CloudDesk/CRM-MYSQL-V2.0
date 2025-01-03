@@ -22,7 +22,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ToastNotification from "../toast/ToastNotification";
-import { appConfig } from "../config";
+import { appConfig } from "../../config/appConfig";
 
 const UpsertUrl = `${appConfig.server}/uploadfile`;
 const urlFiles = `${appConfig.server}/files`;

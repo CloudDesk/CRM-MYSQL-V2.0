@@ -5,8 +5,8 @@ import ToastNotification from '../toast/ToastNotification';
 import { RequestServer } from '../api/HttpReq';
 import { accountformfields, generateAccountInitialValues } from '../formik/InitialValues/initialValues';
 import { DynamicForm } from "../../components/Form/DynamicForm";
-import { appConfig } from '../config';
-import { ACCOUNT_CONSTANTS } from '../config/constantConfigs';
+import { appConfig } from '../../config/appConfig';
+
 const url = appConfig.objects.account.upsert;
 
 const ModalInventoryAccount = ({ item, handleModal }) => {

@@ -6,7 +6,7 @@ import { Grid, Button, DialogActions, MenuItem } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom"
 import './Form.css'
 import ToastNotification from '../toast/ToastNotification';
-import { AccCitiesPickList, AccCountryPickList, InvStatusPicklist, InvTypePicklist } from '../../data/pickLists';
+import { AccCitiesPickList, AccCountryPickList, InvStatusPicklist, InvTypePicklist } from '../../assets/pickLists';
 import CustomizedSelectForFormik from '../formik/CustomizedSelectForFormik';
 import { InventoryInitialValues, InventorySavedValues } from '../formik/InitialValues/formValues';
 import { getPermissions } from '../Auth/getPermission';

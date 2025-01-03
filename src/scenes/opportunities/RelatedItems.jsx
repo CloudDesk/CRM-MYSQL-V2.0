@@ -1,8 +1,7 @@
 import React from "react";
 import ModalOppTask from "../tasks/ModalOppTask";
 import RelatedItems from "../../components/common/RelatedItems";
-import { appConfig } from "../config";
-
+import { appConfig } from "../../config/appConfig";
 
 const OpportunityRelatedItems = ({ props }) => {
   const existingOpportunity = props;

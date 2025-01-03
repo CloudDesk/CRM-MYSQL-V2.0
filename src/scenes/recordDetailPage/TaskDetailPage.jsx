@@ -13,7 +13,7 @@ import {
 import "../formik/FormStyles.css";
 import PreviewFile from "../formik/PreviewFile";
 import ToastNotification from "../toast/ToastNotification";
-import { TaskObjectPicklist, TaskSubjectPicklist } from "../../data/pickLists";
+import { TaskObjectPicklist, TaskSubjectPicklist } from "../../assets/pickLists";
 import CustomizedSelectForFormik from "../formik/CustomizedSelectForFormik";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -240,10 +240,10 @@ const TaskDetailPage = ({ item, handleModal, showModel }) => {
       e === "Account"
         ? fetchAccountUrl
         : e === "Enquiry"
-        ? fetchLeadUrl
-        : e === "Deals"
-        ? fetchOpportunityUrl
-        : null;
+          ? fetchLeadUrl
+          : e === "Deals"
+            ? fetchOpportunityUrl
+            : null;
     setUrl(url1);
     console.log(url1, "url1");
     FetchObjectsbyName("", url1, e);

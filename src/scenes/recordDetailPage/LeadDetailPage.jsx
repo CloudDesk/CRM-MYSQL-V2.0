@@ -14,14 +14,14 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 // import "../formik/FormStyles.css"
 import ToastNotification from "../toast/ToastNotification";
+
 import {
-  NameSalutionPickList,
   LeadSourcePickList,
   IndustryPickList,
   LeadStatusPicklist,
   LeadsDemoPicklist,
   LeadMonthPicklist,
-} from "../../data/pickLists";
+} from "../../assets/pickLists";
 import CustomizedSelectForFormik from "../formik/CustomizedSelectForFormik";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";

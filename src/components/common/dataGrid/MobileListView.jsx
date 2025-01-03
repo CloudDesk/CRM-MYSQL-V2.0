@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Header from '../../chart/Header';
+import MobileHeader from './MobileHeader';
 import ToastNotification from '../../../scenes/toast/ToastNotification';
 import DeleteConfirmDialog from '../../../scenes/toast/DeleteConfirmDialog';
 
@@ -275,7 +275,7 @@ const MobileListView = ({
 
             <Box sx={STYLES.mainContainer}>
                 <Box sx={STYLES.headerContainer}>
-                    <Header title={title} subtitle={subtitle} />
+                    <MobileHeader title={title} subtitle={subtitle} />
                     <Button
                         variant="contained"
                         color="primary"
