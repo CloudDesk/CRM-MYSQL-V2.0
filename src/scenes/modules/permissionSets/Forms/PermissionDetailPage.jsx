@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import {
   generatePermissionSetInitialValues,
@@ -12,53 +12,31 @@ import {
 } from "../../../formik/initialValues";
 import { appConfig } from "../../../../config/appConfig";
 
-const OBJECT_API = "Permissions";
-const upsertPermissionURL = `/upsertPermission`;
-
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.permission.apiName,
   upsert: appConfig.objects.permission.upsert,
   list: appConfig.objects.permission.list
 }
+
 const PermissionDetailPage = ({ props }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const formRef = useRef();
-
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
-  console.log(currentUser, "currentUser");
-
-  console.log(props, "props");
   const existingPermission = location.state.record.item;
 
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [permissionValues, setPermissionValues] = useState({});
+  // State management
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
 
+  // Get user role and department
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
 
-  useEffect(() => {
-    console.log("passed record", location.state.record.item);
-    fetchObjectPermissions();
-  }, []);
-
-  const fetchObjectPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, " deals apiCheckPermission promise res");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "deals res apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-  };
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
   const initialValues = generatePermissionSetInitialValues(existingPermission);
 
@@ -79,9 +57,8 @@ const PermissionDetailPage = ({ props }) => {
 
       obj.permissionLevel = permissionLevel;
     });
-    console.log(convertValue, "convertValue");
-    // values.permissionSets = convertValue;
     values.permissionsets = JSON.stringify(convertValue);
+
     let dateSeconds = new Date().getTime();
     if (existingPermission) {
       values._id = existingPermission._id;
@@ -90,7 +67,7 @@ const PermissionDetailPage = ({ props }) => {
       values.createdby = existingPermission.createdby;
       values.modifiedby = currentUser;
       delete values.userdetails;
-    } else if (!existingPermission) {
+    } else {
       values.createddate = dateSeconds;
       values.modifieddate = dateSeconds;
       values.createdby = currentUser;
@@ -98,18 +75,12 @@ const PermissionDetailPage = ({ props }) => {
       delete values.userdetails;
     }
 
-    console.log("values after modified", values);
     try {
       const response = await RequestServer("post", CONSTANTS.upsert, values);
-      console.log(response, "response");
       if (response.success) {
         setNotify({
           isOpen: true,
-          message:
-            response.data.message ||
-            response.data ||
-            response ||
-            "Permission Set created successfully",
+          message: response.data.message || response.data || "Permission Set created successfully",
           type: "success",
         });
         setTimeout(() => {
@@ -118,19 +89,15 @@ const PermissionDetailPage = ({ props }) => {
       } else {
         setNotify({
           isOpen: true,
-          message:
-            response.data ||
-            response.data.message ||
-            response ||
-            "Error creating Permission Set",
+          message: response.data || response.data.message || "Error creating Permission Set",
           type: "error",
         });
       }
     } catch (error) {
-      console.log(error, "error");
+      console.error("Error creating permission set:", error);
       setNotify({
         isOpen: true,
-        message: error.message || error || "Error creating Permission Set",
+        message: error.message || "Error creating Permission Set",
         type: "error",
       });
     }
@@ -138,9 +105,7 @@ const PermissionDetailPage = ({ props }) => {
 
   const handleFieldChange = (fieldName, value, setFieldValue) => {
     if (fieldName.includes("permissions")) {
-      const matches = fieldName.match(
-        /permissionsets\[(\d+)\]\.permissions\.(\w+)/
-      );
+      const matches = fieldName.match(/permissionsets\[(\d+)\]\.permissions\.(\w+)/);
 
       if (matches) {
         const [_, sectionIndex, permissionType] = matches;
@@ -149,38 +114,25 @@ const PermissionDetailPage = ({ props }) => {
         // Get current permissions for this section
         const currentValues = formRef.current?.values || {};
         const currentPermissionsets = [...(currentValues.permissionsets || [])];
-        const currentPermissions =
-          currentPermissionsets[index]?.permissions || {};
+        const currentPermissions = currentPermissionsets[index]?.permissions || {};
 
         // Handle permission hierarchy
         if (value) {
           // When enabling a permission, enable all required lower-level permissions
           switch (permissionType) {
             case "delete":
-              setFieldValue(
-                `permissionsets[${index}].permissions.delete`,
-                true
-              );
+              setFieldValue(`permissionsets[${index}].permissions.delete`, true);
               setFieldValue(`permissionsets[${index}].permissions.edit`, true);
-              setFieldValue(
-                `permissionsets[${index}].permissions.create`,
-                true
-              );
+              setFieldValue(`permissionsets[${index}].permissions.create`, true);
               setFieldValue(`permissionsets[${index}].permissions.read`, true);
               break;
             case "edit":
               setFieldValue(`permissionsets[${index}].permissions.edit`, true);
-              setFieldValue(
-                `permissionsets[${index}].permissions.create`,
-                true
-              );
+              setFieldValue(`permissionsets[${index}].permissions.create`, true);
               setFieldValue(`permissionsets[${index}].permissions.read`, true);
               break;
             case "create":
-              setFieldValue(
-                `permissionsets[${index}].permissions.create`,
-                true
-              );
+              setFieldValue(`permissionsets[${index}].permissions.create`, true);
               setFieldValue(`permissionsets[${index}].permissions.read`, true);
               break;
             case "read":
@@ -192,39 +144,21 @@ const PermissionDetailPage = ({ props }) => {
           switch (permissionType) {
             case "read":
               setFieldValue(`permissionsets[${index}].permissions.read`, false);
-              setFieldValue(
-                `permissionsets[${index}].permissions.create`,
-                false
-              );
+              setFieldValue(`permissionsets[${index}].permissions.create`, false);
               setFieldValue(`permissionsets[${index}].permissions.edit`, false);
-              setFieldValue(
-                `permissionsets[${index}].permissions.delete`,
-                false
-              );
+              setFieldValue(`permissionsets[${index}].permissions.delete`, false);
               break;
             case "create":
-              setFieldValue(
-                `permissionsets[${index}].permissions.create`,
-                false
-              );
+              setFieldValue(`permissionsets[${index}].permissions.create`, false);
               setFieldValue(`permissionsets[${index}].permissions.edit`, false);
-              setFieldValue(
-                `permissionsets[${index}].permissions.delete`,
-                false
-              );
+              setFieldValue(`permissionsets[${index}].permissions.delete`, false);
               break;
             case "edit":
               setFieldValue(`permissionsets[${index}].permissions.edit`, false);
-              setFieldValue(
-                `permissionsets[${index}].permissions.delete`,
-                false
-              );
+              setFieldValue(`permissionsets[${index}].permissions.delete`, false);
               break;
             case "delete":
-              setFieldValue(
-                `permissionsets[${index}].permissions.delete`,
-                false
-              );
+              setFieldValue(`permissionsets[${index}].permissions.delete`, false);
               break;
           }
         }
@@ -239,13 +173,9 @@ const PermissionDetailPage = ({ props }) => {
         fields={formFields}
         initialValues={initialValues}
         onSubmit={handleSubmit}
-        formTitle={
-          existingPermission ? "Edit Permission Set" : "New Permission Set"
-        }
-        submitButtonText={
-          existingPermission ? "Update Permission Set" : "Create Permission Set"
-        }
-        permissionValues={permissionValues}
+        formTitle={existingPermission ? "Edit Permission Set" : "New Permission Set"}
+        submitButtonText={existingPermission ? "Update Permission Set" : "Create Permission Set"}
+        permissionValues={permissions}
         onFieldChange={handleFieldChange}
         formref={formRef}
       />

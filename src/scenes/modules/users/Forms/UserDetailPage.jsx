@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import {
   generateUserInitialValues,
@@ -11,9 +11,6 @@ import {
   UserFormFields,
 } from "../../../formik/initialValues";
 import { appConfig } from "../../../../config/appConfig";
-const OBJECT_API = "Users";
-const urlUpsertUser = `/UpsertUser`;
-const urlSendEmail = `/singlemail`;
 
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.user.apiName,
@@ -25,40 +22,21 @@ const CONSTANTS = {
 const UserDetailPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
-  console.log(currentUser, "currentUser");
-
   const existingUser = location.state.record.item;
 
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [permissionValues, setPermissionValues] = useState({});
+  // State management
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
 
+  // Get user role and department
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
 
-  useEffect(() => {
-    console.log("passed record", location.state.record.item);
-    fetchObjectPermissions();
-  }, []);
-
-  const fetchObjectPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, " deals apiCheckPermission promise res");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "deals res apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-  };
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
   const initialValues = generateUserInitialValues(existingUser);
 
@@ -183,7 +161,7 @@ const UserDetailPage = () => {
         onSubmit={handleSubmit}
         formTitle={existingUser ? "Edit User" : "New User"}
         submitButtonText={existingUser ? "Update User" : "Create User"}
-        permissionValues={permissionValues}
+        permissionValues={permissions}
         onFieldChange={handleFieldChange}
       />
     </div>

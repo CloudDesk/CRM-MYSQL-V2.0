@@ -12,13 +12,11 @@ import { appConfig } from "../../config/appConfig";
 export const useCheckPermission = ({ role, object, departmentname }) => {
 
     const CONSTANTS = {
-        getAllObjects: (role, departmentname) =>
-            appConfig.api.access.forAllObjects(role, departmentname),
+        getAllObjects: appConfig.api.access.forAllObjects(role, departmentname),
 
-        getObjectPermissionUrl: (role, departmentname, object) =>
-            appConfig.api.access.forObject(role, departmentname, object),
+        getObjectPermissionUrl: appConfig.api.access.forObject(role, departmentname, object),
     };
-
+    console.log(role, object, departmentname, "role, object, departmentname")
     console.log(CONSTANTS, "CONSTANTS")
 
     const [permissions, setPermissions] = useState({
@@ -39,6 +37,7 @@ export const useCheckPermission = ({ role, object, departmentname }) => {
 
             try {
                 const response = await RequestServer("get", CONSTANTS.getObjectPermissionUrl, {});
+                console.log(response, "response checkPermissions");
                 if (response.success) {
                     setPermissions(response.data);
                 } else {
@@ -61,5 +60,5 @@ export const useCheckPermission = ({ role, object, departmentname }) => {
         checkPermissions();
     }, [role, object, departmentname]);
 
-    return { permissions, loading, error };
+    return { permissions };
 };

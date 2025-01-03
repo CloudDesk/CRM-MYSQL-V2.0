@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
 import {
   generateOpportunityInitialValues,
   metaDataFields,
   opportunityFormFields,
 } from "../../../formik/initialValues";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { appConfig } from "../../../../config/appConfig";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import { RequestServer } from "../../../api/HttpReq";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.opportunity.apiName,
@@ -36,7 +36,6 @@ const DealDetailPage = ({ props }) => {
 
   const initialValues = generateOpportunityInitialValues(existingOpportunity);
 
-  const [permissionValues, setPermissionValues] = useState({});
   const [notify, setNotify] = useState({
     isOpen: false,
     message: "",
@@ -51,22 +50,11 @@ const DealDetailPage = ({ props }) => {
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
-  useEffect(() => {
-    fetchObjectPermissions();
-  }, []);
-
-  const fetchObjectPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "res apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-  };
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
   const handleSubmit = async (values, { isSubmitting }) => {
     console.log(values, "Opportunity submit values");
@@ -130,7 +118,7 @@ const DealDetailPage = ({ props }) => {
         onSubmit={handleSubmit}
         formTitle={existingOpportunity ? "Edit Deal" : "New Deal"}
         submitButtonText={existingOpportunity ? "Update Deal" : "Create Deal"}
-        permissionValues={permissionValues}
+        permissionValues={permissions}
       />
     </div>
   );

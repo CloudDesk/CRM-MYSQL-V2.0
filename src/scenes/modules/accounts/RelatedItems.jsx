@@ -28,7 +28,7 @@ const AccountRelatedItems = ({ props }) => {
       ],
     },
     {
-      key: appConfig.objects.contact.key || 'contact',
+      key: appConfig.objects.contact.key,
       title: appConfig.objects.contact.name.plural,
       objectApi: appConfig.objects.contact.apiName,
       fetchUrl: appConfig.objects.account.r_contact || '/getContactsbyAccountId?accountid=',

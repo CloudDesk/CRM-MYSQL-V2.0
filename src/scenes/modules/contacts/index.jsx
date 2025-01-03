@@ -3,11 +3,11 @@ import { useTheme, Box, useMediaQuery, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { RequestServer } from "../../api/HttpReq";
-import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import ListViewContainer from "../../../components/common/dataGrid/ListViewContainer";
 import { CONTACT_TABLE_CONFIG } from "../../../config/tableConfigs";
 import { CONTACT_CONSTANTS } from "../../../config/constantConfigs";
+import { useCheckPermission } from "../../hooks/useCheckPermission";
 
 
 /**
@@ -21,23 +21,25 @@ const Contacts = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const userRoleDept = getUserRoleAndDepartment(CONTACT_CONSTANTS.OBJECT_NAME);
 
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDept?.role,
+    object: userRoleDept?.object,
+    departmentname: userRoleDept?.departmentname
+  });
+
+
   // State management
   const [contactRecords, setContactRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [permissions, setPermissions] = useState({});
 
   // Effects
   useEffect(() => {
-    initializeComponent();
+    fetchContactRecords();
   }, []);
-
-  // Initialization
-  const initializeComponent = async () => {
-    await Promise.all([fetchContactRecords(), fetchPermissions()]);
-  };
 
   // Fetches the list of contacts
   const fetchContactRecords = async () => {
@@ -61,16 +63,7 @@ const Contacts = () => {
     }
   };
 
-  const fetchPermissions = async () => {
-    if (!userRoleDept) return;
-    try {
-      const permissions = await apiCheckPermission(userRoleDept);
-      setPermissions(permissions);
-    } catch (error) {
-      console.error("Error fetching permissions:", error);
-      setPermissions({});
-    }
-  };
+
 
   // Navigation handlers
   const handleCreateContact = () => {

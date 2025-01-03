@@ -3,13 +3,11 @@ import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { RequestServer } from "../../api/HttpReq";
-import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
+import { useCheckPermission } from "../../hooks/useCheckPermission";
 import ListViewContainer from "../../../components/common/dataGrid/ListViewContainer";
 import { TASK_TABLE_CONFIG } from "../../../config/tableConfigs";
 import { TASK_CONSTANTS } from "../../../config/constantConfigs";
-
-
 
 const Tasks = () => {
   const theme = useTheme();
@@ -17,24 +15,27 @@ const Tasks = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const userRoleDept = getUserRoleAndDepartment(TASK_CONSTANTS.OBJECT_NAME);
 
+  // State management
   const [records, setRecords] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [permissions, setPermissions] = useState({});
+
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDept?.role,
+    object: userRoleDept?.object,
+    departmentname: userRoleDept?.departmentname
+  });
 
   useEffect(() => {
-    initializeComponent();
+    fetchRecords();
   }, []);
-
-  const initializeComponent = async () => {
-    await Promise.all([fetchRecords(), fetchPermissions()]);
-  };
 
   const fetchRecords = async () => {
     try {
-      const response = await RequestServer("get", TASK_CONSTANTS.ROUTES.TASK, {});
+      const response = await RequestServer("get", TASK_CONSTANTS.ROUTES.TASK);
       if (response.success) {
         setRecords(response.data);
         setFetchError(null);
@@ -46,17 +47,6 @@ const Tasks = () => {
       setFetchError(error.message);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const fetchPermissions = async () => {
-    if (!userRoleDept) return;
-    try {
-      const permissions = await apiCheckPermission(userRoleDept);
-      setPermissions(permissions);
-    } catch (error) {
-      console.error("Error fetching permissions:", error);
-      setPermissions({});
     }
   };
 
@@ -153,17 +143,11 @@ const Tasks = () => {
       <ListViewContainer
         isMobile={isMobile}
         title={TASK_CONSTANTS.TITLES.MAIN}
-        subtitle={
-          isMobile
-            ? TASK_CONSTANTS.TITLES.MOBILE_SUBTITLE
-            : TASK_CONSTANTS.TITLES.WEB_SUBTITLE
-        }
+        subtitle={isMobile ? TASK_CONSTANTS.TITLES.MOBILE_SUBTITLE : TASK_CONSTANTS.TITLES.WEB_SUBTITLE}
         records={records}
         onCreateRecord={handleCreateRecord}
         onEditRecord={handleEditRecord}
-        onDeleteRecord={
-          isMobile ? (permissions.delete ? handleDelete : null) : handleDelete
-        }
+        onDeleteRecord={isMobile ? (permissions.delete ? handleDelete : null) : handleDelete}
         permissions={permissions}
         columnConfig={isMobile ? TASK_TABLE_CONFIG.mobileFields : getTableColumns()}
         isLoading={isLoading}

@@ -20,7 +20,7 @@ import Leads from "../../modules/leads/index";
 import Opportunities from "../../modules/opportunities/index";
 import Accounts from "../../modules/accounts/index";
 import Contacts from "../../modules/contacts/index";
-import Inventories from "../../modules/contacts/index";
+import Inventories from '../../modules/inventories/index'
 import Tasks from "../../modules/tasks/index";
 import Users from "../../modules/users/index";
 

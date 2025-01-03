@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
@@ -11,6 +10,7 @@ import {
   metaDataFields,
 } from "../../../formik/initialValues";
 import { appConfig } from "../../../../config/appConfig";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 
 
 const CONSTANTS = {
@@ -34,29 +34,15 @@ const AccountDetailPage = ({ props }) => {
     message: "",
     type: "",
   });
-  const [permissionValues, setPermissionValues] = useState({});
-
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
-  useEffect(() => {
-    console.log("passed record", location.state.record.item);
-    fetchObjectPermissions();
-  }, []);
-
-  const fetchObjectPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, " account apiCheckPermission promise res");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "account res apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-  };
 
   const initialValues = generateAccountInitialValues(exisitingAccount);
 
@@ -131,10 +117,30 @@ const AccountDetailPage = ({ props }) => {
         submitButtonText={
           exisitingAccount ? "Update Account" : "Create Account"
         }
-        permissionValues={permissionValues}
+        permissionValues={permissions}
       />
     </div>
   );
 };
 
 export default AccountDetailPage;
+
+
+// useEffect(() => {
+//   console.log("passed record", location.state.record.item);
+//   fetchObjectPermissions();
+// }, []);
+
+// const fetchObjectPermissions = () => {
+//   if (userRoleDpt) {
+//     apiCheckPermission(userRoleDpt)
+//       .then((res) => {
+//         console.log(res, " account apiCheckPermission promise res");
+//         setPermissionValues(res);
+//       })
+//       .catch((err) => {
+//         console.log(err, "account res apiCheckPermission error");
+//         setPermissionValues({});
+//       });
+//   }
+// };

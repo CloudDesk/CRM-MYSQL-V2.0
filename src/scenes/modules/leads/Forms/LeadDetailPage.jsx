@@ -5,10 +5,10 @@ import {
   metaDataFields,
 } from "../../../formik/initialValues";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import { appConfig } from "../../../../config/appConfig";
 
@@ -17,56 +17,26 @@ const CONSTANTS = {
   upsert: appConfig.objects.lead.upsert,
   list: appConfig.objects.lead.list
 }
+
 const LeadDetailPage = ({ props }) => {
   const navigate = useNavigate();
-
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
-  console.log(currentUser, "currentUser");
-
-  console.log(props, "props");
   const existingLead = props;
 
-  const OBJECT_API = "Enquiry";
-  const upsertURL = `/UpsertLead`;
+  // State management
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
 
-  //   const [singleLead, setsingleLead] = useState();
-
-  //   const [showNew, setshowNew] = useState(true);
-  //   const [usersRecord, setUsersRecord] = useState([]);
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [permissionValues, setPermissionValues] = useState({});
-
+  // Get user role and department
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
 
-  useEffect(() => {
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
-    //   setsingleLead(location.state.record.item || location.state.record);
-    //   setshowNew(!location.state.record.item);
-    // getTasks(location.state.record.item._id)
-    fetchObjectPermissions();
-  }, []);
 
-  const fetchObjectPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, " deals apiCheckPermission promise res");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "deals res apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-    // const getPermission=getPermissions("Lead")
-    // console.log(getPermission,"getPermission")
-    // setPermissionValues(getPermission)
-  };
   const initialValues = generateLeadInitialValues(existingLead);
   console.log(initialValues, "initialValues");
   const formFields = [
@@ -162,7 +132,7 @@ const LeadDetailPage = ({ props }) => {
         onSubmit={handleSubmit}
         formTitle={existingLead ? "Edit Enquiry" : "New Enquiry"}
         submitButtonText={existingLead ? "Update Enquiry" : "Create Enquiry"}
-        permissionValues={permissionValues}
+        permissionValues={permissions}
       />
     </div>
   );

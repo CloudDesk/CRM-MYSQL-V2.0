@@ -3,11 +3,11 @@ import { Box, IconButton, useMediaQuery, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { RequestServer } from "../../api/HttpReq";
-import { apiCheckPermission } from "../../shared/Auth/apiCheckPermission";
 import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import ListViewContainer from "../../../components/common/dataGrid/ListViewContainer";
 import { PERMISSION_TABLE_CONFIG } from "../../../config/tableConfigs";
 import { PERMISSION_CONSTANTS } from "../../../config/constantConfigs";
+import { useCheckPermission } from "../../hooks/useCheckPermission";
 
 const PermissionSets = () => {
   const theme = useTheme();
@@ -20,18 +20,15 @@ const PermissionSets = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
-  const [permissions, setPermissions] = useState({});
+  const { permissions } = useCheckPermission({
+    role: userRoleDept?.role,
+    object: userRoleDept?.object,
+    departmentname: userRoleDept?.departmentname
+  });
 
   useEffect(() => {
-    initializeComponent();
+    fetchRecords();
   }, []);
-
-  const initializeComponent = async () => {
-    await Promise.all([
-      fetchRecords(),
-      fetchPermissions(),
-    ]);
-  };
 
   const fetchRecords = async () => {
     try {
@@ -48,17 +45,6 @@ const PermissionSets = () => {
       setFetchError(error.message);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const fetchPermissions = async () => {
-    if (!userRoleDept) return;
-    try {
-      const permissions = await apiCheckPermission(userRoleDept);
-      setPermissions(permissions);
-    } catch (error) {
-      console.error('Error fetching permissions:', error);
-      setPermissions({});
     }
   };
 

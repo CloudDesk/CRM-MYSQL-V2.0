@@ -14,7 +14,7 @@ import DynamicChart from "./DynamicChart";
 import { DashboardDetailPage } from "../dashboard/form/DashboardDetailPage";
 import { RequestServer } from "../../api/HttpReq";
 import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
-import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
+import { useCheckPermission } from "../../hooks/useCheckPermission";
 import DashboardList from "./DashboardList";
 import { appConfig } from "../../../config/appConfig";
 
@@ -32,34 +32,15 @@ export const DashboardIndex = () => {
     const [chartData, setChartData] = useState(null);
     const [selectedDashboard, setSelectedDashboard] = useState(null);
     const [activeDashboardId, setActiveDashboardId] = useState(null);
-    const [permissionValues, setPermissionValues] = useState({});
     const [isLoading, setIsLoading] = useState(false);
 
-    const getUserRoleDept = getUserRoleAndDepartment(OBJECT_API);
-    console.log(getUserRoleDept, "getUserRoleDept");
+    const userRoleDept = getUserRoleAndDepartment(OBJECT_API);
 
-    useEffect(() => {
-        fetchPermissions();
-    }, []);
-
-    const fetchPermissions = () => {
-        if (getUserRoleDept) {
-            apiCheckPermission(getUserRoleDept)
-                .then((res) => {
-                    console.log(res, "res from fetchPermissions");
-                    setPermissionValues(res);
-                })
-                .catch((error) => {
-                    setPermissionValues({});
-                });
-        }
-    };
-
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => {
-        setOpen(false);
-        setEditingDashboard(null);
-    };
+    const { permissions } = useCheckPermission({
+        role: userRoleDept?.role,
+        object: userRoleDept?.object,
+        departmentname: userRoleDept?.departmentname
+    });
 
     useEffect(() => {
         fetchDashboardData();
@@ -79,6 +60,12 @@ export const DashboardIndex = () => {
         } catch (error) {
             console.log(error);
         }
+    };
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => {
+        setOpen(false);
+        setEditingDashboard(null);
     };
 
     const handleSubmit = async (values, { resetForm }) => {
@@ -212,9 +199,6 @@ export const DashboardIndex = () => {
         }
     };
 
-
-
-    console.log(permissionValues, "permissionValues from dashboard index");
     console.log(selectedDashboard, "selectedDashboard");
     return (
         <Box sx={{
@@ -224,7 +208,7 @@ export const DashboardIndex = () => {
             position: 'relative'
         }}>
             {/* New Dashboard Button - Top Right */}
-            {permissionValues.read && permissionValues.create && (
+            {permissions.read && permissions.create && (
                 <Box sx={{
                     padding: "10px",
                     display: "flex",
@@ -261,7 +245,7 @@ export const DashboardIndex = () => {
                 </Box>
             ) : (
                 <Box>
-                    {permissionValues.read && (
+                    {permissions.read && (
                         <Grid container spacing={3}>
                             {/* Dashboard List Column */}
                             {/* <Grid item xs={12} md={4} lg={3}>
@@ -354,7 +338,7 @@ export const DashboardIndex = () => {
                             </Box>
 
                             <Box sx={{ display: 'flex', gap: 1 }}>
-                              {permissionValues.edit && (
+                              {permissions.edit && (
                                 <IconButton
                                   size="small"
                                   onClick={(e) => {
@@ -370,7 +354,7 @@ export const DashboardIndex = () => {
                                   <EditIcon fontSize="small" />
                                 </IconButton>
                               )}
-                              {permissionValues.delete && (
+                              {permissions.delete && (
                                 <IconButton
                                   size="small"
                                   color="error"
@@ -402,7 +386,7 @@ export const DashboardIndex = () => {
                                     onDashboardClick={handleDashboardClick}
                                     onEdit={handleEdit}
                                     onDelete={handleDeleteDashboard}
-                                    permissionValues={permissionValues}
+                                    permissionValues={permissions}
                                 />
                             </Grid>
                             {/* Chart Area Column */}
@@ -471,7 +455,7 @@ export const DashboardIndex = () => {
                         initialValues={editingDashboard}
                         onSubmit={handleSubmit}
                         isEditing={!!editingDashboard}
-                        permissionValues={permissionValues}
+                        permissionValues={permissions}
                     />
                 </Box>
             )}

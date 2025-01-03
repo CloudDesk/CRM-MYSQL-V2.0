@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import {
   generateTaskInitialValues,
@@ -11,12 +11,6 @@ import {
   TaskFormFields,
 } from "../../../formik/initialValues";
 import { appConfig } from "../../../../config/appConfig";
-
-const OBJECT_API = "Event";
-const TaskUpsertURL = `/UpsertTask`;
-const fetchAccountUrl = `/accountsname`;
-const fetchLeadUrl = `/LeadsbyName`;
-const fetchOpportunityUrl = `/opportunitiesbyName`;
 
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.task.apiName,
@@ -30,42 +24,24 @@ const CONSTANTS = {
 const TaskDetailPage = ({ props }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
-  console.log(currentUser, "currentUser");
-
-  console.log(props, "props");
   const existingTask = props;
 
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [permissionValues, setPermissionValues] = useState({});
+  // State management
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
   const [relatedToOptions, setRelatedToOptions] = useState([]);
 
+  // Get user role and department
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
 
-  useEffect(() => {
-    console.log("passed record", location.state.record.item);
-    fetchObjectPermissions();
-  }, []);
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
-  const fetchObjectPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, " deals apiCheckPermission promise res");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "deals res apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-  };
+
 
   const initialValues = generateTaskInitialValues(existingTask);
 
@@ -105,8 +81,6 @@ const TaskDetailPage = ({ props }) => {
     ...TaskFormFields(existingTask),
     ...(existingTask ? metaDataFields : []),
   ];
-
-
 
   const handleSubmit = async (values) => {
     console.log(values, "handleSubmit values from TaskDetailPage");
@@ -177,7 +151,7 @@ const TaskDetailPage = ({ props }) => {
         onSubmit={handleSubmit}
         formTitle={existingTask ? "Edit Event" : "New Event"}
         submitButtonText={existingTask ? "Update Event" : "Create Event"}
-        permissionValues={permissionValues}
+        permissionValues={permissions}
       />
     </div>
   );

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import {
   generateInventoryInitialValues,
@@ -11,9 +11,6 @@ import {
 } from "../../../formik/initialValues";
 import { InvCitiesPickList } from "../../../../assets/pickLists";
 import { appConfig } from "../../../../config/appConfig";
-
-const OBJECT_API = "Inventory";
-const upsertInventoryURL = `/UpsertInventory`;
 
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.inventory.apiName,
@@ -24,47 +21,22 @@ const CONSTANTS = {
 const InventoryDetailPage = ({ props }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const [cityOptions, setCityOptions] = useState([]);
-
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
-  console.log(currentUser, "currentUser");
-
-  console.log(props, "props");
   const exisitingInventory = props;
 
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [permissionValues, setPermissionValues] = useState({});
+  // State management
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
 
+  // Get user role and department
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
 
-
-
-  useEffect(() => {
-    console.log("passed record", location.state.record.item);
-    fetchObjectPermissions();
-  }, []);
-
-  const fetchObjectPermissions = async () => {
-    if (userRoleDpt) {
-      await apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, " deals apiCheckPermission promise res");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "deals res apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-  };
-
-
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
   const initialValues = {
     ...generateInventoryInitialValues(exisitingInventory),
@@ -148,7 +120,7 @@ const InventoryDetailPage = ({ props }) => {
         submitButtonText={
           exisitingInventory ? "Update Inventory" : "Create Inventory"
         }
-        permissionValues={permissionValues}
+        permissionValues={permissions}
       />
     </div>
   );

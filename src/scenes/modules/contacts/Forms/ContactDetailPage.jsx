@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RequestServer } from "../../../api/HttpReq";
 import ToastNotification from "../../../shared/toast/ToastNotification";
@@ -15,8 +14,9 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SendIcon from "@mui/icons-material/Send";
 import { appConfig } from "../../../../config/appConfig";
 import WhatsAppModalNew from "../../../../components/common/communication/WhatsappModal";
-import EmailModalPage from '../../../../components/common/communication/EmailModal'
+import EmailModalPage from '../../../../components/common/communication/EmailModal';
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
+import { useCheckPermission } from "../../../hooks/useCheckPermission";
 
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.contact.apiName,
@@ -28,54 +28,33 @@ const CONSTANTS = {
 const ContactDetailPage = ({ props }) => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const currentUser = JSON.parse(sessionStorage.getItem("loggedInUser"));
-  console.log(currentUser, "currentUser");
+  const existingContact = props || location.state.record?.item;
 
-  const existingContact = props || location.state.record?.item; // This determines if it's an existing contact
-
-  const [notify, setNotify] = useState({
-    isOpen: false,
-    message: "",
-    type: "",
-  });
-  const [permissionValues, setPermissionValues] = useState({});
+  // State management
+  const [notify, setNotify] = useState({ isOpen: false, message: "", type: "" });
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [whatsAppModalOpen, setWhatsAppModalOpen] = useState(false);
 
+  // Get user role and department
   const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
-  console.log(userRoleDpt, "userRoleDpt");
 
-  useEffect(() => {
-    console.log("passed record", location.state.record?.item);
-    fetchObjectPermissions();
-  }, []);
-
-  const fetchObjectPermissions = () => {
-    if (userRoleDpt) {
-      apiCheckPermission(userRoleDpt)
-        .then((res) => {
-          console.log(res, "apiCheckPermission promise res");
-          setPermissionValues(res);
-        })
-        .catch((err) => {
-          console.log(err, "apiCheckPermission error");
-          setPermissionValues({});
-        });
-    }
-  };
+  // Use the custom permission hook
+  const { permissions } = useCheckPermission({
+    role: userRoleDpt?.role,
+    object: userRoleDpt?.object,
+    departmentname: userRoleDpt?.departmentname
+  });
 
   const initialValues = generateContactInitialValues(existingContact);
-
   const formFields = [
-    ...contactformfields(!!existingContact), // Pass true if it's an existing contact
+    ...contactformfields(!!existingContact),
     ...(existingContact ? metaDataFields : []),
   ];
 
   const handleSubmit = async (values, { setIsSubmitting }) => {
-    console.log("Contact Form -> values", values);
-
     let dateSeconds = new Date().getTime();
+
     if (existingContact) {
       values._id = existingContact._id;
       values.fullname = `${values.firstname} ${values.lastname}`;
@@ -91,11 +70,8 @@ const ContactDetailPage = ({ props }) => {
       values.modifiedby = currentUser;
     }
 
-    console.log(values, "values after modifying");
-
     try {
       const response = await RequestServer("post", CONSTANTS.upsert, values);
-      console.log(response, "response");
       if (response.success) {
         setNotify({
           isOpen: true,
@@ -113,7 +89,7 @@ const ContactDetailPage = ({ props }) => {
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error creating contact:", error);
       setNotify({
         isOpen: true,
         message: "Failed to create Contact",
@@ -128,17 +104,15 @@ const ContactDetailPage = ({ props }) => {
         const res = await RequestServer("post", CONSTANTS.whatsAppTemplate, {
           to: `91${existingContact.phone}`,
         });
-        console.log(res, "res");
         if (res.success) {
           setNotify({
             isOpen: true,
-            message:
-              "Promotional Template sent successfully. Once the user replies, you can send more messages.",
+            message: "Promotional Template sent successfully. Once the user replies, you can send more messages.",
             type: "success",
           });
         }
       } catch (error) {
-        console.log(error, "error");
+        console.error("WhatsApp template error:", error);
         setNotify({
           isOpen: true,
           message: error.message,
@@ -157,38 +131,25 @@ const ContactDetailPage = ({ props }) => {
   const renderActionButtons = () => {
     return (
       <>
-        {existingContact &&
-          permissionValues.read &&
-          permissionValues.create && (
-            <>
-              <div style={{ display: "flex", justifyContent: "end" }}>
-                <Tooltip title="Send Email">
-                  <IconButton>
-                    <EmailIcon
-                      sx={{ color: "#DB4437" }}
-                      onClick={() => setEmailModalOpen(true)}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="WhatsApp">
-                  <IconButton>
-                    <WhatsAppIcon
-                      sx={{ color: "#34A853" }}
-                      onClick={() => setWhatsAppModalOpen(true)}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Send WhatsApp Template">
-                  <IconButton>
-                    <SendIcon
-                      sx={{ color: "#34A853" }}
-                      onClick={handleSendWhatsAppTemplate}
-                    />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            </>
-          )}
+        {existingContact && permissions.read && permissions.create && (
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <Tooltip title="Send Email">
+              <IconButton onClick={() => setEmailModalOpen(true)}>
+                <EmailIcon sx={{ color: "#DB4437" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="WhatsApp">
+              <IconButton onClick={() => setWhatsAppModalOpen(true)}>
+                <WhatsAppIcon sx={{ color: "#34A853" }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Send WhatsApp Template">
+              <IconButton onClick={handleSendWhatsAppTemplate}>
+                <SendIcon sx={{ color: "#34A853" }} />
+              </IconButton>
+            </Tooltip>
+          </div>
+        )}
       </>
     );
   };
@@ -203,26 +164,24 @@ const ContactDetailPage = ({ props }) => {
         onSubmit={handleSubmit}
         formTitle={existingContact ? "Edit Contact" : "New Contact"}
         submitButtonText={existingContact ? "Update Contact" : "Create Contact"}
-        permissionValues={permissionValues}
+        permissionValues={permissions}
         renderActionButtons={renderActionButtons}
       />
 
-      {
-        emailModalOpen &&
+      {emailModalOpen && (
         <EmailModalPage
           data={existingContact}
           handleModal={() => setEmailModalOpen(false)}
           bulkMail={false}
         />
-      }
-      {
-        whatsAppModalOpen &&
+      )}
+      {whatsAppModalOpen && (
         <WhatsAppModalNew
           data={existingContact}
           handleModal={() => setWhatsAppModalOpen(false)}
           bulkMail={true}
         />
-      }
+      )}
     </div>
   );
 };
