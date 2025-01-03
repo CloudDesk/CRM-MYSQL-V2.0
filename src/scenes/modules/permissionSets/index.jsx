@@ -37,6 +37,7 @@ const PermissionSets = () => {
   const fetchRecords = async () => {
     try {
       const response = await RequestServer("get", PERMISSION_CONSTANTS.ROUTES.PERMISSIONS);
+      console.log(response.data, "res datd from permission records");
       if (response.success) {
         setRecords(response.data);
         setFetchError(null);

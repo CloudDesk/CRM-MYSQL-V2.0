@@ -212,7 +212,9 @@ export const DashboardIndex = () => {
         }
     };
 
-    console.log(permissionValues, "permissionValues");
+
+
+    console.log(permissionValues, "permissionValues from dashboard index");
     console.log(selectedDashboard, "selectedDashboard");
     return (
         <Box sx={{

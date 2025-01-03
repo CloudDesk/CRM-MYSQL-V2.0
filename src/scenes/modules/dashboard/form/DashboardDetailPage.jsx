@@ -125,6 +125,8 @@ export const DashboardDetailPage = ({
     }
   }, [initialValues?.objectname, isEditing, open]);
 
+
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DynamicForm

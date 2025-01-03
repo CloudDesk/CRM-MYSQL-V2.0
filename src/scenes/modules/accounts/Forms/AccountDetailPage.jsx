@@ -48,11 +48,11 @@ const AccountDetailPage = ({ props }) => {
     if (userRoleDpt) {
       apiCheckPermission(userRoleDpt)
         .then((res) => {
-          console.log(res, " deals apiCheckPermission promise res");
+          console.log(res, " account apiCheckPermission promise res");
           setPermissionValues(res);
         })
         .catch((err) => {
-          console.log(err, "deals res apiCheckPermission error");
+          console.log(err, "account res apiCheckPermission error");
           setPermissionValues({});
         });
     }

@@ -296,30 +296,30 @@ export const generateLeadInitialValues = (existingLead = {}) => {
     // Created By
     defaultValues.createdby = existingLead.createdby
       ? existingLead.createdby.userFullName +
-        " - " +
-        format(existingLead.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingLead.createddate, "MMMM dd, yyyy hh:mm a")
       : // {
-        //     userId: existingLead.createdby.userId || 0,
-        //     userName: existingLead.createdby.userName || '',
-        //     userRole: existingLead.createdby.userRole || '',
-        //     userFullName: existingLead.createdby.userFullName || '',
-        //     userDepartment: existingLead.createdby.userDepartment || ''
-        //   }
-        null;
+      //     userId: existingLead.createdby.userId || 0,
+      //     userName: existingLead.createdby.userName || '',
+      //     userRole: existingLead.createdby.userRole || '',
+      //     userFullName: existingLead.createdby.userFullName || '',
+      //     userDepartment: existingLead.createdby.userDepartment || ''
+      //   }
+      null;
 
     // Modified By
     defaultValues.modifiedby = existingLead.modifiedby
       ? existingLead.modifiedby.userFullName +
-        " - " +
-        format(existingLead.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingLead.modifieddate, "MMMM dd, yyyy hh:mm a")
       : // {
-        //     userId: existingLead.modifiedby.userId || 0,
-        //     userName: existingLead.modifiedby.userName || '',
-        //     userRole: existingLead.modifiedby.userRole || '',
-        //     userFullName: existingLead.modifiedby.userFullName || '',
-        //     userDepartment: existingLead.modifiedby.userDepartment || ''
-        //   }
-        null;
+      //     userId: existingLead.modifiedby.userId || 0,
+      //     userName: existingLead.modifiedby.userName || '',
+      //     userRole: existingLead.modifiedby.userRole || '',
+      //     userFullName: existingLead.modifiedby.userFullName || '',
+      //     userDepartment: existingLead.modifiedby.userDepartment || ''
+      //   }
+      null;
   }
 
   return defaultValues;
@@ -537,27 +537,27 @@ export const generateOpportunityInitialValues = (existingOpportunity = {}) => {
       defaultValues.inventoryname =
         existingOpportunity.inventoryname.startsWith("{")
           ? JSON.parse(existingOpportunity.inventoryname).label ||
-            existingOpportunity.inventoryname
+          existingOpportunity.inventoryname
           : existingOpportunity.inventoryname;
     }
     if (existingOpportunity.leadname !== null) {
       defaultValues.leadname = existingOpportunity.leadname.startsWith("{")
         ? JSON.parse(existingOpportunity.leadname).label ||
-          existingOpportunity.leadname
+        existingOpportunity.leadname
         : existingOpportunity.leadname;
     }
     // Created By
     defaultValues.createdby = existingOpportunity.createdby
       ? existingOpportunity.createdby.userFullName +
-        " - " +
-        format(existingOpportunity.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingOpportunity.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingOpportunity.modifiedby
       ? existingOpportunity.modifiedby.userFullName +
-        " - " +
-        format(existingOpportunity.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingOpportunity.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -748,7 +748,7 @@ export const generateAccountInitialValues = (existingAccount = {}) => {
   if (Object.keys(existingAccount).length > 0) {
     defaultValues.inventoryname = existingAccount.inventoryname.startsWith("{")
       ? JSON.parse(existingAccount.inventoryname).label ||
-        existingAccount.inventoryname
+      existingAccount.inventoryname
       : existingAccount.inventoryname;
     defaultValues.createddate =
       format(existingAccount.createddate, "MM/dd/yyyy") ?? Date.now();
@@ -757,15 +757,15 @@ export const generateAccountInitialValues = (existingAccount = {}) => {
     // Created By
     defaultValues.createdby = existingAccount.createdby
       ? existingAccount.createdby.userFullName +
-        " - " +
-        format(existingAccount.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingAccount.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingAccount.modifiedby
       ? existingAccount.modifiedby.userFullName +
-        " - " +
-        format(existingAccount.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingAccount.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -1088,7 +1088,7 @@ export const generateContactInitialValues = (existingContact = {}) => {
   if (Object.keys(existingContact).length > 0) {
     defaultValues.accountname = existingContact.accountname.startsWith("{")
       ? JSON.parse(existingContact.accountname).label ||
-        existingContact.accountname
+      existingContact.accountname
       : existingContact.accountname;
     defaultValues.createddate =
       format(existingContact.createddate, "MM/dd/yyyy") ?? Date.now();
@@ -1097,15 +1097,15 @@ export const generateContactInitialValues = (existingContact = {}) => {
     // Created By
     defaultValues.createdby = existingContact.createdby
       ? existingContact.createdby.userFullName +
-        " - " +
-        format(existingContact.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingContact.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingContact.modifiedby
       ? existingContact.modifiedby.userFullName +
-        " - " +
-        format(existingContact.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingContact.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -1300,15 +1300,15 @@ export const generateInventoryInitialValues = (existingInventory = {}) => {
     // Created By
     defaultValues.createdby = existingInventory.createdby
       ? existingInventory.createdby.userFullName +
-        " - " +
-        format(existingInventory.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingInventory.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingInventory.modifiedby
       ? existingInventory.modifiedby.userFullName +
-        " - " +
-        format(existingInventory.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingInventory.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -1502,15 +1502,15 @@ export const generateTaskInitialValues = (existingTask = {}) => {
     // Created By
     defaultValues.createdby = existingTask.createdby
       ? existingTask.createdby.userFullName +
-        " - " +
-        format(existingTask.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingTask.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingTask.modifiedby
       ? existingTask.modifiedby.userFullName +
-        " - " +
-        format(existingTask.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingTask.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -1666,15 +1666,15 @@ export const generateUserInitialValues = (existingUser = {}) => {
     // Created By
     defaultValues.createdby = existingUser.createdby
       ? existingUser.createdby.userFullName +
-        " - " +
-        format(Number(existingUser.createddate), "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(Number(existingUser.createddate), "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingUser.modifiedby
       ? existingUser.modifiedby.userFullName +
-        " - " +
-        format(Number(existingUser.modifieddate), "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(Number(existingUser.modifieddate), "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
@@ -1795,6 +1795,24 @@ export const PermissionSetFormFields = () => {
             { name: "delete", label: "Delete", type: "checkbox" },
           ],
         },
+        {
+          object: "Users",
+          fields: [
+            { name: "read", label: "Read", type: "checkbox" },
+            { name: "create", label: "Create", type: "checkbox" },
+            { name: "edit", label: "Edit", type: "checkbox" },
+            { name: "delete", label: "Delete", type: "checkbox" },
+          ],
+        },
+        {
+          object: "Dashboard",
+          fields: [
+            { name: "read", label: "Read", type: "checkbox" },
+            { name: "create", label: "Create", type: "checkbox" },
+            { name: "edit", label: "Edit", type: "checkbox" },
+            { name: "delete", label: "Delete", type: "checkbox" },
+          ],
+        },
       ],
     },
   ];
@@ -1816,6 +1834,7 @@ export const generatePermissionSetInitialValues = (
     "Enquiry",
     "Inventory",
     "Event",
+    "Dashboard"
   ].map((object) => ({
     object,
     permissions: {
@@ -1846,15 +1865,15 @@ export const generatePermissionSetInitialValues = (
     // Created By
     defaultValues.createdby = existingPermissionSet.createdby
       ? existingPermissionSet.createdby.userFullName +
-        " - " +
-        format(existingPermissionSet.createddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingPermissionSet.createddate, "MMMM dd, yyyy hh:mm a")
       : null;
 
     // Modified By
     defaultValues.modifiedby = existingPermissionSet.modifiedby
       ? existingPermissionSet.modifiedby.userFullName +
-        " - " +
-        format(existingPermissionSet.modifieddate, "MMMM dd, yyyy hh:mm a")
+      " - " +
+      format(existingPermissionSet.modifieddate, "MMMM dd, yyyy hh:mm a")
       : null;
   }
 
