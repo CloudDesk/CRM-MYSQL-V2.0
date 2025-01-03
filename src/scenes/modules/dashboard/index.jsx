@@ -81,8 +81,8 @@ export const DashboardIndex = () => {
 
     const handleSubmit = async (values, { resetForm }) => {
         console.log(values, "values from dashboard index handlesubmit");
-        values._id =
-            values.fields = values.selectedFields;
+
+        values.fields = values.selectedFields;
         delete values.selectedFields;
         delete values.selectedFieldsOptions;
         try {
