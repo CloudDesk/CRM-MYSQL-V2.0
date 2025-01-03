@@ -1796,7 +1796,7 @@ export const PermissionSetFormFields = () => {
           ],
         },
         {
-          object: "User",
+          object: "Users",
           fields: [
             { name: "read", label: "Read", type: "checkbox" },
             { name: "create", label: "Create", type: "checkbox" },
