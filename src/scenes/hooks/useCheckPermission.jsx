@@ -31,7 +31,7 @@ export const useCheckPermission = ({ role, object, departmentname }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!role || !object || !departmentName) return;
+        if (!role || !object || !departmentname) return;
 
         const checkPermissions = async () => {
             setLoading(true);
@@ -59,7 +59,7 @@ export const useCheckPermission = ({ role, object, departmentname }) => {
         };
 
         checkPermissions();
-    }, [role, object, departmentName]);
+    }, [role, object, departmentname]);
 
     return { permissions, loading, error };
 };

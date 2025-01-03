@@ -1843,7 +1843,10 @@ export const generatePermissionSetInitialValues = (
     "Enquiry",
     "Inventory",
     "Event",
-    "Dashboard"
+    "Users",
+    "Permissions",
+    "Dashboard",
+
   ].map((object) => ({
     object,
     permissions: {
