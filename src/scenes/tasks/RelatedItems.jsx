@@ -1,14 +1,10 @@
 import React from "react";
-import {
-  OBJECT_API_EVENT
-} from "../api/endUrls";
 import ModalTaskFileUpload from "../Files/ModalTaskRelatedFile";
 import RelatedItems from "../../components/common/RelatedItems";
 import { appConfig } from "../config";
 
 const TaskRelatedItems = ({ props }) => {
   const existingTask = props;
-  const OBJECT_API = OBJECT_API_EVENT;
   const URL_getRelatedFiles = "files?eventid=";
   const urlDelete = `/deletefiles`;
 

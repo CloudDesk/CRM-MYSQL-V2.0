@@ -13,12 +13,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ToastNotification from "../toast/ToastNotification";
 import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
 import { RequestServer } from "../api/HttpReq";
-import { apiMethods } from "../api/methods";
 import "../indexCSS/muiBoxStyles.css";
 import { getLoginUserRoleDept } from "../Auth/userRoleDept";
 import { apiCheckPermission } from "../Auth/apiCheckPermission";
 import CircularProgress from '@mui/material/CircularProgress';
-import { OBJECT_API_FILE, GET_FILE, DELETE_FILE } from "../api/endUrls";
 import ModalFileUpload from "./ModalNewFile";
 import '../Files/FileModal.css'
 import '../recordDetailPage/Form.css'

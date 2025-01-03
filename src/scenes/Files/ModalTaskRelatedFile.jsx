@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Box } from "@mui/material";
 import ToastNotification from "../toast/ToastNotification";
-import { OBJECT_API_EVENT } from "../api/endUrls";
 import { RequestServerFiles } from "../api/HttpReqFiles";
 import { apiMethods } from "../api/methods";
 import { useLocation } from "react-router-dom";
@@ -11,7 +10,8 @@ import { appConfig } from "../config";
 const URL_postRecords = `/upsertfiles`
 
 const CONSTANTS = {
-    upsert: appConfig.api.files.upsert
+    upsert: appConfig.api.files.upsert,
+    TASK_API: appConfig.objects.task.apiName
 }
 
 const ModalTaskFileUpload = ({ handleModal }) => {
@@ -28,7 +28,7 @@ const ModalTaskFileUpload = ({ handleModal }) => {
     const handleUploadButtonClick = (files) => {
         let dateSeconds = new Date().getTime();
         let userDetails = (sessionStorage.getItem("loggedInUser"))
-        let relatedObj = { id: record.taskId || record._id, object: record.OBJECT_API || OBJECT_API_EVENT }
+        let relatedObj = { id: record.taskId || record._id, object: record.OBJECT_API || CONSTANTS.TASK_API }
 
         const commonFormData = new FormData();
         commonFormData.append("relatedto", JSON.stringify(relatedObj));

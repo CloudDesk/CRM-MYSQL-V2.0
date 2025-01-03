@@ -3,10 +3,8 @@ import {
     Divider, List, ListItemIcon,
     ListItem, ListItemText, ListItemButton,
 } from "@mui/material";
-import { Delete, ExpandMore } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { RequestServer } from '../api/HttpReq';
-import { apiMethods } from '../api/methods';
-import { DELETE_DASHBOARD, GET_DASHBOARD } from '../api/endUrls';
 import ToastNotification from "../toast/ToastNotification";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 
@@ -29,7 +27,7 @@ function DashBoardRecords({ handleRowClick, formSubmitted }) {
 
     const fetchRecords = () => {
 
-        RequestServer("get",URL_getRecords)
+        RequestServer("get", URL_getRecords)
             .then(res => {
                 console.log('fetched Dashboard data is ', res.data);
                 setRecords(res.data)
@@ -42,7 +40,7 @@ function DashBoardRecords({ handleRowClick, formSubmitted }) {
 
     const handleRecordItemDelete = (item) => {
         console.log('handleRecordItemDelete', item);
-        RequestServer("delete",URL_deleteRecord + `${item._id}`)
+        RequestServer("delete", URL_deleteRecord + `${item._id}`)
             .then(res => {
                 console.log('DashBoard File Deleted Successfully', res);
                 if (res.success) {

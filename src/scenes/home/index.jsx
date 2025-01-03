@@ -1,12 +1,10 @@
-import {Box,Grid,Typography,} from "@mui/material";
+import { Box, Grid, Typography, } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { RequestServer } from "../api/HttpReq";
 import ApexCharts from "react-apexcharts";
 import "./home.css";
-import { apiMethods } from "../api/methods";
 import useViewport from "../../utility/useViewPort";
 import CircularProgress from "@mui/material/CircularProgress";
-import { GET_DEAL } from "../api/endUrls";
 
 function StaticDashboardIndex() {
   const URL_getRecords = `/opportunities`;
@@ -18,7 +16,7 @@ function StaticDashboardIndex() {
 
   const [records, setRecords] = useState([]);
   const [fetchLoading, setFetchLoading] = useState(true);
-  const [fecthError,setFetchError]=useState(false)
+  const [fecthError, setFetchError] = useState(false)
 
   console.log();
   useEffect(() => {
@@ -27,29 +25,29 @@ function StaticDashboardIndex() {
     }, 3000);
   }, []);
 
-    const fetchRecords = () => {
-   try{
-    RequestServer( URL_getRecords)
-    .then((res) => {
-      console.log(res, "Dashboard index page res");
-      console.log("Dashboard Opportunity Data", res.data);
-      if (res.success) {
-        setRecords(res.data);
-        setFetchLoading(false);
-      } else {
-        setRecords([]);
-        setFetchError(res.error.message)
-      }
-      console.log("closedate is ", records.closeDate);
-    })
-    .catch((error) => {
-      console.log("Dashboard Opportunity Error is :", error);
+  const fetchRecords = () => {
+    try {
+      RequestServer(URL_getRecords)
+        .then((res) => {
+          console.log(res, "Dashboard index page res");
+          console.log("Dashboard Opportunity Data", res.data);
+          if (res.success) {
+            setRecords(res.data);
+            setFetchLoading(false);
+          } else {
+            setRecords([]);
+            setFetchError(res.error.message)
+          }
+          console.log("closedate is ", records.closeDate);
+        })
+        .catch((error) => {
+          console.log("Dashboard Opportunity Error is :", error);
+          setFetchError(error.message)
+        });
+    }
+    catch (error) {
       setFetchError(error.message)
-    });
-   }
-   catch(error){
-    setFetchError(error.message)
-   }  
+    }
   };
 
 
@@ -109,7 +107,7 @@ function StaticDashboardIndex() {
         type: "donut",
       },
       colors: ["#007BFF", "#28A745", "#FFA500", "#DC3545",
-       "#6C63FF", "#6C757D",],
+        "#6C63FF", "#6C757D",],
       labels: Object.keys(opportunityType),
     },
     series: Object.values(opportunityType).map((obj) => obj.count),
@@ -135,13 +133,13 @@ function StaticDashboardIndex() {
         bar: {
           distributed: true
         }
-      } , 
+      },
       xaxis: {
         categories: labels,
       },
       colors: [
         "#000080", "#32CD32", "#FF7F50",
-        "#DC143C", "#DA70D6","#708090",
+        "#DC143C", "#DA70D6", "#708090",
       ],
     },
     series: [

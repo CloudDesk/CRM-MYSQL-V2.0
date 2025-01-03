@@ -12,7 +12,7 @@ import {
     Typography,
 } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import Header from '../../Header';
+import Header from '../../chart/Header';
 import ToastNotification from '../../../scenes/toast/ToastNotification';
 import DeleteConfirmDialog from '../../../scenes/toast/DeleteConfirmDialog';
 

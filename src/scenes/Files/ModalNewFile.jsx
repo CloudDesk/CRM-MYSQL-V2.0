@@ -6,9 +6,7 @@ import ToastNotification from "../toast/ToastNotification";
 import "../recordDetailPage/Form.css";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
-import { POST_FILE } from "../api/endUrls";
 import { RequestServerFiles } from "../api/HttpReqFiles";
-import { apiMethods } from "../api/methods";
 import { appConfig } from "../config";
 
 

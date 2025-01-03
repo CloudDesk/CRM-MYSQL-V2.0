@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, IconButton, useTheme, Typography, Pagination, Tooltip } from "@mui/material";
+import { Box, Button, IconButton, useTheme, Typography, Pagination, Tooltip, useMediaQuery } from "@mui/material";
 import {
   DataGrid, GridToolbar,
   gridPageCountSelector, gridPageSelector,
@@ -19,6 +19,7 @@ import { getLoginUserRoleDept } from '../Auth/userRoleDept';
 import NoAccess from '../NoAccess/NoAccess';
 import SharedDataGrid from '../../components/SharedDataGrid';
 import { appConfig } from '../config';
+import ListViewContainer from '../../components/common/ListView/ListViewContainer';
 
 const CONSTANTS = {
   OBJECT_NAME: appConfig.objects.role.apiName,
@@ -35,7 +36,7 @@ const RoleIndex = () => {
   const OBJECT_API = "Role"
   const urlDelete = `/deleteRole/`;
   const urlRoles = `/roles`;
-
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
@@ -95,13 +96,13 @@ const RoleIndex = () => {
         })
     }
   }
-  const handleAddRecord = () => {
+  const handleCreateRecord = () => {
     navigate(`${CONSTANTS.ROUTES.new}`, { state: { record: {} } })
   };
 
-  const handleOnCellClick = (e, row) => {
-    console.log(' selected  rec', row);
-    const item = e?.row;
+  const handleEditRecord = (event) => {
+    console.log(' selected  rec', event);
+    const item = event.row || event;
     navigate(`${CONSTANTS.ROUTES.detail}/${item._id}`, { state: { record: { item } } })
   };
 
@@ -204,9 +205,9 @@ const RoleIndex = () => {
               {
                 !showDelete ?
                   <>
-                    <IconButton onClick={(e) => handleOnCellClick(e, params.row)} style={{ padding: '20px', color: '#0080FF' }}>
+                    {/* <IconButton onClick={(e) => handleOnCellClick(e, params.row)} style={{ padding: '20px', color: '#0080FF' }}>
                       <EditIcon />
-                    </IconButton>
+                    </IconButton> */}
                     <IconButton onClick={(e) => onHandleDelete(e, params.row)} style={{ padding: '20px', color: '#FF3333' }}>
                       <DeleteIcon />
                     </IconButton>
@@ -219,33 +220,46 @@ const RoleIndex = () => {
       })
   }
 
-  return (
-    <>
-      <ToastNotification notify={notify} setNotify={setNotify} />
-      <DeleteConfirmDialog confirmDialog={confirmDialog} setConfirmDialog={setConfirmDialog} />
+  // return (
+  //   <>
+  //     <ToastNotification notify={notify} setNotify={setNotify} />
+  //     <DeleteConfirmDialog confirmDialog={confirmDialog} setConfirmDialog={setConfirmDialog} />
 
-      {permissionValues.read ? (
-        <SharedDataGrid
-          title="Roles"
-          subtitle="List Of Roles"
-          records={records}
-          columns={columns}
-          loading={fetchLoading}
-          showDelete={showDelete}
-          permissionValues={permissionValues}
-          selectedRecordIds={selectedRecordIds}
-          handleImportModalOpen={null}
-          handleAddRecord={handleAddRecord}
-          handleDelete={onHandleDelete}
-          setShowDelete={setShowDelete}
-          setSelectedRecordIds={setSelectedRecordIds}
-          setSelectedRecordDatas={setSelectedRecordDatas}
-          handleOnCellClick={handleOnCellClick}
-          CustomPagination={CustomPagination}
-          ExcelDownload={ExcelDownload}
-        />
-      ) : null}
-    </>
+  //     {permissionValues.read ? (
+  //       <SharedDataGrid
+  //         title="Roles"
+  //         subtitle="List Of Roles"
+  //         records={records}
+  //         columns={columns}
+  //         loading={fetchLoading}
+  //         showDelete={showDelete}
+  //         permissionValues={permissionValues}
+  //         selectedRecordIds={selectedRecordIds}
+  //         handleImportModalOpen={null}
+  //         handleAddRecord={handleAddRecord}
+  //         handleDelete={onHandleDelete}
+  //         setShowDelete={setShowDelete}
+  //         setSelectedRecordIds={setSelectedRecordIds}
+  //         setSelectedRecordDatas={setSelectedRecordDatas}
+  //         handleOnCellClick={handleOnCellClick}
+  //         CustomPagination={CustomPagination}
+  //         ExcelDownload={ExcelDownload}
+  //       />
+  //     ) : null}
+  //   </>
+  // )
+  return (
+    <Box>
+      <ListViewContainer
+        isMobile={isMobile}
+        title="Role"
+        subtitle="List of Roles"
+        records={records}
+        onCreateRecord={handleCreateRecord}
+        onEditRecord={handleEditRecord}
+
+      />
+    </Box>
   )
 };
 
