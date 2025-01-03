@@ -14,7 +14,7 @@ import ToastNotification from "../toast/ToastNotification";
 import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
 import { RequestServer } from "../../api/HttpReq";
 import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
-import { useCheckPermission } from "../../hooks/useCheckPermission";
+import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import CircularProgress from '@mui/material/CircularProgress';
 import ModalFileUpload from "./ModalNewFile";
 import './FileModal.css'
@@ -50,18 +50,14 @@ const Files = () => {
   const [notify, setNotify] = useState({ isOpen: false, message: "", type: "", });
   const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: "", subTitle: "", });
 
+  const [permissionValues, setPermissionValues] = useState({})
   const [modalFileUpload, setModalFileUpload] = useState(false)
-  const userRoleDept = getUserRoleAndDepartment(CONSTANTS.OBJECT_API)
-
-  // Use the custom permission hook
-  const { permissions } = useCheckPermission({
-    role: userRoleDept?.role,
-    object: userRoleDept?.object,
-    departmentname: userRoleDept?.departmentname
-  });
+  const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API)
+  console.log(userRoleDpt, "userRoleDpt")
 
   useEffect(() => {
     fetchRecords();
+    fetchObjectPermissions()
   }, []);
 
   const fetchRecords = async () => {
@@ -84,6 +80,22 @@ const Files = () => {
         setFetchRecordsLoading(false)
       })
   };
+
+  const fetchObjectPermissions = () => {
+    if (userRoleDpt) {
+      apiCheckPermission(userRoleDpt)
+        .then(res => {
+          console.log(res, "res apiCheckPermission")
+          setPermissionValues(res)
+        })
+        .catch(err => {
+          console.log(err, "error apiCheckObjectPermission")
+        })
+        .finally(() => {
+          setFetchPermissionLoading(false)
+        })
+    }
+  }
 
   const handleAddRecord = () => {
     setModalFileUpload(true)
@@ -194,7 +206,7 @@ const Files = () => {
       flex: 1,
     }
   ]
-  if (permissions.delete) {
+  if (permissionValues.delete) {
     columns.push(
       {
         field: "actions",
@@ -244,7 +256,7 @@ const Files = () => {
             <CircularProgress />
           </Box>
         ) : (
-          permissions.read && (
+          permissionValues.read && (
             <>
 
               <Typography
@@ -279,7 +291,7 @@ const Files = () => {
                         }}
                       >
                         {
-                          permissions.delete &&
+                          permissionValues.delete &&
                           <Tooltip title="Delete Selected">
                             <IconButton>
                               <DeleteIcon
@@ -294,7 +306,7 @@ const Files = () => {
                   ) : (
                     <>
                       {
-                        permissions.create &&
+                        permissionValues.create &&
                         <>
                           <Button
                             variant="contained" color="info"
