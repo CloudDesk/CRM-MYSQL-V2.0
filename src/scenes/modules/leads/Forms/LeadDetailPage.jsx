@@ -3,7 +3,7 @@ import {
   generateLeadInitialValues,
   leadFormFields,
   metaDataFields,
-} from "../../../formik/InitialValues/initialValues";
+} from "../../../formik/initialValues";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
 import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useNavigate } from "react-router-dom";

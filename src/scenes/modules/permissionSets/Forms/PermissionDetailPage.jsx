@@ -9,7 +9,7 @@ import {
   generatePermissionSetInitialValues,
   metaDataFields,
   PermissionSetFormFields,
-} from "../../../formik/InitialValues/initialValues";
+} from "../../../formik/initialValues";
 import { appConfig } from "../../../../config/appConfig";
 
 const OBJECT_API = "Permissions";

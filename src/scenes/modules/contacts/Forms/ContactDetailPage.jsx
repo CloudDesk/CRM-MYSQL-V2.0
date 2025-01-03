@@ -9,7 +9,7 @@ import {
   contactformfields,
   generateContactInitialValues,
   metaDataFields,
-} from "../../../formik/InitialValues/initialValues";
+} from "../../../formik/initialValues";
 import { Tooltip, IconButton } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";

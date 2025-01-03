@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog } from "@mui/material";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
-import { dashboardFormFields } from "../../../formik/InitialValues/initialValues";
+import { dashboardFormFields } from "../../../formik/initialValues";
 import { RequestServer } from "../../../api/HttpReq";
 
 export const DashboardDetailPage = ({

@@ -8,7 +8,7 @@ import ToastNotification from "../../../shared/toast/ToastNotification";
 import {
   generateInventoryInitialValues,
   inventoryformfields,
-} from "../../../formik/InitialValues/initialValues";
+} from "../../../formik/initialValues";
 import { InvCitiesPickList } from "../../../../assets/pickLists";
 import { appConfig } from "../../../../config/appConfig";
 

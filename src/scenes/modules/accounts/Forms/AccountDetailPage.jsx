@@ -9,7 +9,7 @@ import {
   accountformfields,
   generateAccountInitialValues,
   metaDataFields,
-} from "../../../formik/InitialValues/initialValues";
+} from "../../../formik/initialValues";
 import { appConfig } from "../../../../config/appConfig";
 
 

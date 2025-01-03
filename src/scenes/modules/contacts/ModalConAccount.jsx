@@ -5,7 +5,7 @@ import { Grid } from "@mui/material";
 import ToastNotification from "../../shared/toast/ToastNotification";
 import { LeadSourcePickList, NameSalutionPickList } from '../../../assets/pickLists';
 import { RequestServer } from "../../api/HttpReq";
-import { ContactInitialValues } from "../../formik/InitialValues/formValues";
+import { ContactInitialValues } from "../../formik/formValues";
 import { DynamicForm } from "../../../components/Form/DynamicForm";
 import { appConfig } from "../../../config/appConfig";
 

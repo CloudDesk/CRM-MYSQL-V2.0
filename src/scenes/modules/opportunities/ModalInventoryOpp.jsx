@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Grid } from "@mui/material";
 import ToastNotification from '../../shared/toast/ToastNotification';
 import { RequestServer } from '../../api/HttpReq';
-import { opportunityFormFields, generateOpportunityInitialValues } from '../../formik/InitialValues/initialValues';
+import { opportunityFormFields, generateOpportunityInitialValues } from '../../formik/initialValues';
 import { DynamicForm } from '../../../components/Form/DynamicForm';
 import { appConfig } from '../../../config/appConfig';
 

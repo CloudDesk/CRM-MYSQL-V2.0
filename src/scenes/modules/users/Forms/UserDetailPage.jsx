@@ -9,7 +9,7 @@ import {
   generateUserInitialValues,
   metaDataFields,
   UserFormFields,
-} from "../../../formik/InitialValues/initialValues";
+} from "../../../formik/initialValues";
 import { appConfig } from "../../../../config/appConfig";
 const OBJECT_API = "Users";
 const urlUpsertUser = `/UpsertUser`;

@@ -4,7 +4,7 @@ import {
   generateOpportunityInitialValues,
   metaDataFields,
   opportunityFormFields,
-} from "../../../formik/InitialValues/initialValues";
+} from "../../../formik/initialValues";
 import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getLoginUserRoleDept } from "../../../shared/Auth/userRoleDept";
