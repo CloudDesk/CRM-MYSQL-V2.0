@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
 import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getLoginUserRoleDept } from "../../../shared/Auth/userRoleDept";
 import { RequestServer } from "../../../api/HttpReq";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import {
@@ -17,6 +16,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { appConfig } from "../../../../config/appConfig";
 import WhatsAppModalNew from "../../../../components/common/communication/WhatsappModal";
 import EmailModalPage from '../../../../components/common/communication/EmailModal'
+import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 
 const CONSTANTS = {
   OBJECT_API: appConfig.objects.contact.apiName,
@@ -43,7 +43,7 @@ const ContactDetailPage = ({ props }) => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [whatsAppModalOpen, setWhatsAppModalOpen] = useState(false);
 
-  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
+  const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {

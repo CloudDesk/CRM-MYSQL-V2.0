@@ -13,8 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ToastNotification from "../toast/ToastNotification";
 import DeleteConfirmDialog from "../toast/DeleteConfirmDialog";
 import { RequestServer } from "../../api/HttpReq";
-import "../indexCSS/muiBoxStyles.css";
-import { getLoginUserRoleDept } from "../Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
 import CircularProgress from '@mui/material/CircularProgress';
 import ModalFileUpload from "./ModalNewFile";
@@ -53,7 +52,7 @@ const Files = () => {
 
   const [permissionValues, setPermissionValues] = useState({})
   const [modalFileUpload, setModalFileUpload] = useState(false)
-  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API)
+  const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API)
   console.log(userRoleDpt, "userRoleDpt")
 
   useEffect(() => {

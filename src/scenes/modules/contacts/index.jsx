@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useTheme, Box, useMediaQuery, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ExcelDownload from "../Excel";
 import { RequestServer } from "../../api/HttpReq";
 import { apiCheckPermission } from '../../../scenes/shared/Auth/apiCheckPermission';
-import { getLoginUserRoleDept } from "../../../scenes/shared/Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../utils/sessionUtils";
 import ListViewContainer from "../../../components/common/dataGrid/ListViewContainer";
 import { CONTACT_TABLE_CONFIG } from "../../../config/tableConfigs";
 import { CONTACT_CONSTANTS } from "../../../config/constantConfigs";
@@ -20,7 +19,7 @@ const Contacts = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const userRoleDept = getLoginUserRoleDept(CONTACT_CONSTANTS.OBJECT_NAME);
+  const userRoleDept = getUserRoleAndDepartment(CONTACT_CONSTANTS.OBJECT_NAME);
 
   // State management
   const [contactRecords, setContactRecords] = useState([]);
@@ -187,7 +186,6 @@ const Contacts = () => {
         selectedRecordIds={selectedIds}
         onToggleDeleteMode={setIsDeleteMode}
         onSelectRecords={setSelectedIds}
-        ExcelDownload={ExcelDownload}
         importConfig={CONTACT_CONSTANTS.IMPORT_CONFIG}
       />
     </Box>

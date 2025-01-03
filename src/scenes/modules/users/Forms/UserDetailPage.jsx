@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
 import { apiCheckPermission } from "../../../shared/Auth/apiCheckPermission";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getLoginUserRoleDept } from "../../../shared/Auth/userRoleDept";
+import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
 import ToastNotification from "../../../shared/toast/ToastNotification";
 import {
@@ -38,7 +38,7 @@ const UserDetailPage = () => {
   });
   const [permissionValues, setPermissionValues] = useState({});
 
-  const userRoleDpt = getLoginUserRoleDept(CONSTANTS.OBJECT_API);
+  const userRoleDpt = getUserRoleAndDepartment(CONSTANTS.OBJECT_API);
   console.log(userRoleDpt, "userRoleDpt");
 
   useEffect(() => {
