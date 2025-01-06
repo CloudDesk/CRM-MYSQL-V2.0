@@ -13,6 +13,7 @@ import {
   Divider,
   Avatar,
   Tooltip,
+  Button,
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -38,22 +39,37 @@ const titleStyles = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-start',
-  width: '80%',
-  px: 1.5,
-  py: 1,
-  mb: 2,
-  borderRadius: 2,
-  backgroundColor: 'rgba(92, 92, 255, 0.05)',
+  width: '100%',
+  px: 2.5,
+  py: 2,
+  mx: 1.5,
+  borderRadius: 1.5,
+  backgroundColor: 'rgba(92, 92, 255, 0.03)',
+  backdropFilter: 'blur(8px)',
+  // border: '1px solid',
+  // borderColor: 'divider',
+  transition: 'all 0.3s ease-in-out',
+  // '&:hover': {
+  //   backgroundColor: 'rgba(92, 92, 255, 0.05)',
+  //   borderColor: 'primary.main',
+  // },
   '& img': {
-    width: 38,
-    height: 38,
+    width: 36,
+    height: 36,
     borderRadius: '10px',
     objectFit: 'cover',
-    boxShadow: '0 3px 6px rgba(92, 92, 255, 0.15)',
-    backgroundColor: 'white'
+    boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
+    backgroundColor: 'white',
+    padding: '3px',
+    // border: '1px solid',
+    // borderColor: 'primary.light',
+    transition: 'all 0.3s ease-in-out',
+    '&:hover': {
+      transform: 'scale(1.05)',
+    }
   },
   '& .title-container': {
-    ml: 1.5,
+    ml: 2,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start'
@@ -73,6 +89,7 @@ const Sidebar = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
   const loggedInUserData = JSON.parse(sessionStorage.getItem("loggedInUser"));
   const { logout } = useAuth();
   useEffect(() => {
@@ -127,106 +144,156 @@ const Sidebar = ({
     logout()
   };
 
+  const drawerWidth = isMobile ? 300 : (isExpanded || isHovered ? 300 : 73);
+
   const drawerContent = (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        width: isMobile ? 300 : (isExpanded ? 300 : 73),
-        transition: 'width 0.2s ease-in-out',
+        width: drawerWidth,
+        transition: 'width 0.3s ease-in-out',
       }}
+      onMouseEnter={() => !isMobile && setIsHovered(true)}
+      onMouseLeave={() => !isMobile && setIsHovered(false)}
     >
       <Box sx={{
-        p: 2,
+        p: 2.5,
         display: 'flex',
         alignItems: 'center',
         borderBottom: '1px solid',
         borderColor: 'divider',
-        backgroundColor: 'background.paper',
+        backgroundColor: theme.palette.background.paper,
         position: 'relative',
-        minHeight: 64
+        height: 80,
+        overflow: 'hidden'
       }}>
-        {isExpanded && (
-          <Box sx={{
-            ...titleStyles,
-            transition: 'all 0.3s ease-in-out',
-            opacity: isExpanded ? 1 : 0,
-          }}>
-            <img
-              src={cdlogo}
-              alt={appConfig.name}
-              style={{
-                transition: 'all 0.3s ease-in-out',
-                transform: isExpanded ? 'scale(1)' : 'scale(0.8)',
+        <Box sx={{
+          ...titleStyles,
+          transition: 'all 0.3s ease-in-out',
+          display: isExpanded || isHovered ? "flex" : "none",
+          transform: isExpanded || isHovered ? 'translateX(0)' : 'translateX(-20px)',
+        }}>
+          <img
+            src={cdlogo}
+            alt={appConfig.name}
+            style={{
+              transition: 'all 0.3s ease-in-out',
+              transform: (isExpanded || isHovered) ? 'scale(1)' : 'scale(0.8)',
+            }}
+          />
+          <Box className="title-container">
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #5C5CFF 0%, #8A8AFF 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                letterSpacing: '0.5px',
+                fontSize: '1.1rem',
+                lineHeight: 1.2,
+                mb: 0.5,
+                textShadow: '0 2px 4px rgba(92, 92, 255, 0.1)',
               }}
-            />
-            <Box className="title-container">
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 800,
-                  background: 'linear-gradient(45deg, #5C5CFF, #7D7DFF)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  letterSpacing: '0.5px',
-                  fontSize: '1.15rem',
-                  transition: 'all 0.3s ease-in-out',
-                }}
-              >
-                {appConfig.name}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: 'text.secondary',
-                  fontWeight: 600,
-                  letterSpacing: '1px',
-                  fontSize: '0.65rem',
-                  opacity: 0.9,
-                }}
-              >
-                CRM System
-              </Typography>
-            </Box>
+            >
+              {appConfig.name}
+            </Typography>
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+                fontWeight: 500,
+                letterSpacing: '1px',
+                fontSize: '0.7rem',
+                lineHeight: 1,
+                textTransform: 'uppercase',
+                opacity: 0.8,
+                background: 'linear-gradient(135deg, #666 0%, #999 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              CRM System
+            </Typography>
           </Box>
-        )}
 
-        {!isMobile && (
+        </Box>
+
+        {/* {!isMobile && (
           <IconButton
             onClick={() => setIsExpanded(!isExpanded)}
             sx={{
               position: 'absolute',
-              right: isExpanded ? 12 : '50%',
-              transform: isExpanded ? 'none' : 'translateX(50%)',
+              right: (isExpanded || isHovered) ? 20 : '50%',
+              top: '50%',
+              transform: (isExpanded || isHovered)
+                ? 'translateY(-50%)'
+                : 'translate(50%, -50%)',
               width: 28,
               height: 28,
               backgroundColor: 'background.paper',
               border: '1px solid',
               borderColor: 'divider',
               transition: 'all 0.3s ease-in-out',
+              opacity: 1,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
               '&:hover': {
                 backgroundColor: 'primary.main',
                 borderColor: 'primary.main',
                 color: 'white',
-                transform: isExpanded ? 'scale(1.1)' : 'translateX(50%) scale(1.1)',
+                transform: (isExpanded || isHovered)
+                  ? 'translateY(-50%) scale(1.1)'
+                  : 'translate(50%, -50%) scale(1.1)',
+                boxShadow: '0 4px 8px rgba(92, 92, 255, 0.2)',
               },
               '& .MuiSvgIcon-root': {
                 fontSize: 18,
                 transition: 'transform 0.3s ease-in-out',
-                transform: isExpanded ? 'rotate(0deg)' : 'rotate(180deg)',
+                transform: (isExpanded || isHovered) ? 'rotate(0deg)' : 'rotate(180deg)',
               }
             }}
           >
             <ChevronLeftIcon />
           </IconButton>
+        )} */}
+
+        {!isExpanded && !isHovered && !isMobile && (
+          <Box sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <img
+              src={cdlogo}
+              alt={appConfig.name}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '10px',
+                objectFit: 'cover',
+                boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
+                backgroundColor: 'white',
+                padding: '3px',
+                // border: '1px solid',
+                borderColor: theme.palette.primary.light,
+                transition: 'all 0.3s ease-in-out',
+              }}
+            />
+          </Box>
         )}
       </Box>
 
-      <List>
+
+      <List sx={{
+        px: 2,
+        py: 2.5,
+      }}>
         {tableNamearr.map((page) => (
           <Tooltip
-            title={!isExpanded && !isMobile ? page.title : ""}
+            title={!isExpanded && !isHovered && !isMobile ? page.title : ""}
             placement="right"
             key={page.title}
           >
@@ -236,9 +303,10 @@ const Sidebar = ({
               selected={selected === page.title}
               sx={{
                 mb: 1,
-                mx: 1,
-                borderRadius: 1,
-                justifyContent: (isExpanded || isMobile) ? 'flex-start' : 'start',
+                borderRadius: 1.5,
+                justifyContent: (isExpanded || isHovered || isMobile) ? 'flex-start' : 'center',
+                minHeight: 48,
+                transition: 'all 0.2s ease-in-out',
                 '&.Mui-selected': {
                   backgroundColor: 'primary.main',
                   color: 'white',
@@ -252,100 +320,96 @@ const Sidebar = ({
                     color: 'white',
                   },
                 },
+                '&:hover': {
+                  backgroundColor: selected === page.title ? 'primary.dark' : 'rgba(92, 92, 255, 0.08)',
+                },
                 '& .MuiListItemText-root': {
                   color: 'text.primary',
+                  opacity: (isExpanded || isHovered || isMobile) ? 1 : 0,
+                  transition: 'opacity 0.2s ease-in-out',
                 },
                 '& .MuiListItemIcon-root': {
-                  color: 'text.secondary',
+                  color: selected === page.title ? 'white' : 'text.secondary',
+                  minWidth: (isExpanded || isHovered || isMobile) ? 40 : 'auto',
+                  transition: 'all 0.2s ease-in-out',
                 },
               }}
             >
-              <ListItemIcon sx={{ minWidth: (isExpanded || isMobile) ? 40 : 'auto' }}>
+              <ListItemIcon>
                 {getIcon(page.title)}
               </ListItemIcon>
-              {(isExpanded || isMobile) && <ListItemText primary={page.title} />}
+              <ListItemText
+                primary={page.title}
+                sx={{
+                  opacity: (isExpanded || isHovered || isMobile) ? 1 : 0,
+                  transform: (isExpanded || isHovered || isMobile) ? 'translateX(0)' : 'translateX(-10px)',
+                  transition: 'all 0.3s ease-in-out',
+                }}
+              />
             </ListItem>
           </Tooltip>
         ))}
       </List>
 
-      {/* User Profile and Logout Section */}
-      <Box sx={{ mt: 'auto', pb: 2 }}>
+      {/* User Profile Section */}
+      <Box sx={{
+        mt: 'auto',
+        pb: 2,
+        opacity: (isExpanded || isHovered) ? 1 : 0,
+        transition: 'opacity 0.3s ease-in-out',
+      }}>
         <Divider sx={{ my: 2 }} />
-        {isExpanded ? (
-          <>
-            <Box sx={{ px: 2, mb: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Avatar src={mainLogo} sx={{ width: 40, height: 40, mr: 2 }} />
-                <Box>
-                  <Typography variant="subtitle1">
-                    {loggedInUserData?.userFullName}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {loggedInUserData?.userName}
-                  </Typography>
-                </Box>
-              </Box>
+        <Box sx={{ px: 2 }}>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            p: 1.5,
+            borderRadius: 2,
+            backgroundColor: 'rgba(92, 92, 255, 0.04)',
+            transition: 'all 0.2s ease-in-out',
+            '&:hover': {
+              backgroundColor: 'rgba(92, 92, 255, 0.08)',
+            }
+          }}>
+            <Avatar
+              src={mainLogo}
+              sx={{
+                width: 40,
+                height: 40,
+                mr: 2,
+                border: '2px solid',
+                borderColor: 'primary.light'
+              }}
+            />
+            <Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                {loggedInUserData?.userFullName}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {loggedInUserData?.userName}
+              </Typography>
             </Box>
-            <ListItem
-              button
-              onClick={handleLogout}
-              sx={{
-                mx: 1,
-                borderRadius: 1,
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  backgroundColor: '#ffebee',
-                  '& .MuiListItemIcon-root': {
-                    color: '#f44336',
-                  },
-                  '& .MuiListItemText-root': {
-                    color: '#f44336',
-                  },
-                },
-              }}
-            >
-              <ListItemIcon sx={{ color: '#f44336' }}>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary="Logout"
-                sx={{
-                  color: '#f44336',
-                  '& .MuiTypography-root': {
-                    fontWeight: 'medium',
-                  }
-                }}
-              />
-            </ListItem>
-          </>
-        ) : (
-          <Tooltip title="Logout" placement="right">
-            <ListItem
-              button
-              onClick={handleLogout}
-              sx={{
-                justifyContent: 'center',
-                mx: 1,
-                borderRadius: 1,
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  backgroundColor: '#ffebee',
-                  '& .MuiListItemIcon-root': {
-                    color: '#f44336',
-                  },
-                },
-              }}
-            >
-              <ListItemIcon sx={{
-                minWidth: 'auto',
-                color: '#f44336',
-              }}>
-                <LogoutIcon />
-              </ListItemIcon>
-            </ListItem>
-          </Tooltip>
-        )}
+          </Box>
+
+          <Button
+            fullWidth
+            onClick={handleLogout}
+            startIcon={<LogoutIcon />}
+            sx={{
+              mt: 2,
+              py: 1,
+              color: 'error.main',
+              borderColor: 'error.light',
+              '&:hover': {
+                backgroundColor: 'error.lighter',
+                borderColor: 'error.main',
+              },
+            }}
+            variant="outlined"
+          >
+            Logout
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
@@ -357,7 +421,7 @@ const Sidebar = ({
       onClose={() => setIsSidebarOpen(false)}
       sx={{
         '& .MuiDrawer-paper': {
-          width: isMobile ? 300 : (isExpanded ? 300 : 73),
+          width: drawerWidth,
           boxSizing: 'border-box',
           border: 'none',
           backgroundColor: 'background.paper',
