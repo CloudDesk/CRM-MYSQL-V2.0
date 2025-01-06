@@ -589,19 +589,22 @@ const DynamicFormField = ({
             typeof option === "string" ? option : option.label
           }
           isOptionEqualToValue={(option, value) =>
-            option.value === value || option.label === value
+            typeof option === 'string'
+              ? option === value
+              : option.value === value || option.label === value
           }
           value={values[field.name] || []}
           onChange={(_, newValue) => {
-            // Convert to array of strings
+            // Prevent dropdown from closing by stopping event propagation
             const stringValues = newValue.map(val =>
               typeof val === 'string' ? val : val.label
             );
 
+            setFieldValue(field.name, stringValues);
+
+            // Call field-specific onChange after the state update
             if (field.onChange) {
               field.onChange(stringValues, formik);
-            } else {
-              setFieldValue(field.name, stringValues);
             }
           }}
           renderInput={(params) => (
@@ -615,6 +618,7 @@ const DynamicFormField = ({
               {...field.props}
             />
           )}
+          disableCloseOnSelect={true} // Keep dropdown open after selection
           {...field.autocompleteProps}
         />
       );

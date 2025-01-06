@@ -6,6 +6,7 @@ import {
   Typography,
   IconButton,
   ThemeProvider,
+  alpha,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,25 @@ const theme = createTheme({
   typography: {
     fontFamily: ["Inter", "Roboto", "Arial", "sans-serif"].join(","),
   },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          transition: 'all 0.3s ease-in-out',
+          backdropFilter: 'blur(12px)',
+          backgroundColor: 'rgba(255, 255, 255, 0.98)',
+          borderBottom: '1px solid rgba(231, 235, 240, 0.8)',
+        }
+      }
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          transition: 'all 0.2s ease-in-out',
+        }
+      }
+    }
+  }
 });
 
 function AppNavbar({ isExpanded, setIsExpanded }) {
@@ -60,25 +80,55 @@ function AppNavbar({ isExpanded, setIsExpanded }) {
       />
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           display: { md: "none" },
-          backgroundColor: "#5C5CFF",
           zIndex: theme.zIndex.appBar,
         }}
       >
-        <Toolbar>
+        <Toolbar
+          sx={{
+            justifyContent: 'space-between',
+            minHeight: '64px',
+            px: 2
+          }}
+        >
           <IconButton
-            color="inherit"
+            color="primary"
             aria-label="open drawer"
             edge="start"
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            sx={{ mr: 2 }}
+            sx={{
+              width: 40,
+              height: 40,
+              borderRadius: '12px',
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.primary.main, 0.08),
+              }
+            }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            {selected}
-          </Typography>
+
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                color: 'text.primary',
+                fontSize: '1.1rem'
+              }}
+            >
+              {selected}
+            </Typography>
+          </Box>
+
+          <Box sx={{ width: 40 }} /> {/* Spacer for balance */}
         </Toolbar>
       </AppBar>
     </ThemeProvider>

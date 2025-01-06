@@ -133,134 +133,137 @@ const Sidebar = ({
         transition: 'width 0.2s ease-in-out',
       }}
     >
-      <Box sx={{ pt: 2 }}>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: isExpanded ? 'space-between' : 'center',
-          px: 2,
-          py: 1.5,
-          mb: 2,
-          minHeight: 70,
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-          backgroundColor: 'background.paper',
-        }}>
-          {isExpanded && (
-            <Box sx={titleStyles}>
-              <img src={cdlogo} alt={appConfig.name} />
-              <Box className="title-container">
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 800,
-                    color: 'primary.main',
-                    letterSpacing: '0.5px',
-                    lineHeight: 1.2,
-                    fontSize: '1.15rem',
-                    fontFamily: '"Poppins", sans-serif',
-                    textTransform: 'uppercase',
-                    background: 'linear-gradient(45deg, #5C5CFF, #7D7DFF)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                  }}
-                >
-                  {appConfig.name}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: 'text.secondary',
-                    fontWeight: 600,
-                    letterSpacing: '1.5px',
-                    textTransform: 'uppercase',
-                    fontSize: '0.65rem',
-                    opacity: 0.8,
-                    mt: 0.2
-                  }}
-                >
-                  CRM System
-                </Typography>
-              </Box>
-            </Box>
-          )}
-          {!isMobile && (
-            <IconButton
-              onClick={() => setIsExpanded(!isExpanded)}
-              sx={{
-                backgroundColor: 'background.default',
-                '&:hover': {
-                  backgroundColor: 'primary.light',
-                  color: 'white'
-                },
-                transition: 'all 0.2s ease-in-out',
-                ml: isExpanded ? 0 : 'auto'
+      <Box sx={{
+        p: 2,
+        display: 'flex',
+        alignItems: 'center',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
+        position: 'relative',
+        minHeight: 64
+      }}>
+        {isExpanded && (
+          <Box sx={{
+            ...titleStyles,
+            transition: 'all 0.3s ease-in-out',
+            opacity: isExpanded ? 1 : 0,
+          }}>
+            <img
+              src={cdlogo}
+              alt={appConfig.name}
+              style={{
+                transition: 'all 0.3s ease-in-out',
+                transform: isExpanded ? 'scale(1)' : 'scale(0.8)',
               }}
-            >
-              {isExpanded ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
-          )}
-          {isMobile && (
-            <IconButton
-              onClick={() => setIsSidebarOpen(false)}
-              sx={{
-                backgroundColor: 'background.default',
-                '&:hover': {
-                  backgroundColor: 'primary.light',
-                  color: 'white'
-                }
-              }}
-            >
-              <ChevronLeftIcon />
-            </IconButton>
-          )}
-        </Box>
-        <List>
-          {tableNamearr.map((page) => (
-            <Tooltip
-              title={!isExpanded && !isMobile ? page.title : ""}
-              placement="right"
-              key={page.title}
-            >
-              <ListItem
-                button
-                onClick={() => handleMenuItemClick(page)}
-                selected={selected === page.title}
+            />
+            <Box className="title-container">
+              <Typography
+                variant="h6"
                 sx={{
-                  mb: 1,
-                  mx: 1,
-                  borderRadius: 1,
-                  justifyContent: (isExpanded || isMobile) ? 'flex-start' : 'start',
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.main',
-                    color: 'white',
-                    '&:hover': {
-                      backgroundColor: 'primary.dark',
-                    },
-                    '& .MuiListItemIcon-root': {
-                      color: 'white',
-                    },
-                    '& .MuiListItemText-root': {
-                      color: 'white',
-                    },
-                  },
-                  '& .MuiListItemText-root': {
-                    color: 'text.primary',
-                  },
-                  '& .MuiListItemIcon-root': {
-                    color: 'text.secondary',
-                  },
+                  fontWeight: 800,
+                  background: 'linear-gradient(45deg, #5C5CFF, #7D7DFF)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  letterSpacing: '0.5px',
+                  fontSize: '1.15rem',
+                  transition: 'all 0.3s ease-in-out',
                 }}
               >
-                <ListItemIcon sx={{ minWidth: (isExpanded || isMobile) ? 40 : 'auto' }}>
-                  {getIcon(page.title)}
-                </ListItemIcon>
-                {(isExpanded || isMobile) && <ListItemText primary={page.title} />}
-              </ListItem>
-            </Tooltip>
-          ))}
-        </List>
+                {appConfig.name}
+              </Typography>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary',
+                  fontWeight: 600,
+                  letterSpacing: '1px',
+                  fontSize: '0.65rem',
+                  opacity: 0.9,
+                }}
+              >
+                CRM System
+              </Typography>
+            </Box>
+          </Box>
+        )}
+
+        {!isMobile && (
+          <IconButton
+            onClick={() => setIsExpanded(!isExpanded)}
+            sx={{
+              position: 'absolute',
+              right: isExpanded ? 12 : '50%',
+              transform: isExpanded ? 'none' : 'translateX(50%)',
+              width: 28,
+              height: 28,
+              backgroundColor: 'background.paper',
+              border: '1px solid',
+              borderColor: 'divider',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                backgroundColor: 'primary.main',
+                borderColor: 'primary.main',
+                color: 'white',
+                transform: isExpanded ? 'scale(1.1)' : 'translateX(50%) scale(1.1)',
+              },
+              '& .MuiSvgIcon-root': {
+                fontSize: 18,
+                transition: 'transform 0.3s ease-in-out',
+                transform: isExpanded ? 'rotate(0deg)' : 'rotate(180deg)',
+              }
+            }}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+        )}
       </Box>
+
+      <List>
+        {tableNamearr.map((page) => (
+          <Tooltip
+            title={!isExpanded && !isMobile ? page.title : ""}
+            placement="right"
+            key={page.title}
+          >
+            <ListItem
+              button
+              onClick={() => handleMenuItemClick(page)}
+              selected={selected === page.title}
+              sx={{
+                mb: 1,
+                mx: 1,
+                borderRadius: 1,
+                justifyContent: (isExpanded || isMobile) ? 'flex-start' : 'start',
+                '&.Mui-selected': {
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'primary.dark',
+                  },
+                  '& .MuiListItemIcon-root': {
+                    color: 'white',
+                  },
+                  '& .MuiListItemText-root': {
+                    color: 'white',
+                  },
+                },
+                '& .MuiListItemText-root': {
+                  color: 'text.primary',
+                },
+                '& .MuiListItemIcon-root': {
+                  color: 'text.secondary',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: (isExpanded || isMobile) ? 40 : 'auto' }}>
+                {getIcon(page.title)}
+              </ListItemIcon>
+              {(isExpanded || isMobile) && <ListItemText primary={page.title} />}
+            </ListItem>
+          </Tooltip>
+        ))}
+      </List>
 
       {/* User Profile and Logout Section */}
       <Box sx={{ mt: 'auto', pb: 2 }}>
@@ -354,13 +357,20 @@ const Sidebar = ({
           boxSizing: 'border-box',
           border: 'none',
           backgroundColor: 'background.paper',
-          boxShadow: 1,
-          transition: 'width 0.2s ease-in-out',
+          boxShadow: '0 0 20px rgba(0,0,0,0.03)',
+          transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
           overflowX: 'hidden',
           zIndex: theme.zIndex.appBar + 100,
+          '&:hover': {
+            boxShadow: '0 0 30px rgba(0,0,0,0.05)',
+          }
         },
         '& .MuiBackdrop-root': {
-          zIndex: theme.zIndex.appBar + 50
+          backdropFilter: 'blur(8px)',
+          backgroundColor: 'rgba(0,0,0,0.2)',
         }
       }}
     >
