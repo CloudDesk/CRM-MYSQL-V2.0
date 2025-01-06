@@ -3,7 +3,7 @@ import { DynamicForm } from "../../../../components/Form/DynamicForm";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
-import ToastNotification from "../../../shared/toast/ToastNotification";
+import ToastNotification from "../../../../components/UI/toast/ToastNotification";
 import {
   accountformfields,
   generateAccountInitialValues,
@@ -133,13 +133,13 @@ export default AccountDetailPage;
 
 // const fetchObjectPermissions = () => {
 //   if (userRoleDpt) {
-//     apiCheckPermission(userRoleDpt)
+//     useCheckPermission(userRoleDpt)
 //       .then((res) => {
-//         console.log(res, " account apiCheckPermission promise res");
+//         console.log(res, " account useCheckPermission promise res");
 //         setPermissionValues(res);
 //       })
 //       .catch((err) => {
-//         console.log(err, "account res apiCheckPermission error");
+//         console.log(err, "account res useCheckPermission error");
 //         setPermissionValues({});
 //       });
 //   }

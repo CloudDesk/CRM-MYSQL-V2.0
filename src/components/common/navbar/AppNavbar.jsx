@@ -32,7 +32,6 @@ const theme = createTheme({
 function AppNavbar({ isExpanded, setIsExpanded }) {
   const [selected, setSelected] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const navigate = useNavigate();
 
   const tableNamearr = [
     { title: "Dashboard", toNav: "list/Dashboard" },

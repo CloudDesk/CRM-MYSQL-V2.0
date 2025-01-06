@@ -14,8 +14,7 @@ import OpportunityDetailsWithRelatedItems from "../../modules/opportunities/Oppo
 import TaskDetailsWithRelatedItems from "../../modules/tasks/TaskDetailsWithRelatedItems";
 import PermissionDetailPage from "../../modules/permissionSets/Forms/PermissionDetailPage";
 import PermissionSets from "../../modules/permissionSets/index"
-import PageNotFound from "../Errors/PageNotFound";
-import { DashboardIndex } from "../../modules/dashboard";
+import DashboardIndex from "../../modules/dashboard";
 import Leads from "../../modules/leads/index";
 import Opportunities from "../../modules/opportunities/index";
 import Accounts from "../../modules/accounts/index";
@@ -23,7 +22,7 @@ import Contacts from "../../modules/contacts/index";
 import Inventories from '../../modules/inventories/index'
 import Tasks from "../../modules/tasks/index";
 import Users from "../../modules/users/index";
-
+import Error404 from "../../../components/UI/Error/Error404";
 function LoginLayoutIndex(props) {
   return (
     <>
@@ -62,25 +61,7 @@ function LoginLayoutIndex(props) {
           path="/permissionDetailPage/:id"
           element={<PermissionDetailPage />}
         />
-
-
-        <Route path="*" element={<PageNotFound />} />
-
-
-        {/* 
-        import RoleDetailPage from "../../recordDetailPage/RoleDetailPage";
- <Route path="/roleDetailPage/:id" element={<RoleDetailPage />} />
-     
-        <Route path="/new-role" element={<RoleDetailPage />} />
-                <Route path="/file" element={<FileUploadUpdated />} />
-                <Route path="/list/file" element={<Files />} /> */}
-        {/* <Route path="/list/role" element={<RoleIndex />} /> */}
-        {/* <Route path="/leadDetailPage/:Id" element={<LeadDetailPage/>} /> */}
-        {/* <Route path="/accountDetailPage/:id" element={<FlexAccounts/>} /> */}
-        {/* <Route path="/dataLoader" element={<DataLoadPage />} /> */}
-        {/* <Route path='/mobi' element={<AccountsMobile/>} /> */}
-        {/* <Route path='/invmobi' element={<InventoriesMobile/>} />  */}
-        {/* <Route path ='/test' element={<ResponsiveScreen/>} />   */}
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </>
   );

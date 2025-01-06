@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Grid } from "@mui/material";
-import ToastNotification from '../../shared/toast/ToastNotification';
+import ToastNotification from '../../../components/UI/toast/ToastNotification';
 import { RequestServer } from '../../api/HttpReq';
 import { opportunityFormFields, generateOpportunityInitialValues } from '../../formik/initialValues';
 import { DynamicForm } from "../../../components/Form/DynamicForm";

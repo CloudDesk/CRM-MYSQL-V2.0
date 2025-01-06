@@ -4,7 +4,7 @@ import { RequestServerFiles } from '../../../scenes/api/HttpReqFiles';
 import { appConfig } from '../../../config/appConfig';
 import CommunicationModal from './CommunicationModal';
 import CommunicationForm from './CommunicationForm';
-import ToastNotification from '../../../scenes/shared/toast/ToastNotification';
+import ToastNotification from '../../UI/toast/ToastNotification';
 
 const CONSTANTS = {
     send: appConfig.api.email.bulk

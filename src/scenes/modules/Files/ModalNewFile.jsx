@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import {
     Button, Typography, Box
 } from "@mui/material";
-import ToastNotification from "../toast/ToastNotification";
+import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import "../recordDetailPage/Form.css";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import ClearAllIcon from "@mui/icons-material/ClearAll";

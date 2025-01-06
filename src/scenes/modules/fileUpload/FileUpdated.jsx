@@ -21,7 +21,7 @@ import "../formik/FormStyles.css";
 import ArticleIcon from "@mui/icons-material/Article";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ToastNotification from "../shared/toast/ToastNotification";
+import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { appConfig } from "../../config/appConfig";
 
 const UpsertUrl = `${appConfig.server}/uploadfile`;

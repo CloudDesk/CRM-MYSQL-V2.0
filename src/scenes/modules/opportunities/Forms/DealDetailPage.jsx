@@ -8,7 +8,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { appConfig } from "../../../../config/appConfig";
-import ToastNotification from "../../../shared/toast/ToastNotification";
+import ToastNotification from "../../../../components/UI/toast/ToastNotification";
 import { RequestServer } from "../../../api/HttpReq";
 import { useCheckPermission } from "../../../hooks/useCheckPermission";
 

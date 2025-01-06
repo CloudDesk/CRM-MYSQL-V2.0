@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import * as Yup from "yup";
 import { Grid } from "@mui/material";
-import ToastNotification from "../../shared/toast/ToastNotification";
+import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { LeadSourcePickList, NameSalutionPickList } from '../../../assets/pickLists';
 import { RequestServer } from "../../api/HttpReq";
 import { ContactInitialValues } from "../../formik/formValues";

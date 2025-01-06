@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { getUserRoleAndDepartment } from "../../../../utils/sessionUtils";
 import { RequestServer } from "../../../api/HttpReq";
 import { useCheckPermission } from "../../../hooks/useCheckPermission";
-import ToastNotification from "../../../shared/toast/ToastNotification";
+import ToastNotification from "../../../../components/UI/toast/ToastNotification";
 import { appConfig } from "../../../../config/appConfig";
 
 const CONSTANTS = {

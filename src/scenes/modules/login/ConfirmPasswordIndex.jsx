@@ -11,7 +11,7 @@ import {
     Container
 } from "@mui/material";
 import Cdlogo from "../../../assets/cdlogo.jpg"
-import ToastNotification from "../../shared/toast/ToastNotification";
+import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { RequestServer } from "../../api/HttpReq";
 
 const singupUrl = `/UpsertUser`;

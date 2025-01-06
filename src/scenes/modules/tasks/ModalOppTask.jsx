@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from "yup";
 import { Grid } from "@mui/material";
 import { TaskSubjectPicklist } from "../../../assets/pickLists";
-import ToastNotification from "../../shared/toast/ToastNotification";
+import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { RequestServer } from '../../api/HttpReq';
 import { TaskInitialValues } from "../../formik/formValues";
 import { DynamicForm } from "../../../components/Form/DynamicForm";

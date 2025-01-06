@@ -10,7 +10,7 @@ import axios from 'axios'
 import "../formik/FormStyles.css"
 import Iframe from 'react-iframe'
 
-import ToastNotification from "../toast/ToastNotification";
+import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { appConfig } from "../../config/appConfig";
 // import download from 'downloadjs';
 // import { saveAs } from 'file-saver'

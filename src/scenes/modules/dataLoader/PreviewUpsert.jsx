@@ -4,7 +4,7 @@ import {
   Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography, DialogActions, Button,
   CircularProgress,
 } from "@mui/material";
-import ToastNotification from '../../shared/toast/ToastNotification';
+import ToastNotification from '../../../components/UI/toast/ToastNotification';
 import { DATALOADER_CONSTANTS } from '../../../config/constantConfigs';
 
 

@@ -112,24 +112,24 @@ export default InventoryRelatedItems
     getAccountsbyInvId(location.state.record.item._id)
 
     if(userRoleDptAccount){
-      apiCheckPermission(userRoleDptAccount)
+      useCheckPermission(userRoleDptAccount)
       .then(res=>{
-        console.log(res,"res task apiCheckPermission")
+        console.log(res,"res task useCheckPermission")
         setPermissionValuesAccount(res);
       })
       .catch(err=>{
-        console.log(err,"res task apiCheckPermission")
+        console.log(err,"res task useCheckPermission")
         setPermissionValuesAccount(err)
       })
     }
     if(userRoleDptOpportunity){
-      apiCheckPermission(userRoleDptOpportunity)
+      useCheckPermission(userRoleDptOpportunity)
       .then(res=>{
-        console.log(res,"res contact apiCheckPermission")
+        console.log(res,"res contact useCheckPermission")
         setPermissionValuesOpportunity(res);
       })
       .catch(err=>{
-        console.log(err,"res contact apiCheckPermission")
+        console.log(err,"res contact useCheckPermission")
         setPermissionValuesOpportunity(err)
       })
     }

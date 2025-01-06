@@ -4,10 +4,9 @@ import ModalConAccount from "../contacts/ModalConAccount";
 import RelatedItems from "../../../components/common/RelatedItems";
 import { appConfig } from "../../../config/appConfig";
 
-
 const AccountRelatedItems = ({ props }) => {
-  console.log("AccountRelatedItems", props)
   const exisitingAccount = props;
+
   const sections = [
     {
       key: appConfig.objects.task.key,
@@ -19,11 +18,7 @@ const AccountRelatedItems = ({ props }) => {
       icon: 'event',
       displayFields: [
         { key: 'subject', label: 'Subject' },
-        {
-          key: 'startdate',
-          label: 'Date&Time',
-          format: (date) => date ? new Date(date).toLocaleDateString() : '---'
-        },
+        { key: 'startdate', label: 'Date&Time', format: date => date ? new Date(date).toLocaleDateString() : '---' },
         { key: 'description', label: 'Description' }
       ],
     },
@@ -40,7 +35,6 @@ const AccountRelatedItems = ({ props }) => {
         { key: 'phone', label: 'Phone' },
         { key: 'email', label: 'Email' }
       ],
-
     }
   ];
 
@@ -54,8 +48,9 @@ const AccountRelatedItems = ({ props }) => {
       component: ModalConAccount
     }
   ];
-  return <RelatedItems parentId={exisitingAccount._id} sections={sections} modals={modals} />;
 
-}
-export default AccountRelatedItems
+  return <RelatedItems parentId={exisitingAccount._id} sections={sections} modals={modals} />;
+};
+
+export default AccountRelatedItems;
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography, Box } from "@mui/material";
-import ToastNotification from "../../shared/toast/ToastNotification";
+import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { RequestServerFiles } from "../../api/HttpReqFiles";
 import { useLocation } from "react-router-dom";
 import FileUpload from "../../../components/common/File";

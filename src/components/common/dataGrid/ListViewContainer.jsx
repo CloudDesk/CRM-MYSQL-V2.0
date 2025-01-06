@@ -2,7 +2,7 @@ import React from 'react';
 import WebListView from './WebListView';
 import MobileListView from './MobileListView';
 import SharedDataGridSkeleton from '../../UI/Skeletons/SharedDataGridSkeleton';
-import NoAccessPage from '../../UI/NoAccessPage';
+import NoAccessPage from '../../UI/Error';
 
 const ListViewContainer = ({
     isMobile,

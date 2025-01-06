@@ -8,7 +8,7 @@ function PageNotFound() {
 
   const handleNavBack = (e) => {
     console.log("handle nav back", e);
-    navigate(-1);
+    navigate('/');
   };
 
   return (

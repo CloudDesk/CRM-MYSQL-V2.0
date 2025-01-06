@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DynamicForm } from "../../../../components/Form/DynamicForm";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RequestServer } from "../../../api/HttpReq";
-import ToastNotification from "../../../shared/toast/ToastNotification";
+import ToastNotification from "../../../../components/UI/toast/ToastNotification";
 import {
   contactformfields,
   generateContactInitialValues,

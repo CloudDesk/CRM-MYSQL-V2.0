@@ -1,4 +1,4 @@
-import { RequestServer } from "../../api/HttpReq";
+import { RequestServer } from "../scenes/api/HttpReq";
 export const apiCheckPermission = (obj) => {
   console.log(obj, "obj checkPermission");
   const { role, object, departmentname } = obj;

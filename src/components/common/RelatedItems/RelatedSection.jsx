@@ -11,7 +11,7 @@ import {
     Typography
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import NoAccessCard from "../../../scenes/shared/NoAccess/NoAccessCard"
+import NoAccessCard from "../../UI/Error/NoAccessCard";
 
 
 // Common RelatedSection component for rendering a section of related items
