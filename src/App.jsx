@@ -3,24 +3,12 @@ import { useState, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider, Box, CircularProgress } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
-import AppNavbar from "../src/components/common/navbar/AppNavbar";
+import AppNavbar from './components/common/navbar/AppNavbar'
 import { authRoutes, privateRoutes } from "./scenes/modules/routes/routes.config";
 import Error404 from "./components/UI/Error/Error404";
 import ProtectedRoute from "./scenes/modules/routes/ProtectedRoutes";
+import Loader from "./components/UI/Loader";
 
-// Loading component for Suspense fallback
-const LoadingSpinner = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100vh'
-    }}
-  >
-    <CircularProgress />
-  </Box>
-);
 
 
 function App() {
@@ -60,7 +48,7 @@ function App() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Suspense fallback={<LoadingSpinner />}>
+        <Suspense fallback={<Loader />}>
           <Routes>
             {/* Auth Routes */}
             {
