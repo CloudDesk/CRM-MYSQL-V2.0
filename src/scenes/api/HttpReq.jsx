@@ -25,11 +25,12 @@ export const RequestServer = (method, endpoint, payload) => {
             }
         }).catch((error) => {
             console.log('inside HttpReq error', error)
+            console.log('inside HttpReq error content', error.response)
             return {
                 success: false,
                 error: {
                     status: error.response ? error.response.status : 'Error',
-                    message: error.response ? error.response.data.message : 'Network Error'
+                    message: error.response ? error.response.data.content || error.response.data.message : 'Network Error'
                 }
             }
         })
