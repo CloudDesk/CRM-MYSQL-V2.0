@@ -17,15 +17,17 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 // import "../recordDetailPage/Form.css";
 import Cdlogo from "../../../assets/cdlogo.jpg"
 import { RequestServer } from "../../api/HttpReq";
+import { useAuth } from "../../hooks/useAuth";
 
 const loginUrl = `/signin`;
 const urlPermission = `/sendRolePermission`;
 
-export default function LoginIndex({ onAuthentication }) {
+export default function LoginIndex() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const [loginErrorNote, setLoginErrorNote] = useState();
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const styles = {
     container: {
@@ -132,7 +134,7 @@ export default function LoginIndex({ onAuthentication }) {
           };
           sessionStorage.setItem("token", res.data.content);
           sessionStorage.setItem("loggedInUser", JSON.stringify(obj));
-          getPermissions(res.data.userDetails[0].roledetails);
+          getPermissions(res.data.userDetails[0].roledetails, res.data.content);
         } else {
           console.log(res.error.message, "err");
         }
@@ -142,7 +144,7 @@ export default function LoginIndex({ onAuthentication }) {
       });
   };
 
-  const getPermissions = (userRoleDpt) => {
+  const getPermissions = (userRoleDpt, token) => {
     console.log("inside getPermissions user Role Dpt", userRoleDpt);
 
     let url = `${urlPermission}?roledetails=${userRoleDpt}`;
@@ -152,7 +154,9 @@ export default function LoginIndex({ onAuthentication }) {
         console.log("urlPermission INDEX page", res);
         if (res.success) {
           sessionStorage.setItem("userPermissions", res.data[0].permissionsets);
-          onAuthentication();
+          // onAuthentication();
+          // onAuthentication()
+          login(token)
         } else {
           console.log(res.error.message);
         }

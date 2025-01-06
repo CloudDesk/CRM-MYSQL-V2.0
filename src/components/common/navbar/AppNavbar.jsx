@@ -54,17 +54,15 @@ function AppNavbar({ isExpanded, setIsExpanded }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const tableNamearr = [
-    { title: "Dashboard", toNav: "list/Dashboard" },
-    { title: "Enquiry", toNav: "list/Enquiry" },
-    { title: "Deal", toNav: "list/Deals" },
-    { title: "Account", toNav: "list/Account" },
-    { title: "Contact", toNav: "list/Contact" },
-    { title: "Inventory", toNav: "list/Inventory" },
-    { title: "Event", toNav: "list/Event" },
-    { title: "User", toNav: "list/User" },
-    // { title: "Files", toNav: "list/File" },
-    { title: "Permissions", toNav: "list/Permissions" },
-    // { title: "Role", toNav: "list/Role" },
+    { title: "Dashboard", toNav: "/list/Dashboard" },
+    { title: "Enquiry", toNav: "/list/Enquiry" },
+    { title: "Deal", toNav: "/list/Deals" },
+    { title: "Account", toNav: "/list/Account" },
+    { title: "Contact", toNav: "/list/Contact" },
+    { title: "Inventory", toNav: "/list/Inventory" },
+    { title: "Event", toNav: "/list/Event" },
+    { title: "User", toNav: "/list/User" },
+    { title: "Permissions", toNav: "/list/Permissions" },
   ];
 
   return (

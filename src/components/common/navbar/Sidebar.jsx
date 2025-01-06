@@ -32,6 +32,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import { appConfig } from '../../../config/appConfig';
+import { useAuth } from '../../../scenes/hooks/useAuth';
 
 const titleStyles = {
   display: 'flex',
@@ -66,13 +67,14 @@ const Sidebar = ({
   isSidebarOpen,
   setIsSidebarOpen,
   isExpanded,
-  setIsExpanded
+  setIsExpanded,
+  onLogout
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
   const loggedInUserData = JSON.parse(sessionStorage.getItem("loggedInUser"));
-
+  const { logout } = useAuth();
   useEffect(() => {
     const currentPath = window.location.pathname;
 
@@ -119,8 +121,10 @@ const Sidebar = ({
   };
 
   const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/");
+    // sessionStorage.clear();
+    // navigate("/");
+    // // onLogout()
+    logout()
   };
 
   const drawerContent = (
