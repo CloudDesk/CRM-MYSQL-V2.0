@@ -7,6 +7,8 @@ import AppNavbar from "../src/components/common/navbar/AppNavbar";
 import { authRoutes, privateRoutes } from "./scenes/modules/routes/config";
 import Error404 from "./components/UI/Error/Error404";
 import ProtectedRoute from "./scenes/modules/routes/ProtectedRoutes";
+import LoginLayoutIndex from "./scenes/modules/routes/loginLayout";
+import LogoutLayoutIndex from "./scenes/modules/routes/logoutLayout";
 
 // Loading component for Suspense fallback
 const LoadingSpinner = () => (
@@ -55,48 +57,83 @@ function App() {
     </Box>
   );
 
-
-  return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-            {/* Auth Routes */}
-            {
-              authRoutes.map(({ path, element: Element }) => (
+  /*
+    return (
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {
+                authRoutes.map(({ path, element: Element }) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      sessionStorage.getItem('token') ? (
+                        <Navigate to="/" replace />
+                      ) : (
+                        <Element />
+                      )
+                    }
+                  />
+                ))
+              }
+              {privateRoutes.map(({ path, element: Element }) => (
                 <Route
                   key={path}
                   path={path}
                   element={
-                    sessionStorage.getItem('token') ? (
-                      <Navigate to="/" replace />
-                    ) : (
-                      <Element />
-                    )
+                    <ProtectedRoute>
+                      <PrivateLayout>
+                        <Element />
+                      </PrivateLayout>
+                    </ProtectedRoute>
                   }
                 />
-              ))
-            }
-            {/* Protected Routes */}
-            {privateRoutes.map(({ path, element: Element }) => (
-              <Route
-                key={path}
-                path={path}
-                element={
-                  <ProtectedRoute>
-                    <PrivateLayout>
-                      <Element />
-                    </PrivateLayout>
-                  </ProtectedRoute>
-                }
-              />
-            ))}
-            {/* Catch all route */}
-            <Route path="*" element={<Error404 />} />
-
-          </Routes>
-        </Suspense>
+              ))}
+              <Route path="*" element={<Error404 />} />
+  
+            </Routes>
+          </Suspense>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    );
+    */
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        {sessionStorage.getItem("token") ? (
+          <Box sx={{ display: "flex", minHeight: "100vh" }}>
+            <AppNavbar isExpanded={isExpanded} setIsExpanded={setIsExpanded} />
+            <Box
+              component="main"
+              sx={{
+                flexGrow: 1,
+                p: { xs: 1, sm: 2, md: 3 },
+                ml: {
+                  xs: 0,
+                  md: isExpanded ? "300px" : "73px",
+                },
+                mt: { xs: "64px", md: 0 },
+                transition:
+                  "margin-left 0.2s ease-in-out, width 0.2s ease-in-out",
+                backgroundColor: "#f5f5f5",
+                minHeight: "100vh",
+                width: {
+                  xs: "100%",
+                  md: `calc(100% - ${isExpanded ? "300px" : "73px"})`,
+                },
+                overflow: "auto",
+              }}
+            >
+              <LoginLayoutIndex />
+            </Box>
+          </Box>
+        ) : (
+          <LogoutLayoutIndex />
+        )}
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

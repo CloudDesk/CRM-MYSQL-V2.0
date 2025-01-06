@@ -11,7 +11,8 @@ export const useAuth = () => {
 
   const logout = () => {
     sessionStorage.clear();
-    navigate("/auth/login", { replace: true });
+    navigate("/", { replace: true });
+    // navigate("/auth/login", { replace: true });
   };
 
   return {
