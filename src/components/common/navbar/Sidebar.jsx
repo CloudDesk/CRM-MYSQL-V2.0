@@ -87,7 +87,7 @@ const Sidebar = ({
   onLogout
 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const loggedInUserData = JSON.parse(sessionStorage.getItem("loggedInUser"));
@@ -129,12 +129,21 @@ const Sidebar = ({
   };
 
   const handleMenuItemClick = (page) => {
-    navigate(page.toNav);
-    setSelected(page.title);
+    if (isMobile) {
+      // Close drawer first, then navigate
 
-    sessionStorage.setItem('selectedSidebarItem', page.title);
-
-    if (isMobile) setIsSidebarOpen(false);
+      setTimeout(() => {
+        navigate(page.toNav);
+        setSelected(page.title);
+        sessionStorage.setItem('selectedSidebarItem', page.title);
+      }, 0);
+    } else {
+      setIsSidebarOpen(false);
+      navigate(page.toNav);
+      setSelected(page.title);
+      sessionStorage.setItem('selectedSidebarItem', page.title);
+    }
+    setIsSidebarOpen(false);
   };
 
   const handleLogout = () => {
@@ -172,7 +181,7 @@ const Sidebar = ({
         <Box sx={{
           ...titleStyles,
           transition: 'all 0.3s ease-in-out',
-          display: isExpanded || isHovered ? "flex" : "none",
+          display: isExpanded || isHovered || isMobile ? "flex" : "none",
           transform: isExpanded || isHovered ? 'translateX(0)' : 'translateX(-20px)',
         }}>
           <img
@@ -419,6 +428,13 @@ const Sidebar = ({
       variant={isMobile ? 'temporary' : 'permanent'}
       open={isMobile ? isSidebarOpen : true}
       onClose={() => setIsSidebarOpen(false)}
+      keepMounted={false}
+      disableScrollLock={!isMobile}
+      ModalProps={{
+        keepMounted: false,
+        disableScrollLock: !isMobile,
+        onBackdropClick: () => setIsSidebarOpen(false)
+      }}
       sx={{
         '& .MuiDrawer-paper': {
           width: drawerWidth,
@@ -438,7 +454,7 @@ const Sidebar = ({
         },
         '& .MuiBackdrop-root': {
           backdropFilter: 'blur(8px)',
-          backgroundColor: 'rgba(0,0,0,0.2)',
+          backgroundColor: 'rgba(0,0,0,0.2)'
         }
       }}
     >

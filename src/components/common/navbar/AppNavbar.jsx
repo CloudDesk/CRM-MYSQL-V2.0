@@ -53,6 +53,14 @@ function AppNavbar({ isExpanded, setIsExpanded }) {
   const [selected, setSelected] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const handleSidebarToggle = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
+
+  const handleSidebarClose = () => {
+    setIsSidebarOpen(false);
+  };
+
   const tableNamearr = [
     { title: "Dashboard", toNav: "/dashboard" },
     { title: "Enquiry", toNav: "/enquiries" },
@@ -72,7 +80,7 @@ function AppNavbar({ isExpanded, setIsExpanded }) {
         selected={selected}
         setSelected={setSelected}
         isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
+        setIsSidebarOpen={handleSidebarClose}
         isExpanded={isExpanded}
         setIsExpanded={setIsExpanded}
       />
@@ -95,7 +103,7 @@ function AppNavbar({ isExpanded, setIsExpanded }) {
             color="primary"
             aria-label="open drawer"
             edge="start"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            onClick={handleSidebarToggle}
             sx={{
               width: 40,
               height: 40,
