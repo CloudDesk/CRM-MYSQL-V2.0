@@ -24,6 +24,27 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { CancelOutlined } from '@mui/icons-material';
+
+const StyledTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        maxWidth: 300,
+        border: `1px solid ${theme.palette.divider}`,
+        borderRadius: theme.shape.borderRadius,
+        boxShadow: theme.shadows[3],
+        padding: theme.spacing(2),
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+        color: theme.palette.background.paper,
+        '&:before': {
+            border: `1px solid ${theme.palette.divider}`,
+        }
+    },
+}));
 
 const DashboardList = ({
     dashboards,
@@ -57,40 +78,61 @@ const DashboardList = ({
     };
 
     const getTooltipContent = (dashboard) => (
-        <Box sx={{ p: 1 }}>
-            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+        <Box>
+            <Typography
+                variant="subtitle1"
+                sx={{
+                    mb: 2,
+                    fontWeight: 600,
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    pb: 1
+                }}
+            >
                 Dashboard Details
             </Typography>
-            <Stack spacing={0.5}>
-                <Typography variant="subtitle2">
-                    <strong>Object:</strong> {dashboard.objectname}
-                </Typography>
-                <Typography variant="subtitle2">
-                    <strong>Chart Type:</strong> {dashboard.charttype}
-                </Typography>
-                <Typography variant="subtitle2">
-                    <strong>Fields:</strong> {Array.isArray(dashboard.fields)
-                        ? dashboard.fields.join(', ')
-                        : dashboard.fields}
-                </Typography>
+            <Stack spacing={1.5}>
+                <Box>
+                    <Typography variant="caption" color="text.secondary">
+                        Object
+                    </Typography>
+                    <Typography variant="body2" fontWeight={500}>
+                        {dashboard.objectname}
+                    </Typography>
+                </Box>
+                <Box>
+                    <Typography variant="caption" color="text.secondary">
+                        Chart Type
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {getChartIcon(dashboard.charttype)}
+                        <Typography variant="body2" fontWeight={500}>
+                            {dashboard.charttype}
+                        </Typography>
+                    </Box>
+                </Box>
+                <Box>
+                    <Typography variant="caption" color="text.secondary">
+                        Fields
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mt: 0.5 }}>
+                        {Array.isArray(dashboard.fields) && dashboard.fields.map((field, index) => (
+                            <Chip
+                                key={index}
+                                label={field}
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                    backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                                    borderColor: alpha(theme.palette.primary.main, 0.2),
+                                }}
+                            />
+                        ))}
+                    </Box>
+                </Box>
             </Stack>
         </Box>
     );
-
-    const BootstrapTooltip = styled(({ className, ...props }) => (
-        <Tooltip slots={{
-            transition: Zoom,
-        }} {...props} arrow classes={{ popper: className }} />
-    ))(({ theme }) => ({
-        [`& .${tooltipClasses.arrow}`]: {
-            color: theme.palette.common.black,
-        },
-        [`& .${tooltipClasses.tooltip}`]: {
-            backgroundColor: theme.palette.common.black,
-        },
-    }));
-
-
 
     return (
         <Paper
@@ -132,12 +174,20 @@ const DashboardList = ({
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search dashboards..."
+
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
                                 <SearchIcon sx={{ color: theme.palette.text.secondary }} />
                             </InputAdornment>
                         ),
+                        endAdornment: searchTerm.length > 0 ? (
+                            <InputAdornment position='end'>
+                                <CancelOutlined onClick={() => setSearchTerm("")} sx={{
+                                    cursor: "pointer",
+                                }} />
+                            </InputAdornment>
+                        ) : null,
                         sx: {
                             backgroundColor: alpha(theme.palette.primary.main, 0.02),
                             '&:hover': {
@@ -207,10 +257,11 @@ const DashboardList = ({
                         </Typography>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <BootstrapTooltip
+                            <StyledTooltip
                                 title={getTooltipContent(dashboard)}
                                 arrow
                                 placement="left"
+                                TransitionComponent={Zoom}
                             >
                                 <IconButton
                                     size="small"
@@ -225,7 +276,7 @@ const DashboardList = ({
                                 >
                                     <InfoOutlinedIcon sx={{ fontSize: 18 }} />
                                 </IconButton>
-                            </BootstrapTooltip>
+                            </StyledTooltip>
 
                             {permissionValues.edit && (
                                 <Tooltip title="Edit Dashboard" arrow>
