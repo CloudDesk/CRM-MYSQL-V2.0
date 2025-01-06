@@ -134,7 +134,7 @@ export default OpportunityRelatedItems
 //   const handleTaskCardEdit = (row) => {
 //     console.log('selected record', row);
 //     const item = row;
-//    navigate("/taskDetailPage", { state: { record: { item } } })
+//    navigate("/events", { state: { record: { item } } })
 //   };
 
 //   const handleReqTaskCardDelete = (e,row) => {
@@ -467,7 +467,7 @@ export default OpportunityRelatedItems
 
 // //     console.log('selected record', row);
 // //     const item = row;
-// //    navigate("/taskDetailPage", { state: { record: { item } } })
+// //    navigate("/events", { state: { record: { item } } })
 // //   };
 
 // //   const handleReqTaskCardDelete = (row) => {
@@ -505,7 +505,7 @@ export default OpportunityRelatedItems
 // //     // setFinalClickInfo(e);
 // //     const item = row;
 // //     console.log('item',item);
-// //     navigate("/inventoryDetailPage", { state: { record: { item } } })
+// //     navigate("/inventories", { state: { record: { item } } })
 // //   };
 
 
@@ -546,7 +546,7 @@ export default OpportunityRelatedItems
 
 // //     const item = row
 
-// //   navigate("/inventoryDetailPage", { state: { record: { item } } })
+// //   navigate("/inventories", { state: { record: { item } } })
 // //   };
 
 // //   const handleInventoryCardDelete =(row) =>{

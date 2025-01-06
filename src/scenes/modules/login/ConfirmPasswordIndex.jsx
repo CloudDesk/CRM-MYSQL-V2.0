@@ -13,9 +13,14 @@ import {
 import Cdlogo from "../../../assets/cdlogo.jpg"
 import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { RequestServer } from "../../api/HttpReq";
+import { appConfig } from "../../../config/appConfig";
 
 const singupUrl = `/UpsertUser`;
 
+const CONSTANTS = {
+    upsert: appConfig.objects.user.upsert,
+    authLogin: appConfig.api.auth.login
+}
 export default function ConfirmPasswordIndex() {
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' });
     const location = useLocation();
@@ -122,7 +127,7 @@ export default function ConfirmPasswordIndex() {
         submissionValues.userName = submissionValues.email;
         delete submissionValues.confirmPassword;
 
-        RequestServer("post", singupUrl, submissionValues)
+        RequestServer("post", CONSTANTS.upsert, submissionValues)
             .then((res) => {
                 if (res.success) {
                     setNotify({
@@ -147,7 +152,7 @@ export default function ConfirmPasswordIndex() {
             })
             .finally(() => {
                 setTimeout(() => {
-                    navigate('/');
+                    navigate(CONSTANTS.authLogin);
                 }, 2000);
             });
     };
@@ -231,7 +236,7 @@ export default function ConfirmPasswordIndex() {
                                         disabled={!isValid}
                                         sx={styles.button}
                                     >
-                                        Sign Up
+                                        Update Password
                                     </Button>
                                 </Form>
                             );
@@ -240,7 +245,7 @@ export default function ConfirmPasswordIndex() {
 
                     <Box sx={{ textAlign: 'center', mt: 3 }}>
                         <Link
-                            to="/"
+                            to={CONSTANTS.authLogin}
                             style={{
                                 color: '#1976d2',
                                 textDecoration: 'none',

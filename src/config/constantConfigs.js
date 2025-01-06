@@ -59,9 +59,8 @@ export const INVENTORY_CONSTANTS = {
   ROUTES: {
     INVENTORY: appConfig.objects.inventory.base,
     DELETE_INVENTORY: appConfig.objects.inventory.delete || "/deleteInventory",
-    NEW_INVENTORY: appConfig.objects.inventory.new || "/new-inventories",
-    INVENTORY_DETAIL:
-      appConfig.objects.inventory.detail || "/inventoryDetailPage",
+    NEW_INVENTORY: appConfig.objects.inventory.new || "/inventories/new",
+    INVENTORY_DETAIL: appConfig.objects.inventory.detail || "/inventories",
   },
   TITLES: {
     MAIN: appConfig.objects.inventory.apiName,
@@ -114,9 +113,8 @@ export const OPPORTUNITY_CONSTANTS = {
     OPPORTUNITIES: appConfig.objects.opportunity.base || "/opportunities",
     DELETE_OPPORTUNITY:
       appConfig.objects.opportunity.delete || "/deleteOpportunity",
-    NEW_OPPORTUNITY: appConfig.objects.opportunity.new || "/new-opportunities",
-    OPPORTUNITY_DETAIL:
-      appConfig.objects.opportunity.detail || "/opportunityDetailPage",
+    NEW_OPPORTUNITY: appConfig.objects.opportunity.new || "/deals/new",
+    OPPORTUNITY_DETAIL: appConfig.objects.opportunity.detail || "/deals",
   },
   TITLES: {
     MAIN: appConfig.objects.opportunity.name.singular,
@@ -140,9 +138,8 @@ export const PERMISSION_CONSTANTS = {
     PERMISSIONS: appConfig.objects.permission.base || "/getPermissions",
     DELETE_PERMISSION:
       appConfig.objects.permission.delete || "/deletePermission",
-    NEW_PERMISSION: appConfig.objects.permission.new || "/new-permission",
-    PERMISSION_DETAIL:
-      appConfig.objects.permission.detail || "/permissionDetailPage",
+    NEW_PERMISSION: appConfig.objects.permission.new || "/permissions/new",
+    PERMISSION_DETAIL: appConfig.objects.permission.detail || "/permissions",
   },
   TITLES: {
     MAIN: appConfig.objects.permission.name.singular,
@@ -170,8 +167,8 @@ export const TASK_CONSTANTS = {
   ROUTES: {
     TASK: appConfig.objects.task.base || "/Task",
     DELETE_TASK: appConfig.objects.task.delete || "/deleteTask",
-    NEW_TASK: appConfig.objects.task.new || "/new-task",
-    TASK_DETAIL: appConfig.objects.task.detail || "/taskDetailPage",
+    NEW_TASK: appConfig.objects.task.new || "/events/new",
+    TASK_DETAIL: appConfig.objects.task.detail || "/events",
   },
   TITLES: {
     MAIN: appConfig.objects.task.name.singular,
@@ -199,8 +196,8 @@ export const USER_CONSTANTS = {
   ROUTES: {
     USERS: appConfig.objects.user.base || "/Users",
     DELETE_USER: appConfig.objects.user.delete || "/delete",
-    NEW_USER: appConfig.objects.user.new || "/new-users",
-    USER_DETAIL: appConfig.objects.user.detail || "/userDetailPage",
+    NEW_USER: appConfig.objects.user.new || "/users/new",
+    USER_DETAIL: appConfig.objects.user.detail || "/users",
   },
   TITLES: {
     MAIN: appConfig.objects.user.name.singular,

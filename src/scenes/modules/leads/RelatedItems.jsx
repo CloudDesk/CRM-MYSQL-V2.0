@@ -187,7 +187,7 @@ export default LeadRelatedItems
 //   const handleTaskCardEdit = (row) => {
 //     console.log('selected edit record', row);
 //     const item = row;
-//     navigate("/taskDetailPage", { state: { record: { item } } })
+//     navigate("/events", { state: { record: { item } } })
 //   };
 
 //   const handleReqTaskCardDelete = (e,row) => {
@@ -238,7 +238,7 @@ export default LeadRelatedItems
 //     console.log('Opportunity selected edit record', row);
 
 //     const item = row;
-//    navigate("/opportunityDetailPage", { state: { record: { item } } })
+//    navigate("/deals", { state: { record: { item } } })
 //   };
 
 //   const handleReqOpportunityCardDelete =(e,row) =>{

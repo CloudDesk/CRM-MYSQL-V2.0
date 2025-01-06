@@ -169,7 +169,7 @@ const AuthenticatedLayout = ({ isExpanded, setIsExpanded, onLogout }) => {
   useEffect(() => {
     // Redirect to dashboard on mount if not already there
     if (window.location.pathname === '/') {
-      navigate('/list/dashboard');
+      navigate('/dashboard');
     }
   }, [navigate]);
 
@@ -233,7 +233,7 @@ const UnauthenticatedLayout = () => {
             element={
               <Element onLoginSuccess={() => {
                 // Navigate to dashboard after successful login
-                navigate('/list/dashboard');
+                navigate('/dashboard');
               }} />
             }
           />

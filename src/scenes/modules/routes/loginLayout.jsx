@@ -28,37 +28,37 @@ function LoginLayoutIndex(props) {
         <>
             <Routes>
                 <Route path="/" exact element={<DashboardIndex />} />
-                <Route path="/list/account" element={<Accounts />} />
-                <Route path="/list/contact" element={<Contacts />} />
-                <Route path="/list/deals" element={<Opportunities />} />
-                <Route path="/list/enquiry" element={<Leads />} />
-                <Route path="/list/inventory" element={<Inventories />} />
-                <Route path="/list/event" element={<Tasks />} />
-                <Route path="/list/user" element={<Users />} />
-                <Route path="/list/permissions" element={<PermissionSets />} />
-                <Route path="/list/dashboard" element={<DashboardIndex />} />
+                <Route path="/accounts" element={<Accounts />} />
+                <Route path="/contacts" element={<Contacts />} />
+                <Route path="/deals" element={<Opportunities />} />
+                <Route path="/enquiries" element={<Leads />} />
+                <Route path="/inventories" element={<Inventories />} />
+                <Route path="/events" element={<Tasks />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/permissions" element={<PermissionSets />} />
+                <Route path="/dashboard" element={<DashboardIndex />} />
 
-                <Route path="/new-contacts" element={<ContactDetailPage />} />
-                <Route path="/new-users" element={<UserDetailPage />} />
-                <Route path="/new-task" element={<TaskDetailPage />} />
-                <Route path="/new-inventories" element={<InventoryDetailPage />} />
-                <Route path="/new-leads" element={<LeadDetailPage />} />
-                <Route path="/new-opportunities" element={<OpportunityDetailPage />} />
-                <Route path="/new-accounts" element={<AccountDetailPage />} />
-                <Route path="/new-permission" element={<PermissionDetailPage />} />
+                <Route path="/contacts/new" element={<ContactDetailPage />} />
+                <Route path="/users/new" element={<UserDetailPage />} />
+                <Route path="/events/new" element={<TaskDetailPage />} />
+                <Route path="/inventories/new" element={<InventoryDetailPage />} />
+                <Route path="/enquiries/new" element={<LeadDetailPage />} />
+                <Route path="/deals/new" element={<OpportunityDetailPage />} />
+                <Route path="/accounts/new" element={<AccountDetailPage />} />
+                <Route path="/permissions/new" element={<PermissionDetailPage />} />
 
-                <Route path="/accountDetailPage/:id" element={<AccountDetailsWithRelatedItems />} />
-                <Route path="/taskDetailPage/:id" element={<TaskDetailsWithRelatedItems />} />
-                <Route path="/inventoryDetailPage/:id" element={<InventoryDetailsWithRelatedItems />} />
-                <Route path="/contactDetailPage/:id" element={<ContactDetailPage />} />
-                <Route path="/userDetailPage/:id" element={<UserDetailPage />} />
-                <Route path="/leadDetailPage/:id" element={<LeadDetailsWithRelatedItems />} />
+                <Route path="/accounts/:id" element={<AccountDetailsWithRelatedItems />} />
+                <Route path="/events/:id" element={<TaskDetailsWithRelatedItems />} />
+                <Route path="/inventories/:id" element={<InventoryDetailsWithRelatedItems />} />
+                <Route path="/contacts/:id" element={<ContactDetailPage />} />
+                <Route path="/users/:id" element={<UserDetailPage />} />
+                <Route path="/enquiries/:id" element={<LeadDetailsWithRelatedItems />} />
                 <Route
-                    path="/opportunityDetailPage/:id"
+                    path="/deals/:id"
                     element={<OpportunityDetailsWithRelatedItems />}
                 />
                 <Route
-                    path="/permissionDetailPage/:id"
+                    path="/permissions/:id"
                     element={<PermissionDetailPage />}
                 />
                 <Route path="*" element={<Error404 />} />

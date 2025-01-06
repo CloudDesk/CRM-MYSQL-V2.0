@@ -18,10 +18,16 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Cdlogo from "../../../assets/cdlogo.jpg"
 import { RequestServer } from "../../api/HttpReq";
 import { useAuth } from "../../hooks/useAuth";
+import { appConfig } from "../../../config/appConfig";
 
 const loginUrl = `/signin`;
 const urlPermission = `/sendRolePermission`;
 
+const CONSTANTS = {
+  signIn: appConfig.api.auth.signin,
+  urlPermission: appConfig.api.auth.rolePermission,
+  forgotPassword: appConfig.api.auth.forgotPassword
+}
 export default function LoginIndex() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState(false);
@@ -114,7 +120,7 @@ export default function LoginIndex() {
 
   const formSubmission = async (values, { resetForm }) => {
     console.log("inside form Submission", values);
-    let url = `${loginUrl}/${values.userName}/${values.password}`;
+    let url = `${CONSTANTS.signIn}/${values.userName}/${values.password}`;
 
     RequestServer("get", url, {})
       .then((res) => {
@@ -147,7 +153,7 @@ export default function LoginIndex() {
   const getPermissions = (userRoleDpt, token) => {
     console.log("inside getPermissions user Role Dpt", userRoleDpt);
 
-    let url = `${urlPermission}?roledetails=${userRoleDpt}`;
+    let url = `${CONSTANTS.urlPermission}${userRoleDpt}`;
     // sendRolePermission?roledetails=Admin
     RequestServer("get", url, {})
       .then((res) => {
@@ -262,7 +268,7 @@ export default function LoginIndex() {
 
                 <Box sx={{ textAlign: "center", mt: 3 }}>
                   <Link
-                    to="/forgot-password"
+                    to={CONSTANTS.forgotPassword}
                     style={{
                       color: "#1976d2",
                       textDecoration: "none",

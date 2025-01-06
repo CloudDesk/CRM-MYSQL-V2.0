@@ -11,9 +11,15 @@ import {
 import OtpInput from 'react-otp-input';
 import Cdlogo from "../../../assets/cdlogo.jpg"
 import { RequestServer } from "../../api/HttpReq";
+import { appConfig } from "../../../config/appConfig";
 
 const generateotpUrl = `/generateOTP`;
 
+const CONSTANTS = {
+    authLogin: appConfig.api.auth.login,
+    generateotpUrl: appConfig.api.auth.generateOTP,
+    confirmPassword: appConfig.api.auth.confirmPassword
+}
 export default function OTPVerification() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -98,7 +104,7 @@ export default function OTPVerification() {
     }, []);
 
     const handleSendEmailId = () => {
-        RequestServer("post", generateotpUrl, { emailId: location.state.record.item[0].email })
+        RequestServer("post", CONSTANTS.generateotpUrl, { emailId: location.state.record.item[0].email })
             .then((res) => {
                 console.log(res.data, "otp email res");
             })
@@ -108,12 +114,12 @@ export default function OTPVerification() {
     };
 
     const handleSendOtp = () => {
-        RequestServer("post", generateotpUrl, { otp: otp })
+        RequestServer("post", CONSTANTS.generateotpUrl, { otp: otp })
             .then((res) => {
                 console.log(res.data, "otp RES");
                 if (res.data.status === 'success') {
                     const item = location.state.record.item;
-                    navigate('/confirm-password', { state: { record: { item } } });
+                    navigate(CONSTANTS.confirmPassword, { state: { record: { item } } });
                 } else {
                     setOtpError(true);
                 }
@@ -197,7 +203,7 @@ export default function OTPVerification() {
 
                     <Box sx={{ textAlign: 'center', mt: 3 }}>
                         <Link
-                            to="/"
+                            to={CONSTANTS.authLogin}
                             style={{
                                 color: '#1976d2',
                                 textDecoration: 'none',
