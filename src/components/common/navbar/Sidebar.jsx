@@ -45,13 +45,13 @@ const titleStyles = {
   borderRadius: 1.5,
   backgroundColor: 'rgba(92, 92, 255, 0.03)',
   backdropFilter: 'blur(8px)',
-  border: '1px solid',
-  borderColor: 'divider',
+  // border: '1px solid',
+  // borderColor: 'divider',
   transition: 'all 0.3s ease-in-out',
-  '&:hover': {
-    backgroundColor: 'rgba(92, 92, 255, 0.05)',
-    borderColor: 'primary.main',
-  },
+  // '&:hover': {
+  //   backgroundColor: 'rgba(92, 92, 255, 0.05)',
+  //   borderColor: 'primary.main',
+  // },
   '& img': {
     width: 36,
     height: 36,
@@ -60,8 +60,8 @@ const titleStyles = {
     boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
     backgroundColor: 'white',
     padding: '3px',
-    border: '1px solid',
-    borderColor: 'primary.light',
+    // border: '1px solid',
+    // borderColor: 'primary.light',
     transition: 'all 0.3s ease-in-out',
     '&:hover': {
       transform: 'scale(1.05)',
@@ -214,6 +214,7 @@ const Sidebar = ({
               CRM System
             </Typography>
           </Box>
+
         </Box>
 
         {/* {!isMobile && (
@@ -253,7 +254,34 @@ const Sidebar = ({
             <ChevronLeftIcon />
           </IconButton>
         )} */}
+
+        {!isExpanded && !isHovered && !isMobile && (
+          <Box sx={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <img
+              src={cdlogo}
+              alt={appConfig.name}
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '10px',
+                objectFit: 'cover',
+                boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
+                backgroundColor: 'white',
+                padding: '3px',
+                // border: '1px solid',
+                borderColor: theme.palette.primary.light,
+                transition: 'all 0.3s ease-in-out',
+              }}
+            />
+          </Box>
+        )}
       </Box>
+
 
       <List sx={{
         px: 2,
