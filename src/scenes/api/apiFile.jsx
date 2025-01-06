@@ -1,4 +1,4 @@
-import axios, { isCancel, AxiosError } from 'axios';
+import axios from 'axios';
 import { appConfig } from '../../config/appConfig';
 
 const apiFile = axios.create({

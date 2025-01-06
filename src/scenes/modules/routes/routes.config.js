@@ -112,9 +112,3 @@ export const authRoutes = [
   { path: "/auth/confirm-password", element: ConfirmPasswordIndex },
   { path: "/auth/verify-otp", element: OTPVerification },
 ];
-
-// { path: "/auth/login", element: LoginIndex }, // Login page
-// { path: "/auth/forgot-password", element: ForgotPasswordIndex }, // Forgot password page
-// { path: "/auth/reset-password", element: ConfirmPasswordIndex }, // Reset password confirmation
-// { path: "/auth/verify-otp", element: OTPVerification }, // OTP verification page
-// { path: "/auth/user-not-found", element: NoUserNameFound },

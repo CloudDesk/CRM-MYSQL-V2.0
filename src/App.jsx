@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider, Box, CircularProgress } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import AppNavbar from "../src/components/common/navbar/AppNavbar";
-import { authRoutes, privateRoutes } from "./scenes/modules/routes/config";
+import { authRoutes, privateRoutes } from "./scenes/modules/routes/routes.config";
 import Error404 from "./components/UI/Error/Error404";
 import ProtectedRoute from "./scenes/modules/routes/ProtectedRoutes";
 
