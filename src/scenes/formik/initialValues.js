@@ -5,6 +5,7 @@ import {
   AccCountryPickList,
   AccRatingPickList,
   AccTypePickList,
+  DashboardChartTypePicklist,
   IndustryPickList,
   InvCitiesPickList,
   InvCountryPickList,
@@ -1951,10 +1952,6 @@ export const dashboardFormFields = (isEditing = false) => [
     required: true,
     xs: 12,
     validator: Yup.string().required("Chart Type is Required"),
-    options: [
-      { value: "bar", label: "Bar Chart" },
-      { value: "line", label: "Line Chart" },
-      { value: "pie", label: "Pie Chart" },
-    ],
+    options: DashboardChartTypePicklist,
   },
 ];

@@ -182,7 +182,7 @@ const DashboardIndex = () => {
       console.log(error);
     }
   };
-
+  console.log(chartData, "chartdata");
   const handleDeleteDashboard = async (dashboard) => {
     console.log(dashboard, "dashboard for deletion");
     try {
