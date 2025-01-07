@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { appConfig } from "../../config/appConfig";
 
 export const useAuth = () => {
-  const authLogin = appConfig.api.auth.login;
   const navigate = useNavigate();
 
   const login = (token) => {
@@ -13,7 +12,7 @@ export const useAuth = () => {
 
   const logout = () => {
     sessionStorage.clear();
-    navigate(authLogin, { replace: true });
+    navigate(appConfig.api.auth.login, { replace: true });
   };
 
   return {

@@ -1,7 +1,6 @@
-
 import { useState, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { CssBaseline, ThemeProvider, Box, CircularProgress } from "@mui/material";
+import { CssBaseline, ThemeProvider, Box } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import AppNavbar from './components/common/navbar/AppNavbar'
 import { authRoutes, privateRoutes } from "./scenes/modules/routes/routes.config";
@@ -50,23 +49,19 @@ function App() {
         <CssBaseline />
         <Suspense fallback={<Loader />}>
           <Routes>
-            {/* Auth Routes */}
-            {
-              authRoutes.map(({ path, element: Element }) => (
-                <Route
-                  key={path}
-                  path={path}
-                  element={
-                    sessionStorage.getItem('token') ? (
-                      <Navigate to="/" replace />
-                    ) : (
-                      <Element />
-                    )
-                  }
-                />
-              ))
-            }
-            {/* Protected Routes */}
+            {authRoutes.map(({ path, element: Element }) => (
+              <Route
+                key={path}
+                path={path}
+                element={
+                  sessionStorage.getItem('token') ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <Element />
+                  )
+                }
+              />
+            ))}
             {privateRoutes.map(({ path, element: Element }) => (
               <Route
                 key={path}
@@ -266,5 +261,4 @@ function App() {
 }
 
 export default App;
-
 */

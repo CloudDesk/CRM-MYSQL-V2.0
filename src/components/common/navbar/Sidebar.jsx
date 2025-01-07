@@ -147,10 +147,7 @@ const Sidebar = ({
   };
 
   const handleLogout = () => {
-    // sessionStorage.clear();
-    // navigate("/");
-    // // onLogout()
-    logout()
+    logout();
   };
 
   const drawerWidth = isMobile ? 300 : (isExpanded || isHovered ? 300 : 83.8);
