@@ -212,7 +212,7 @@ const DropFileInput = () => {
                     }}
                 </Formik>
 
-                <button onclick={handleClick}>
+                <button onClick={handleClick}>
                     btn
                 </button>
                 <button onClick={iframeFn}>
@@ -253,7 +253,7 @@ const DropFileInput = () => {
                             </td>
                             <td>
 
-                                <iframe src={`https://view.officeapps.live.com/op/embed.aspx?src=http://localhost:4000/${item.fileName}`} width='100%' height='1000%' frameborder='0'>This is an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank' href='http://office.com/webapps'>Office Online</a>.</iframe>
+                                <iframe src={`https://view.officeapps.live.com/op/embed.aspx?src=http://localhost:4000/${item.fileName}`} width='100%' height='1000%' frameBorder='0'>This is an embedded <a target='_blank' href='http://office.com' rel="noreferrer">Microsoft Office</a> document, powered by <a target='_blank' href='http://office.com/webapps' rel="noreferrer">Office Online</a>.</iframe>
 
 
                             </td>

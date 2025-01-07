@@ -141,6 +141,8 @@ const Leads = () => {
             <IconButton
               onClick={(e) => handleDelete(e, params.row._id)}
               style={{ padding: "20px", color: "#FF3333" }}
+              aria-label="Delete row"
+              title="Delete row"
             >
               <DeleteIcon />
             </IconButton>

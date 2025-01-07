@@ -100,7 +100,7 @@ const UserDetailPage = () => {
       values.modifiedby = currentUser;
       values.fullname = values.firstname + " " + values.lastname;
       values.username = values.email;
-      values.roledetails = values.roledetails;
+      // values.roledetails = values.roledetails;
     } else if (!existingUser) {
       console.log("inside new User");
       values.modifieddate = dateSeconds;
@@ -108,7 +108,7 @@ const UserDetailPage = () => {
       values.fullname = values.firstname + " " + values.lastname;
       values.createdby = currentUser;
       values.modifiedby = currentUser;
-      values.roledetails = values.roledetails;
+      // values.roledetails = values.roledetails;
     }
     console.log("values after modification", values);
 

@@ -49,7 +49,6 @@ const Users = () => {
       setIsLoading(false);
     }
   };
-
   const handleCreateRecord = () => {
     navigate(USER_CONSTANTS.ROUTES.NEW_USER, { state: { record: {} } });
   };

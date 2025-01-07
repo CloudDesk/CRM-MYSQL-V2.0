@@ -21,6 +21,7 @@ const CONSTANTS = {
 
 
 const ModalOppTask = ({ item, handleModal }) => {
+    console.log(item, "item");
     const [taskParentRecord, setTaskParentRecord] = useState();
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' });
     const [usersRecord, setUsersRecord] = useState([]);

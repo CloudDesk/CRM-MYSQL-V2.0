@@ -1,5 +1,5 @@
-import { formatCurrency } from "../utils/formatCurrency";
-import "../scenes/modules/styles/muiBoxStyles.css"
+import formatCurrency from "../utils/formatCurrency";
+import "../scenes/modules/styles/muiBoxStyles.css";
 
 export const ACCOUNT_TABLE_CONFIG = {
   mobileFields: [

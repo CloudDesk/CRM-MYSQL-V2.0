@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import * as Yup from "yup";
-import { Grid, Button, DialogActions } from "@mui/material";
+import { Grid } from "@mui/material";
 import { TaskSubjectPicklist } from "../../../assets/pickLists";
 import ToastNotification from "../../../components/UI/toast/ToastNotification";
 import { RequestServer } from '../../api/HttpReq';
@@ -9,8 +9,6 @@ import { TaskInitialValues } from "../../formik/formValues";
 import { DynamicForm } from "../../../components/Form/DynamicForm";
 import { appConfig } from "../../../config/appConfig";
 
-const UpsertUrl = `/UpsertTask`;
-const fetchUsersbyName = `/usersByName`;
 
 const CONSTANTS = {
     upsert: appConfig.objects.task.upsert,
@@ -23,7 +21,6 @@ const ModalTask = ({ item, handleModal }) => {
     const [taskParentRecord, setTaskParentRecord] = useState();
     const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' });
     const [usersRecord, setUsersRecord] = useState([]);
-    const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
