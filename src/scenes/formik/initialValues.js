@@ -1479,11 +1479,11 @@ export const generateTaskInitialValues = (existingTask = {}) => {
     return acc;
   }, {});
 
-  if (existingTask.object) {
-    fetchRelatedToOptions(existingTask.object).then((options) => {
-      defaultValues.relatedtoOptions = options;
-    });
-  }
+  // if (existingTask.object) {
+  //   fetchRelatedToOptions(existingTask.object).then((options) => {
+  //     defaultValues.relatedtoOptions = options;
+  //   });
+  // }
 
   if (Object.keys(existingTask).length > 0) {
     // defaultValues.relatedToOptions = relatedToOptions;

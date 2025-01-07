@@ -84,15 +84,19 @@ const TaskDetailPage = ({ props }) => {
 
   const handleSubmit = async (values) => {
     console.log(values, "handleSubmit values from TaskDetailPage");
+    console.log(values.startdate);
+    console.log(values.enddate);
     let dateSeconds = new Date().getTime();
     let startDateSec = new Date(values.startdate).getTime();
     let endDateSec = new Date(values.enddate).getTime();
+    values.startdate = startDateSec;
+    values.enddate = endDateSec;
     if (values.relatedtoOptions || values.relatedToOptions) {
       delete values.relatedtoOptions;
       delete values.relatedToOptions;
     }
     if (existingTask) {
-      console.log("inside existingTask");
+      console.log("inside existingTask", values);
       values._id = existingTask._id;
       values.createddate = existingTask.createddate;
       values.createdby = existingTask.createdby;
@@ -100,8 +104,6 @@ const TaskDetailPage = ({ props }) => {
       values.modifiedby = currentUser;
     } else if (!existingTask) {
       console.log("inside new Task");
-      values.startdate = startDateSec;
-      values.enddate = endDateSec;
       values.createddate = dateSeconds;
       values.modifieddate = dateSeconds;
       values.createdby = currentUser;
