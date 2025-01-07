@@ -40,11 +40,11 @@ const titleStyles = {
   alignItems: 'center',
   justifyContent: 'flex-start',
   width: '100%',
-  px: 2.5,
+  // px: 2.5,
   py: 2,
-  mx: 1.5,
+  // mx: 1.5,
   borderRadius: 1.5,
-  backgroundColor: 'rgba(92, 92, 255, 0.03)',
+  // backgroundColor: 'rgba(92, 92, 255, 0.03)',
   backdropFilter: 'blur(8px)',
   // border: '1px solid',
   // borderColor: 'divider',
@@ -56,9 +56,9 @@ const titleStyles = {
   '& img': {
     width: 36,
     height: 36,
-    borderRadius: '10px',
+    // borderRadius: '10px',
     objectFit: 'cover',
-    boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
+    // boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
     backgroundColor: 'white',
     padding: '3px',
     // border: '1px solid',
@@ -185,12 +185,14 @@ const Sidebar = ({
             src={cdlogo}
             alt={appConfig.name}
             style={{
+              height: 70,
+              width: 70,
               transition: 'all 0.3s ease-in-out',
               transform: (isExpanded || isHovered) ? 'scale(1)' : 'scale(0.8)',
             }}
           />
           <Box className="title-container">
-            <Typography
+            {/* <Typography
               variant="h6"
               sx={{
                 fontWeight: 700,
@@ -205,8 +207,8 @@ const Sidebar = ({
               }}
             >
               {appConfig.name}
-            </Typography>
-            <Typography
+            </Typography> */}
+            {/* <Typography
               variant="caption"
               sx={{
                 color: 'text.secondary',
@@ -219,6 +221,22 @@ const Sidebar = ({
                 background: 'linear-gradient(135deg, #666 0%, #999 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
+              }}
+            >
+              CRM System
+            </Typography> */}
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #5C5CFF 0%, #8A8AFF 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                letterSpacing: '0.5px',
+                fontSize: '1.2rem',
+                lineHeight: 1.2,
+                mb: 0.5,
+                textShadow: '0 2px 4px rgba(92, 92, 255, 0.1)',
               }}
             >
               CRM System
@@ -276,11 +294,11 @@ const Sidebar = ({
               src={cdlogo}
               alt={appConfig.name}
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: '10px',
+                width: 70,
+                height: 70,
+                // borderRadius: '10px',
                 objectFit: 'cover',
-                boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
+                // boxShadow: '0 2px 8px rgba(92, 92, 255, 0.15)',
                 backgroundColor: 'white',
                 padding: '3px',
                 // border: '1px solid',
