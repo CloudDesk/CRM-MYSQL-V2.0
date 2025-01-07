@@ -153,7 +153,7 @@ const Sidebar = ({
     logout()
   };
 
-  const drawerWidth = isMobile ? 300 : (isExpanded || isHovered ? 300 : 73);
+  const drawerWidth = isMobile ? 300 : (isExpanded || isHovered ? 300 : 83.8);
 
   const drawerContent = (
     <Box
