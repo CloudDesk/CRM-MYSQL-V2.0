@@ -1,4 +1,4 @@
-import { useState, Suspense } from "react";
+import { useState, Suspense, Profiler } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline, ThemeProvider, Box } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";

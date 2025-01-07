@@ -12,7 +12,6 @@ import {
   IconButton,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-// import "../recordDetailPage/Form.css";
 import Cdlogo from "../../../assets/cdlogo.jpg"
 import { RequestServer } from "../../api/HttpReq";
 import { useAuth } from "../../hooks/useAuth";
@@ -96,7 +95,6 @@ const CONSTANTS = {
 
 export default function LoginIndex() {
   const [showPassword, setShowPassword] = useState(false);
-  const [loginError, setLoginError] = useState(false);
   const [error, setError] = useState({
     isError: false, message: ""
   });
@@ -190,7 +188,10 @@ export default function LoginIndex() {
             {({ isValid, setFieldValue }) => (
               <Form>
                 <Box sx={styles.field}>
-                  <Typography variant="subtitle2" gutterBottom>
+                  <Typography variant="subtitle2" gutterBottom
+                    component="label"
+                    style={{ fontWeight: "bold", fontSize: "0.8rem" }}
+                  >
                     Email Address
                   </Typography>
                   <Field
@@ -200,7 +201,6 @@ export default function LoginIndex() {
                     placeholder="Enter your email"
                     onChange={(e) => {
                       setFieldValue("userName", e.target.value);
-                      setLoginError(false);
                     }}
                   />
                   <ErrorMessage
@@ -211,7 +211,10 @@ export default function LoginIndex() {
                 </Box>
 
                 <Box sx={styles.field}>
-                  <Typography variant="subtitle2" gutterBottom>
+                  <Typography variant="subtitle2" gutterBottom
+                    component="label"
+                    style={{ fontWeight: "bold", fontSize: "0.8rem" }}
+                  >
                     Password
                   </Typography>
                   <Field name="password">
@@ -224,6 +227,8 @@ export default function LoginIndex() {
                           placeholder="Enter your password"
                         />
                         <IconButton
+                          className="view-password"
+                          aria-label={showPassword ? "Hide password" : "Show password"}
                           onClick={() => setShowPassword(!showPassword)}
                           style={{
                             position: "absolute",
