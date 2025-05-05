@@ -239,7 +239,7 @@ const Sidebar = ({
                 textShadow: '0 2px 4px rgba(92, 92, 255, 0.1)',
               }}
             >
-              CRM System
+              CRM
             </Typography>
           </Box>
 
